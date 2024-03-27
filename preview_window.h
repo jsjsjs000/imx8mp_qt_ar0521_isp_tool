@@ -17,10 +17,15 @@ public:
 	~PreviewWindow();
 
 private slots:
+	void on_pushButton_clicked();
+
+protected:
+	void showEvent(QShowEvent *event);
 
 private:
 	Ui::PreviewWindow *ui;
 	QVideoWidget *videoWidget;
+	void setupCamera(void);
 };
 
 #endif // PREVIEW_WINDOW_H

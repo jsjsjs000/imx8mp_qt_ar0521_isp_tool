@@ -1,32 +1,21 @@
 #include "mainwindow.h"
 #include "preview_window.h"
 
-// #include <glib.h>
-// #include <gst/gst.h>
-// #include <gst/interfaces/xoverlay.h>
-
 #include <QApplication>
 #include <QGuiApplication>
 #include <QDesktopWidget>
 #include <QScreen>
 
-// #include <QVideoWidget>
-// #include <QMediaPlayer>
-// #include <QMediaPlaylist>
-// #include <QCamera>
-// #include <QCameraInfo>
-// #include <QLabel>
-
-// QMediaPlayer *player;
-// QMediaPlaylist *playlist;
-// QVideoWidget *videoWidget;
-
 int main(int argc, char *argv[])
 {
 	qDebug() << "Debug: Start";
-	QApplication a(argc, argv);
+	QApplication application(argc, argv);
 
-	/* player = new QMediaPlayer;
+	/* QMediaPlayer *player;
+	QMediaPlaylist *playlist;
+	QVideoWidget *videoWidget;
+
+	player = new QMediaPlayer;
 
 	// playlist = new QMediaPlaylist(player);
 	//player->setMedia(QUrl("https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"));
@@ -51,21 +40,25 @@ int main(int argc, char *argv[])
 	myLabel.setPixmap(QPixmap::fromImage(myImage));
 	myLabel.show(); */
 
-	const QSize desktopSize = QGuiApplication::primaryScreen()->size();
 
 	const int DesktopTaskBarHeight = 32;
 	const int MainWindowWidth = 340;
 	const int WindowBorder = 5;
+	const QSize desktopSize = QGuiApplication::primaryScreen()->size();
 
 	PreviewWindow previewWindow;
-	previewWindow.setGeometry(MainWindowWidth + 2 * WindowBorder, DesktopTaskBarHeight,
-			desktopSize.width() - MainWindowWidth - 4 * WindowBorder, //previewWindow.geometry().height());
-			desktopSize.height() - 2 * DesktopTaskBarHeight);
 	previewWindow.show();
+	previewWindow.setGeometry(MainWindowWidth + 2 * WindowBorder, DesktopTaskBarHeight,
+			desktopSize.width() - MainWindowWidth - 4 * WindowBorder,
+			desktopSize.height() - 2 * DesktopTaskBarHeight);
+	// previewWindow.resize(40, 40);
+	// // previewWindow.setGeometry(MainWindowWidth + 2 * WindowBorder, DesktopTaskBarHeight,200,200);
+	// 													// desktopSize.width() - MainWindowWidth - 4 * WindowBorder, //previewWindow.geometry().height());
+	// 													// desktopSize.height() - 2 * DesktopTaskBarHeight);
 
 	MainWindow mainWindow;
-	mainWindow.setGeometry(2, 100, mainWindow.geometry().width(), mainWindow.geometry().height());
+	mainWindow.move(0, 100);
 	mainWindow.show();
 
-	return a.exec();
+	return application.exec();
 }

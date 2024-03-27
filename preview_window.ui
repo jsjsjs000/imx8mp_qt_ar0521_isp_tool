@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>570</width>
+    <height>447</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QHBoxLayout" name="horizontalLayout_2">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -30,12 +30,9 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
       <number>0</number>
-     </property>
-     <property name="sizeConstraint">
-      <enum>QLayout::SetMaximumSize</enum>
      </property>
     </layout>
    </item>

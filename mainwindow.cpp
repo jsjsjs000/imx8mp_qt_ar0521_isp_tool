@@ -23,3 +23,11 @@ void MainWindow::on_horizontalSlider_valueChanged(int value)
 	this->ispControl.set_cproc_brightness(value);
 	this->ui->label_2->setText(QString::number(value));
 }
+
+void MainWindow::on_pushButton_clicked()
+{
+	this->setGeometry(100, 100, 200, 200);
+	this->move(50, 50);
+	this->setFixedSize(300, 300);
+	// qDebug() << this->geometry().left() << "x" << this->geometry().top();
+}
