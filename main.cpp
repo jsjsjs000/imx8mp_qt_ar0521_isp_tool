@@ -53,16 +53,19 @@ int main(int argc, char *argv[])
 
 	const QSize desktopSize = QGuiApplication::primaryScreen()->size();
 
+	const int DesktopTaskBarHeight = 32;
 	const int MainWindowWidth = 340;
+	const int WindowBorder = 5;
 
 	PreviewWindow previewWindow;
-	previewWindow.setGeometry(MainWindowWidth, QGuiApplication::primaryScreen()->geometry().top(),
-														desktopSize.width() - MainWindowWidth, previewWindow.geometry().height());
+	previewWindow.setGeometry(MainWindowWidth + 2 * WindowBorder, DesktopTaskBarHeight,
+			desktopSize.width() - MainWindowWidth - 4 * WindowBorder, //previewWindow.geometry().height());
+			desktopSize.height() - 2 * DesktopTaskBarHeight);
 	previewWindow.show();
 
-	MainWindow w;
-	w.setGeometry(2, 100, w.geometry().width(), w.geometry().height());
-	w.show();
+	MainWindow mainWindow;
+	mainWindow.setGeometry(2, 100, mainWindow.geometry().width(), mainWindow.geometry().height());
+	mainWindow.show();
 
 	return a.exec();
 }
