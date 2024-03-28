@@ -1,6 +1,9 @@
 #include <QVideoWidget>
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
+#include <QSpacerItem>
+
+#include "controls_definitions.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -10,18 +13,30 @@ MainWindow::MainWindow(QWidget *parent)
 {
 	ui->setupUi(this);
 
+	this->createControls();
+
 	this->ispControl.OpenVideo();
+}
+
+void MainWindow::createControls(void)
+{
+	ControlsDefinitions controls;
+	controls.init(); // $$
+
+	for (const Control *control : qAsConst(controls.controls))
+	{
+		const SliderControl *scontrol = static_cast<const SliderControl*>(control);
+		SliderWidget *slider = new SliderWidget();
+		slider->initialize(control->name, control->description, scontrol->min, scontrol->max, scontrol->value);
+		ui->verticalLayout->addWidget(slider, 1);
+	}
+
+	ui->verticalLayout->addStretch(2);
 }
 
 MainWindow::~MainWindow()
 {
 	delete ui;
-}
-
-void MainWindow::on_horizontalSlider_valueChanged(int value)
-{
-	this->ispControl.set_cproc_brightness(value);
-	this->ui->label_2->setText(QString::number(value));
 }
 
 void MainWindow::on_pushButton_clicked()

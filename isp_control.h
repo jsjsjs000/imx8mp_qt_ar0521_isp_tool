@@ -8,14 +8,14 @@
 
 class IspControl
 {
-    int fd;
-    int streamid = 0;
+	int fd;
+	int streamid = 0;
 public:
-    IspControl();
-    int OpenVideo(void);
-    bool viv_private_ioctl(const char *cmd, Json::Value& jsonRequest, Json::Value& jsonResponse);
-    bool set_cproc_brightness(int brightness);
-    void get_cproc();
+	IspControl();
+	int OpenVideo(void);
+	bool viv_private_ioctl(const char *cmd, Json::Value& jsonRequest, Json::Value& jsonResponse);
+	bool set_cproc_brightness(int brightness);
+	void get_cproc();
 };
 
 #endif // ISPCONTROL_H

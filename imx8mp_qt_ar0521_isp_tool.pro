@@ -17,17 +17,21 @@ SOURCES += \
 		lib/jsoncpp/src/lib_json/json_reader.cpp \
 		lib/jsoncpp/src/lib_json/json_value.cpp \
 		lib/jsoncpp/src/lib_json/json_writer.cpp \
-  preview_window.cpp
+  preview_window.cpp \
+  slider_widget.cpp
 
 HEADERS += \
+  controls_definitions.h \
   isp_control.h \
     mainwindow.h \
 		lib/json_helper/json_helper.h \
-  preview_window.h
+  preview_window.h \
+  slider_widget.h
 
 FORMS += \
     mainwindow.ui \
-    preview_window.ui
+    preview_window.ui \
+    slider_widget.ui
 
 INCLUDEPATH += \
   lib/jsoncpp/include \

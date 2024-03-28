@@ -6,6 +6,7 @@
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
 #include "isp_control.h"
+#include "slider_widget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -22,8 +23,6 @@ public:
     ~MainWindow();
 
 	private slots:
-		void on_horizontalSlider_valueChanged(int value);
-
 		void on_pushButton_clicked();
 
 	private:
@@ -32,5 +31,6 @@ public:
     QMediaPlaylist *playlist;
     QVideoWidget *videoWidget;
 		IspControl ispControl;
+		void createControls(void);
 };
 #endif // MAINWINDOW_H
