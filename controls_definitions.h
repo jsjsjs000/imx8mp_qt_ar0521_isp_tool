@@ -9,6 +9,17 @@ class Control
 public:
 	QString name;
 	QString description;
+	virtual void v(void) = 0;  // pure virtual, need virtual method for dynamic_cast<>()
+};
+
+class GroupControl : public Control
+{
+public:
+	GroupControl(QString name)
+	{
+		this->name = name;
+	}
+	void v(void) override {}
 };
 
 class SliderControl : public Control
@@ -27,6 +38,7 @@ public:
 		this->max = max;
 		this->value = value;
 	}
+	void v(void) override {}
 };
 
 class CheckBoxControl : public Control
@@ -34,6 +46,7 @@ class CheckBoxControl : public Control
 public:
 	bool defaultChecked;
 	bool checked;
+	void v(void) override {}
 };
 
 class ControlsDefinitions
@@ -42,20 +55,14 @@ public:
 	QVector<Control*> controls; //= QVector<Control&>
 	void init(void)
 	{
-		controls.append(new SliderControl("Brightness", -127, 127, 0,
-																			"Brightness value"));
-		controls.append(new SliderControl("Chrominance", -127, 127, 0,
-																			"CPROC chrominance pixel clipping range at output"));
-		controls.append(new SliderControl("Contrast", -127, 127, 0,
-																			"Contrast value"));
-		controls.append(new SliderControl("Hue", -127, 127, 0,
-																			"Hue value"));
-		controls.append(new SliderControl("Luminance input", -127, 127, 0,
-																			"CPROC luminance input range (offset processing)"));
-		controls.append(new SliderControl("Luminance output", -127, 127, 0,
-																			"CPROC luminance output clipping range"));
-		controls.append(new SliderControl("Saturation", -127, 127, 0,
-																			"Saturation value"));
+		controls.append(new GroupControl("CPROC - Color Processing"));
+		controls.append(new SliderControl("Brightness", -127, 127, 0, "Brightness value"));
+		controls.append(new SliderControl("Chrominance", -127, 127, 0, "CPROC chrominance pixel clipping range at output"));
+		controls.append(new SliderControl("Contrast", -127, 127, 0, "Contrast value"));
+		controls.append(new SliderControl("Hue", -127, 127, 0, "Hue value"));
+		controls.append(new SliderControl("Luminance input", -127, 127, 0, "CPROC luminance input range (offset processing)"));
+		controls.append(new SliderControl("Luminance output", -127, 127, 0, "CPROC luminance output clipping range"));
+		controls.append(new SliderControl("Saturation", -127, 127, 0, "Saturation value"));
 	}
 	// {
 	// 	SliderControl("Brightness", "description...", -127, 127, 0),

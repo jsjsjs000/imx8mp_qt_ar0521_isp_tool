@@ -4,6 +4,7 @@
 #include <QSpacerItem>
 
 #include "controls_definitions.h"
+#include "group_widget.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
@@ -23,12 +24,20 @@ void MainWindow::createControls(void)
 	ControlsDefinitions controls;
 	controls.init(); // $$
 
-	for (const Control *control : qAsConst(controls.controls))
+	for (const auto *control : qAsConst(controls.controls))
 	{
-		const SliderControl *scontrol = static_cast<const SliderControl*>(control);
-		SliderWidget *slider = new SliderWidget();
-		slider->initialize(control->name, control->description, scontrol->min, scontrol->max, scontrol->value);
-		ui->verticalLayout->addWidget(slider, 1);
+		if (const GroupControl *scontrol = dynamic_cast<const GroupControl*>(control))
+		{
+			GroupWidget *gcontrol = new GroupWidget();
+			gcontrol->initialize(scontrol->name);
+			ui->verticalLayout->addWidget(gcontrol, 1);
+		}
+		else if (const SliderControl *scontrol = static_cast<const SliderControl*>(control))
+		{
+			SliderWidget *slider = new SliderWidget();
+			slider->initialize(control->name, control->description, scontrol->min, scontrol->max, scontrol->value);
+			ui->verticalLayout->addWidget(slider, 1);
+		}
 	}
 
 	ui->verticalLayout->addStretch(2);
