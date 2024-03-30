@@ -33,6 +33,6 @@ private:
 
 	void createControls();
 	static void onCheckBoxChanged(QString type, QString parameter, bool value);
-	static void onSliderValueChange(QString type, QString parameter, int value);
+	static void onSliderValueChange(QString type, QString parameter, int value, int divide);
 };
 #endif // MAINWINDOW_H

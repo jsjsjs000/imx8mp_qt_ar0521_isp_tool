@@ -14,10 +14,12 @@ SliderWidget::~SliderWidget()
 }
 
 void SliderWidget::initialize(const SliderControl *control,
-		void (*onSliderValueChange)(QString type, QString parameter, int value))
+		void (*onSliderValueChange)(QString type, QString parameter, int value, int divide))
 {
 	this->type = control->type;
 	this->parameter = control->parameter;
+	this->precision = control->precision;
+	this->multiple = control->multiple;
 	this->ui->name->setText(control->name);
 	this->ui->name->setToolTip(control->description);
 	this->ui->value->setText(QString::number(control->value));
@@ -29,8 +31,11 @@ void SliderWidget::initialize(const SliderControl *control,
 
 void SliderWidget::on_horizontalSlider_valueChanged(int value)
 {
-	ui->value->setText(QString::number(value));
+	if (this->precision == 0)
+		ui->value->setText(QString::number(value));
+	else
+		ui->value->setText(QString::number((float)value / this->multiple, 'g', this->precision));
 	
 	if (this->onSliderValueChange)
-		(*this->onSliderValueChange)(this->type, this->parameter, value);
+		(*this->onSliderValueChange)(this->type, this->parameter, value, this->multiple);
 }

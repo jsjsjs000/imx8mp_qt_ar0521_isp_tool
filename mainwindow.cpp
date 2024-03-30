@@ -61,11 +61,11 @@ void MainWindow::onCheckBoxChanged(QString type, QString parameter, bool checked
 		ispControl.set_cproc_enable(parameter, checked);
 }
 
-void MainWindow::onSliderValueChange(QString type, QString parameter, int value)
+void MainWindow::onSliderValueChange(QString type, QString parameter, int value, int divide)
 {
-	qDebug() << type << " " << parameter << " " << value;
+	qDebug() << type << " " << parameter << " " << ((float)value / divide);
 	if (type == IF_CPROC_S_CFG)
-		ispControl.set_cproc_value(parameter, value);
+		ispControl.set_cproc_value(parameter, value, divide);
 }
 
 MainWindow::~MainWindow()

@@ -15,7 +15,7 @@ class SliderWidget : public QWidget
 
 public:
 	explicit SliderWidget(QWidget *parent = nullptr);
-	void initialize(const SliderControl *control, void (*f)(QString type, QString parameter, int value));
+	void initialize(const SliderControl *control, void (*f)(QString type, QString parameter, int value, int divide));
 	~SliderWidget();
 
 private slots:
@@ -25,7 +25,9 @@ private:
 	Ui::SliderWidget *ui;
 	QString type;
 	QString parameter;
-	void (*onSliderValueChange)(QString type, QString parameter, int value);
+	int precision;
+	int multiple;
+	void (*onSliderValueChange)(QString type, QString parameter, int value, int divide);
 };
 
 #endif // SLIDER_WIDGET_H

@@ -110,14 +110,17 @@ end:
 	return false;
 }
 
-bool IspControl::set_cproc_value(QString parameter, int value)
+bool IspControl::set_cproc_value(QString parameter, int value, int divide)
 {
 	Json::Value jRequest, jResponse;
 	if (!viv_private_ioctl(IF_CPROC_G_CFG, jRequest, jResponse))
 		return false;
 
 	jRequest = jResponse;
-	jRequest[parameter.toStdString()] = value;
+	if (divide == 1)
+		jRequest[parameter.toStdString()] = value;
+	else
+		jRequest[parameter.toStdString()] = (float)value / divide;
 	return viv_private_ioctl(IF_CPROC_S_CFG, jRequest, jResponse);
 }
 
