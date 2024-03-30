@@ -4,9 +4,13 @@
 #include <QSpacerItem>
 
 #include "controls_definitions.h"
+#include "slider_widget.h"
 #include "group_widget.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "checkbox_widget.h"
+
+IspControl ispControl; // $$
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -16,10 +20,10 @@ MainWindow::MainWindow(QWidget *parent)
 
 	this->createControls();
 
-	this->ispControl.OpenVideo();
+	ispControl.OpenVideo();
 }
 
-void MainWindow::createControls(void)
+void MainWindow::createControls()
 {
 	ControlsDefinitions controls;
 	controls.init(); // $$
@@ -32,15 +36,36 @@ void MainWindow::createControls(void)
 			gcontrol->initialize(scontrol->name);
 			ui->verticalLayout->addWidget(gcontrol, 1);
 		}
+		else if (const CheckBoxControl *scontrol = dynamic_cast<const CheckBoxControl*>(control))
+		{
+			CheckBoxWidget *checkBox = new CheckBoxWidget();
+			checkBox->initialize(scontrol, &MainWindow::onCheckBoxChanged);
+			ui->verticalLayout->addWidget(checkBox, 1);
+			checkBox->setState(scontrol->checked);
+		}
 		else if (const SliderControl *scontrol = static_cast<const SliderControl*>(control))
 		{
 			SliderWidget *slider = new SliderWidget();
-			slider->initialize(control->name, control->description, scontrol->min, scontrol->max, scontrol->value);
+			slider->initialize(scontrol, &MainWindow::onSliderValueChange);
 			ui->verticalLayout->addWidget(slider, 1);
 		}
 	}
 
 	ui->verticalLayout->addStretch(2);
+}
+
+void MainWindow::onCheckBoxChanged(QString type, QString parameter, bool checked)
+{
+	qDebug() << type << " " << parameter << " " << int(checked);
+	if (type == IF_CPROC_S_EN)
+		ispControl.set_cproc_enable(parameter, checked);
+}
+
+void MainWindow::onSliderValueChange(QString type, QString parameter, int value)
+{
+	qDebug() << type << " " << parameter << " " << value;
+	if (type == IF_CPROC_S_CFG)
+		ispControl.set_cproc_value(parameter, value);
 }
 
 MainWindow::~MainWindow()

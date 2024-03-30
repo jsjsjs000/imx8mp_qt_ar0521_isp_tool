@@ -2,9 +2,6 @@
 #define ISPCONTROL_H
 
 #include "json_helper.h"
-#include "cam_device_api.hpp"
-#include "viv_video_kevent.h"
-#include "ioctl_cmds.h"
 
 class IspControl
 {
@@ -14,7 +11,8 @@ public:
 	IspControl();
 	int OpenVideo(void);
 	bool viv_private_ioctl(const char *cmd, Json::Value& jsonRequest, Json::Value& jsonResponse);
-	bool set_cproc_brightness(int brightness);
+	bool set_cproc_value(QString parameter, int value);
+	bool set_cproc_enable(QString parameter, int value);
 	void get_cproc();
 };
 

@@ -11,6 +11,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+	checkbox_widget.cpp \
 	group_widget.cpp \
     isp_control.cpp \
     main.cpp \
@@ -22,6 +23,7 @@ SOURCES += \
   slider_widget.cpp
 
 HEADERS += \
+	checkbox_widget.h \
   controls_definitions.h \
 	group_widget.h \
   isp_control.h \
@@ -31,6 +33,7 @@ HEADERS += \
   slider_widget.h
 
 FORMS += \
+    checkbox_widget.ui \
     group_widget.ui \
     mainwindow.ui \
     preview_window.ui \

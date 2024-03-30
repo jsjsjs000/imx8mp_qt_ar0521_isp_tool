@@ -1,6 +1,7 @@
 #ifndef SLIDER_WIDGET_H
 #define SLIDER_WIDGET_H
 
+#include "controls_definitions.h"
 #include "ui_slider_widget.h"
 #include <QWidget>
 
@@ -14,15 +15,7 @@ class SliderWidget : public QWidget
 
 public:
 	explicit SliderWidget(QWidget *parent = nullptr);
-	void initialize(QString name, QString description, int min, int max, int value)
-	{
-		this->ui->name->setText(name);
-		this->ui->name->setToolTip(description);
-		this->ui->value->setText(QString::number(value));
-		this->ui->horizontalSlider->setMinimum(min);
-		this->ui->horizontalSlider->setMaximum(max);
-		this->ui->horizontalSlider->setValue(value);
-	}
+	void initialize(const SliderControl *control, void (*f)(QString type, QString parameter, int value));
 	~SliderWidget();
 
 private slots:
@@ -30,6 +23,9 @@ private slots:
 
 private:
 	Ui::SliderWidget *ui;
+	QString type;
+	QString parameter;
+	void (*onSliderValueChange)(QString type, QString parameter, int value);
 };
 
 #endif // SLIDER_WIDGET_H

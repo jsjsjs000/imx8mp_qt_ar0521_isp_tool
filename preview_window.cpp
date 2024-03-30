@@ -56,7 +56,7 @@ void PreviewWindow::setupCamera(void)
 	QCameraViewfinderSettings viewfinderSettings;
 	viewfinderSettings.setResolution(1920, 1080);
 	viewfinderSettings.setMinimumFrameRate(5.0);
-	viewfinderSettings.setMaximumFrameRate(60.0);
+	viewfinderSettings.setMaximumFrameRate(7.0);
 	camera->setViewfinderSettings(viewfinderSettings);
 	camera->start();
 

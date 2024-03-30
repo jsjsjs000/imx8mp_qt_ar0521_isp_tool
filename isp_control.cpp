@@ -1,10 +1,11 @@
-#include "isp_control.h"
 #include <sys/ioctl.h>
+#include <QString>
 #include <fcntl.h>
 
-// #include "cam_device_api.hpp"
+#include "cam_device_api.hpp"
 #include "viv_video_kevent.h"
 #include "ioctl_cmds.h"
+#include "isp_control.h"
 
 #define DEBUG
 
@@ -21,6 +22,7 @@ int IspControl::OpenVideo()
 		printf("can't open video file %s", szFile);
 		return 1;
 	}
+
 	v4l2_capability caps;
 	int result = ::ioctl(this->fd, VIDIOC_QUERYCAP, &caps);
 	if (result < 0)
@@ -108,20 +110,26 @@ end:
 	return false;
 }
 
-bool IspControl::set_cproc_brightness(int brightness)
+bool IspControl::set_cproc_value(QString parameter, int value)
 {
-	if (brightness > -128 && brightness < 128)
-	{
-		Json::Value jRequest, jResponse;
-		if (!viv_private_ioctl(IF_CPROC_G_CFG, jRequest, jResponse))
-				return false;
+	Json::Value jRequest, jResponse;
+	if (!viv_private_ioctl(IF_CPROC_G_CFG, jRequest, jResponse))
+		return false;
 
-		jRequest = jResponse;
-		jRequest[CPROC_BRIGHTNESS_PARAMS] = brightness;
-		return viv_private_ioctl(IF_CPROC_S_CFG, jRequest, jResponse);
-	}
+	jRequest = jResponse;
+	jRequest[parameter.toStdString()] = value;
+	return viv_private_ioctl(IF_CPROC_S_CFG, jRequest, jResponse);
+}
 
-	return false;
+bool IspControl::set_cproc_enable(QString parameter, int value)
+{
+	Json::Value jRequest, jResponse;
+	if (!viv_private_ioctl(IF_CPROC_G_EN, jRequest, jResponse))
+		return false;
+
+	jRequest = jResponse;
+	jRequest[parameter.toStdString()] = value;
+	return viv_private_ioctl(IF_CPROC_S_EN, jRequest, jResponse);
 }
 
 void IspControl::get_cproc()
