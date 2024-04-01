@@ -10,7 +10,8 @@
 #include "ui_mainwindow.h"
 #include "checkbox_widget.h"
 
-IspControl ispControl; // $$
+IspControl ispControl;
+ControlsDefinitions ControlsDefinition;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -18,17 +19,17 @@ MainWindow::MainWindow(QWidget *parent)
 {
 	ui->setupUi(this);
 
+	ControlsDefinition.init();
 	this->createControls();
 
 	ispControl.OpenVideo();
+
+	Json::Value cproc = ispControl.get_cproc();
 }
 
 void MainWindow::createControls()
 {
-	ControlsDefinitions controls;
-	controls.init(); // $$
-
-	for (const auto *control : qAsConst(controls.controls))
+	for (const auto *control : qAsConst(ControlsDefinition.controls))
 	{
 		if (const GroupControl *scontrol = dynamic_cast<const GroupControl*>(control))
 		{
@@ -39,14 +40,14 @@ void MainWindow::createControls()
 		else if (const CheckBoxControl *scontrol = dynamic_cast<const CheckBoxControl*>(control))
 		{
 			CheckBoxWidget *checkBox = new CheckBoxWidget();
-			checkBox->initialize(scontrol, &MainWindow::onCheckBoxChanged);
+			checkBox->initialize(this, scontrol, &MainWindow::onCheckBoxChanged);
 			ui->verticalLayout->addWidget(checkBox, 1);
 			checkBox->setState(scontrol->checked);
 		}
 		else if (const SliderControl *scontrol = static_cast<const SliderControl*>(control))
 		{
 			SliderWidget *slider = new SliderWidget();
-			slider->initialize(scontrol, &MainWindow::onSliderValueChange);
+			slider->initialize(this, scontrol, &MainWindow::onSliderValueChange);
 			ui->verticalLayout->addWidget(slider, 1);
 		}
 	}
@@ -54,15 +55,21 @@ void MainWindow::createControls()
 	ui->verticalLayout->addStretch(2);
 }
 
-void MainWindow::onCheckBoxChanged(QString type, QString parameter, bool checked)
+void MainWindow::onCheckBoxChanged(MainWindow *mainWindow, QString type, QString parameter, bool checked)
 {
+	if (!mainWindow->canUpdateControls)
+		return;
+
 	qDebug() << type << " " << parameter << " " << int(checked);
 	if (type == IF_CPROC_S_EN)
 		ispControl.set_cproc_enable(parameter, checked);
 }
 
-void MainWindow::onSliderValueChange(QString type, QString parameter, int value, int divide)
+void MainWindow::onSliderValueChange(MainWindow *mainWindow, QString type, QString parameter, int value, int divide)
 {
+	if (!mainWindow->canUpdateControls)
+		return;
+
 	qDebug() << type << " " << parameter << " " << ((float)value / divide);
 	if (type == IF_CPROC_S_CFG)
 		ispControl.set_cproc_value(parameter, value, divide);

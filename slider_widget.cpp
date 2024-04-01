@@ -13,9 +13,10 @@ SliderWidget::~SliderWidget()
 	delete ui;
 }
 
-void SliderWidget::initialize(const SliderControl *control,
-		void (*onSliderValueChange)(QString type, QString parameter, int value, int divide))
+void SliderWidget::initialize(MainWindow *mainWindow, const SliderControl *control,
+		void (*onSliderValueChange)(MainWindow *mainWindow, QString type, QString parameter, int value, int divide))
 {
+	this->mainWindow = mainWindow;
 	this->type = control->type;
 	this->parameter = control->parameter;
 	this->precision = control->precision;
@@ -37,5 +38,5 @@ void SliderWidget::on_horizontalSlider_valueChanged(int value)
 		ui->value->setText(QString::number((float)value / this->multiple, 'g', this->precision));
 	
 	if (this->onSliderValueChange)
-		(*this->onSliderValueChange)(this->type, this->parameter, value, this->multiple);
+		(*this->onSliderValueChange)(this->mainWindow, this->type, this->parameter, value, this->multiple);
 }

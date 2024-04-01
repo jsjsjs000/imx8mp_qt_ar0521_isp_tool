@@ -29,10 +29,10 @@ private:
 	QMediaPlayer *player;
 	QMediaPlaylist *playlist;
 	QVideoWidget *videoWidget;
-	// static IspControl ispControl;
+	bool canUpdateControls;
 
 	void createControls();
-	static void onCheckBoxChanged(QString type, QString parameter, bool value);
-	static void onSliderValueChange(QString type, QString parameter, int value, int divide);
+	static void onCheckBoxChanged(MainWindow *mainWindow, QString type, QString parameter, bool value);
+	static void onSliderValueChange(MainWindow *mainWindow, QString type, QString parameter, int value, int divide);
 };
 #endif // MAINWINDOW_H

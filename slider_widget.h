@@ -3,6 +3,7 @@
 
 #include "controls_definitions.h"
 #include "ui_slider_widget.h"
+#include "mainwindow.h"
 #include <QWidget>
 
 namespace Ui {
@@ -15,7 +16,7 @@ class SliderWidget : public QWidget
 
 public:
 	explicit SliderWidget(QWidget *parent = nullptr);
-	void initialize(const SliderControl *control, void (*f)(QString type, QString parameter, int value, int divide));
+	void initialize(MainWindow *mainWindow, const SliderControl *control, void (*f)(MainWindow *mainWindow, QString type, QString parameter, int value, int divide));
 	~SliderWidget();
 
 private slots:
@@ -23,11 +24,12 @@ private slots:
 
 private:
 	Ui::SliderWidget *ui;
+	MainWindow *mainWindow;
 	QString type;
 	QString parameter;
 	int precision;
 	int multiple;
-	void (*onSliderValueChange)(QString type, QString parameter, int value, int divide);
+	void (*onSliderValueChange)(MainWindow *mainWindow, QString type, QString parameter, int value, int divide);
 };
 
 #endif // SLIDER_WIDGET_H

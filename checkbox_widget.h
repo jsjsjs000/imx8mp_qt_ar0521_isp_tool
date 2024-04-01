@@ -2,6 +2,7 @@
 #define CHECKBOX_WIDGET_H
 
 #include "controls_definitions.h"
+#include "mainwindow.h"
 
 #include <QWidget>
 
@@ -16,8 +17,8 @@ class CheckBoxWidget : public QWidget
 public:
 	explicit CheckBoxWidget(QWidget *parent = nullptr);
 	~CheckBoxWidget();
-	void initialize(const CheckBoxControl *control,
-			void (*f)(QString type, QString parameter, bool value));
+	void initialize(MainWindow *mainWindow, const CheckBoxControl *control,
+			void (*f)(MainWindow *mainWindow, QString type, QString parameter, bool value));
 	void setState(bool state);
 
 private slots:
@@ -25,9 +26,10 @@ private slots:
 
 private:
 	Ui::CheckBoxWidget *ui;
+	MainWindow *mainWindow;
 	QString type;
 	QString parameter;
-	void (*onCheckBoxChanged)(QString type, QString parameter, bool value);
+	void (*onCheckBoxChanged)(MainWindow *mainWindow, QString type, QString parameter, bool value);
 };
 
 #endif // CHECKBOX_WIDGET_H
