@@ -8,31 +8,35 @@ SliderWidget::SliderWidget(QWidget *parent)
 	ui->setupUi(this);
 }
 
+SliderWidget::SliderWidget(MainWindow *mainWindow, const SliderControl *control,
+		void (*onSliderValueChange)(MainWindow *mainWindow, QString type, QString parameter, int value, int divide))
+		: QWidget()
+		, ui(new Ui::SliderWidget)
+{
+	ui->setupUi(this);
+
+	this->mainWindow = mainWindow;
+	this->type = control->type;
+	this->parameter = control->parameter;
+	this->min = control->min;
+	this->max = control->max;
+	this->precision = control->precision;
+	this->multiple = control->multiple;
+	ui->name->setText(control->name);
+	ui->name->setToolTip(control->description);
+	ui->value->setText(QString::number(control->value));
+	this->onSliderValueChange = onSliderValueChange;
+}
+
 SliderWidget::~SliderWidget()
 {
 	delete ui;
 }
 
-void SliderWidget::initialize(MainWindow *mainWindow, const SliderControl *control,
-		void (*onSliderValueChange)(MainWindow *mainWindow, QString &type, QString &parameter, int value, int divide))
+void SliderWidget::setRange()
 {
-	this->mainWindow = mainWindow;
-	qDebug() << control->type << control->parameter;
-	this->type = QString(control->type);
-	this->parameter = QString(control->parameter);
-	this->precision = control->precision;
-	this->multiple = control->multiple;
-	this->ui->name->setText(QString(control->name));
-	this->ui->name->setToolTip(QString(control->description));
-	this->ui->value->setText(QString::number(control->value));
-	qDebug() << this->type << this->parameter << this->ui->name->text() << this->ui->name->text() << this->ui->name->toolTip();
-	qDebug() << control->min << control->max << control->value << this->ui->horizontalSlider->minimum() << this->ui->horizontalSlider->maximum() << this->ui->horizontalSlider->value();
-	this->ui->horizontalSlider->setRange(control->min, control->max);
-	// this->ui->horizontalSlider->setPageStep(1);
-	// this->ui->horizontalSlider->setSingleStep(1);
-	// this->ui->horizontalSlider->setValue(control->value);
-	//qDebug() << "a:" << this->ui->horizontalSlider->minimum() << this->ui->horizontalSlider->maximum() << this->ui->horizontalSlider->value();
-	// this->onSliderValueChange = onSliderValueChange;
+	this->ui->horizontalSlider->setMinimum(this->min);
+	this->ui->horizontalSlider->setMaximum(this->max);
 }
 
 void SliderWidget::setValue(int value)

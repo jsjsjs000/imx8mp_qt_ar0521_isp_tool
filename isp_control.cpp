@@ -7,11 +7,11 @@
 #include "ioctl_cmds.h"
 #include "isp_control.h"
 
-#define DEBUG
+// #define DEBUG
 
 IspControl::IspControl() {}
 
-int IspControl::OpenVideo()
+int IspControl::openVideo()
 {
 	int videoid = 0;
 	char szFile[256] = {0};
@@ -56,7 +56,7 @@ int IspControl::OpenVideo()
 #define VIV_CUSTOM_CID_BASE (V4L2_CID_USER_BASE | 0xf000)
 #define V4L2_CID_VIV_EXTCTRL (VIV_CUSTOM_CID_BASE + 1)
 
-bool IspControl::viv_private_ioctl(const char *cmd, Json::Value& jsonRequest, Json::Value& jsonResponse)
+bool IspControl::vivIoctl(const char *cmd, Json::Value& jsonRequest, Json::Value& jsonResponse)
 {
 	if (!cmd)
 	{
@@ -110,10 +110,10 @@ end:
 	return false;
 }
 
-bool IspControl::set_cproc_value(QString parameter, int value, int divide)
+bool IspControl::setCprocCfg(QString parameter, int value, int divide)
 {
 	Json::Value jRequest, jResponse;
-	if (!viv_private_ioctl(IF_CPROC_G_CFG, jRequest, jResponse))
+	if (!vivIoctl(IF_CPROC_G_CFG, jRequest, jResponse))
 		return false;
 
 	jRequest = jResponse;
@@ -121,32 +121,44 @@ bool IspControl::set_cproc_value(QString parameter, int value, int divide)
 		jRequest[parameter.toStdString()] = value;
 	else
 		jRequest[parameter.toStdString()] = (float)value / divide;
-	return viv_private_ioctl(IF_CPROC_S_CFG, jRequest, jResponse);
+	return vivIoctl(IF_CPROC_S_CFG, jRequest, jResponse);
 }
 
-bool IspControl::set_cproc_enable(QString parameter, int value)
+bool IspControl::setCprocCoeff(QString parameter, int value, int divide)
 {
 	Json::Value jRequest, jResponse;
-	if (!viv_private_ioctl(IF_CPROC_G_EN, jRequest, jResponse))
+	if (divide == 1)
+		jRequest[parameter.toStdString()] = value;
+	else
+		jRequest[parameter.toStdString()] = (float)value / divide;
+	return vivIoctl(IF_CPROC_S_COEFF, jRequest, jResponse);
+}
+
+bool IspControl::setCprocEnable(QString parameter, int value)
+{
+	Json::Value jRequest, jResponse;
+	if (!vivIoctl(IF_CPROC_G_EN, jRequest, jResponse))
 		return false;
 
 	jRequest = jResponse;
 	jRequest[parameter.toStdString()] = value;
-	return viv_private_ioctl(IF_CPROC_S_EN, jRequest, jResponse);
+	return vivIoctl(IF_CPROC_S_EN, jRequest, jResponse);
 }
 
 Json::Value IspControl::getCprocCfg()
 {
 	Json::Value jRequest, jResponse;
-	if (!viv_private_ioctl(IF_CPROC_G_CFG, jRequest, jResponse))
+	if (!vivIoctl(IF_CPROC_G_CFG, jRequest, jResponse))
 		return nullptr;
+
 	return jResponse;
 }
 
 Json::Value IspControl::getCprocEn()
 {
 	Json::Value jRequest, jResponse;
-	if (!viv_private_ioctl(IF_CPROC_G_EN, jRequest, jResponse))
+	if (!vivIoctl(IF_CPROC_G_EN, jRequest, jResponse))
 		return nullptr;
+
 	return jResponse;
 }

@@ -1,8 +1,8 @@
+#include <ctime>
 #include <QVideoWidget>
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
 #include <QSpacerItem>
-#include <QtWidgets>
 
 #include "controls_definitions.h"
 #include "slider_widget.h"
@@ -21,80 +21,83 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->setupUi(this);
 
 	ControlsDefinition.init();
+	this->createControls();
 
-	ispControl.OpenVideo();
+	ispControl.openVideo();
 
 	this->canUpdateControls = true;
-}
 
-void MainWindow::createControls()
-{
-	int i = 0;
-	for (const auto *control : qAsConst(ControlsDefinition.controls))
-	{
-		qDebug() << i++;
-		// if (const GroupControl *scontrol = dynamic_cast<const GroupControl*>(control))
-		// {
-		// 	qDebug() << "group";
-		// 	GroupWidget *group = new GroupWidget;
-		// 	group->initialize(scontrol->name);
-		// 	ui->verticalLayout->addWidget(group, 1);
-		// }
-		// else if (const CheckBoxControl *scontrol = dynamic_cast<const CheckBoxControl*>(control))
-		// {
-		// 	qDebug() << "check";
-		// 	CheckBoxWidget *checkBox = new CheckBoxWidget;
-		// 	checkBox->initialize(this, scontrol, nullptr);//&MainWindow::onCheckBoxChanged);
-
-		// 	// QString *name = new QString(scontrol->type + "/" + scontrol->parameter);
-		// 	// this->widgets.insert(name, checkBox);
-
-		// 	ui->verticalLayout->addWidget(checkBox, 1);
-		// 	qDebug() << "check2";
-		// 	// checkBox->setState(scontrol->checked);
-		// }
-		if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
-		{
-			qDebug() << "slider";
-			SliderWidget *slider = new SliderWidget;
-			slider->initialize(this, scontrol, &MainWindow::onSliderValueChange);
-
-			// QString *name = new QString(scontrol->type + "/" + scontrol->parameter);
-			// this->widgets.insert(name, slider);
-
-
-			ui->verticalLayout->addWidget(slider, 1);
-		}
-	}
-
-	qDebug() << "end";
-	ui->verticalLayout->addStretch(2);
-	qDebug() << "end2";
-}
-
-void MainWindow::onCheckBoxChanged(MainWindow *mainWindow, QString &type, QString &parameter, bool checked)
-{
-	if (!mainWindow->canUpdateControls)
-		return;
-
-	qDebug() << type << " " << parameter << " " << int(checked);
-	if (type == IF_CPROC_S_EN)
-		ispControl.set_cproc_enable(parameter, checked);
-}
-
-void MainWindow::onSliderValueChange(MainWindow *mainWindow, QString &type, QString &parameter, int value, int divide)
-{
-	if (!mainWindow->canUpdateControls)
-		return;
-
-	qDebug() << type << " " << parameter << " " << ((float)value / divide);
-	if (type == IF_CPROC_S_CFG)
-		ispControl.set_cproc_value(parameter, value, divide);
+	timerId = startTimer(200);
 }
 
 MainWindow::~MainWindow()
 {
+	killTimer(timerId);
 	delete ui;
+}
+
+void MainWindow::createControls()
+{
+	for (const auto *control : qAsConst(ControlsDefinition.controls))
+	{
+		if (const GroupControl *scontrol = dynamic_cast<const GroupControl*>(control))
+		{
+			GroupWidget *group = new GroupWidget();
+			group->initialize(scontrol->name);
+			ui->verticalLayout->addWidget(group, 1);
+		}
+		else if (const CheckBoxControl *scontrol = dynamic_cast<const CheckBoxControl*>(control))
+		{
+			CheckBoxWidget *checkBox = new CheckBoxWidget(this, scontrol, &MainWindow::onCheckBoxChanged);
+			this->widgets.insert(QString(scontrol->type + "/" + scontrol->parameter), checkBox);
+			ui->verticalLayout->addWidget(checkBox, 1);
+			checkBox->setState(scontrol->checked);
+		}
+		else if (const SliderControl *scontrol = static_cast<const SliderControl*>(control))
+		{
+			SliderWidget *slider = new SliderWidget(this, scontrol, &MainWindow::onSliderValueChange);
+			this->widgets.insert(QString(scontrol->type + "/" + scontrol->parameter), slider);
+			ui->verticalLayout->addWidget(slider, 1);
+		}
+	}
+
+	ui->verticalLayout->addStretch(2);
+}
+
+void MainWindow::onCheckBoxChanged(MainWindow *mainWindow, QString type, QString parameter, bool checked)
+{
+	if (!mainWindow->canUpdateControls)
+		return;
+
+	qDebug() << type << parameter << int(checked);
+	if (type == IF_CPROC_S_EN)
+		ispControl.setCprocEnable(parameter, checked);
+
+	mainWindow->lastTime = clock();
+}
+
+void MainWindow::onSliderValueChange(MainWindow *mainWindow, QString type, QString parameter, int value, int divide)
+{
+	if (!mainWindow->canUpdateControls)
+		return;
+
+	qDebug() << type << parameter << ((float)value / divide);
+	if (type == IF_CPROC_S_CFG)
+		ispControl.setCprocCfg(parameter, value, divide);
+	else if (type == IF_CPROC_S_COEFF)
+		ispControl.setCprocCoeff(parameter, value, divide);
+
+	mainWindow->lastTime = clock();
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+	// this->setGeometry(100, 100, 200, 200);
+	// this->move(50, 50);
+	// this->setFixedSize(300, 300);
+	// qDebug() << this->geometry().left() << "x" << this->geometry().top();
+
+	// this->readParameters();
 }
 
 void MainWindow::readParameters()
@@ -118,62 +121,44 @@ void MainWindow::updateControlsFromJson(Json::Value json, QString type)
 	{
 		if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
 		{
-			QString name = QString(scontrol->type + "/" + scontrol->parameter);
-			SliderWidget *slider = (SliderWidget*)this->widgets[&name];
+			SliderWidget *slider = (SliderWidget*)this->widgets[scontrol->type + "/" + scontrol->parameter];
 			if (slider == nullptr)
 				qDebug() << "Widget " << scontrol->type + "/" + scontrol->parameter << " not found";
 			else if (scontrol->type == type)
 			{
+				slider->setRange();
 				if (scontrol->precision == 0)
 				{
-					int value = json[(scontrol->parameter).toStdString()].asInt();
+					int value = json[scontrol->parameter.toStdString()].asInt();
 					slider->setValue(value);
-					qDebug() << scontrol->type + "/" + scontrol->parameter << "=" << value;
+					// qDebug() << scontrol->parameter << value;
 				}
 				else
 				{
-					float value = json[(scontrol->parameter).toStdString()].asFloat();
+					float value = json[scontrol->parameter.toStdString()].asFloat();
 					slider->setValueFloat(value);
-					qDebug() << scontrol->type + "/" + scontrol->parameter << "=" << value;
+					// qDebug() << scontrol->parameter << value;
 				}
 			}
 		}
 		else if (const CheckBoxControl *scontrol = dynamic_cast<const CheckBoxControl*>(control))
 		{
-			QString name = QString(scontrol->type + "/" + scontrol->parameter);
-			CheckBoxWidget *checkBox = (CheckBoxWidget*)this->widgets[&name];
+			CheckBoxWidget *checkBox = (CheckBoxWidget*)this->widgets[scontrol->type + "/" + scontrol->parameter];
 			if (checkBox == nullptr)
 				qDebug() << "Widget " << scontrol->type + "/" + scontrol->parameter << " not found";
 			else if (scontrol->type == type)
 			{
-				int state = json[(scontrol->parameter).toStdString()].asInt();
+				int state = json[scontrol->parameter.toStdString()].asInt();
 				checkBox->setState((bool)state);
-				qDebug() << scontrol->type + "/" + scontrol->parameter << "=" << state;
+				// qDebug() << scontrol->parameter << state;
 			}
 		}
 	}
 }
 
-void MainWindow::on_pushButtonClicked()
+void MainWindow::timerEvent(QTimerEvent *event)
 {
-	// this->setGeometry(100, 100, 200, 200);
-	// this->move(50, 50);
-	// this->setFixedSize(300, 300);
-	// qDebug() << this->geometry().left() << "x" << this->geometry().top();
-
-	this->readParameters();
+	double diff = double(clock() - this->lastTime) / CLOCKS_PER_SEC * 1000;
+	if (diff >= 300)
+		this->readParameters();
 }
-
-void MainWindow::on_pushButton_clicked()
-{
-	this->canUpdateControls = false;
-	this->createControls();
-	this->canUpdateControls = true;
-
-	this->readParameters();
-}
-
-// https://doc.qt.io/qt-5/qtwidgets-layouts-dynamiclayouts-example.html
-// https://www.youtube.com/watch?v=fNTnU7mMgK4
-// connect()
-// set thread safety

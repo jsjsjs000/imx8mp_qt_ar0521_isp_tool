@@ -9,20 +9,24 @@ CheckBoxWidget::CheckBoxWidget(QWidget *parent)
 	ui->setupUi(this);
 }
 
+CheckBoxWidget::CheckBoxWidget(MainWindow *mainWindow, const CheckBoxControl *control,
+		void (*onCheckBoxChanged)(MainWindow *mainWindow, QString type, QString parameter, bool checked))
+		: QWidget()
+		, ui(new Ui::CheckBoxWidget)
+{
+	ui->setupUi(this);
+
+	this->mainWindow = mainWindow;
+	this->type = control->type;
+	this->parameter = control->parameter;
+	ui->checkBox->setText(control->name);
+	ui->checkBox->setToolTip(control->description);
+	this->onCheckBoxChanged = onCheckBoxChanged;
+}
+
 CheckBoxWidget::~CheckBoxWidget()
 {
 	delete ui;
-}
-
-void CheckBoxWidget::initialize(MainWindow *mainWindow, const CheckBoxControl *control,
-		void (*onCheckBoxChanged)(MainWindow *mainWindow, QString &type, QString &parameter, bool checked))
-{
-	this->mainWindow = mainWindow;
-	this->type = QString(control->type);
-	this->parameter = QString(control->parameter);
-	this->ui->checkBox->setText(QString(control->name));
-	this->ui->checkBox->setToolTip(QString(control->description));
-	// this->onCheckBoxChanged = onCheckBoxChanged;
 }
 
 void CheckBoxWidget::setState(bool state)

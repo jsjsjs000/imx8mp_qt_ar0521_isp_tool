@@ -83,14 +83,14 @@ PreviewWindow::~PreviewWindow()
 	delete ui;
 }
 
-void PreviewWindow::on_pushButton_clicked()
-{
-	// this->move(100, 0);
-	this->setGeometry(100, 100, 200, 200);
-	this->move(50, 50);
-	this->setFixedSize(300, 300);
-	qDebug() << this->geometry().left() << "x" << this->geometry().top();
-}
+// void PreviewWindow::on_pushButton_clicked()
+// {
+// 	// this->move(100, 0);
+// 	this->setGeometry(100, 100, 200, 200);
+// 	this->move(50, 50);
+// 	this->setFixedSize(300, 300);
+// 	qDebug() << this->geometry().left() << "x" << this->geometry().top();
+// }
 
 void PreviewWindow::showEvent(QShowEvent* event)
 {

@@ -16,7 +16,9 @@ class SliderWidget : public QWidget
 
 public:
 	explicit SliderWidget(QWidget *parent = nullptr);
-	void initialize(MainWindow *mainWindow, const SliderControl *control, void (*f)(MainWindow *mainWindow, QString &type, QString &parameter, int value, int divide));
+	SliderWidget(MainWindow *mainWindow, const SliderControl *control,
+			void (*onSliderValueChange)(MainWindow *mainWindow, QString type, QString parameter, int value, int divide));
+	void setRange();
 	void setValue(int value);
 	void setValueFloat(float value);
 	~SliderWidget();
@@ -29,9 +31,11 @@ private:
 	MainWindow *mainWindow;
 	QString type;
 	QString parameter;
+	int min;
+	int max;
 	int precision;
 	int multiple;
-	void (*onSliderValueChange)(MainWindow *mainWindow, QString &type, QString &parameter, int value, int divide);
+	void (*onSliderValueChange)(MainWindow *mainWindow, QString type, QString parameter, int value, int divide);
 };
 
 #endif // SLIDER_WIDGET_H
