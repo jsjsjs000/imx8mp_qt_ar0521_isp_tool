@@ -15,15 +15,14 @@ CheckBoxWidget::~CheckBoxWidget()
 }
 
 void CheckBoxWidget::initialize(MainWindow *mainWindow, const CheckBoxControl *control,
-		void (*onCheckBoxChanged)(MainWindow *mainWindow, QString type, QString parameter, bool checked))
+		void (*onCheckBoxChanged)(MainWindow *mainWindow, QString &type, QString &parameter, bool checked))
 {
 	this->mainWindow = mainWindow;
-	this->type = control->type;
-	this->parameter = control->parameter;
-	this->ui->checkBox->setText(control->name);
-	//this->ui->checkBox->setCheckState(Qt::CheckState::Checked); //control->checked);
-	this->ui->checkBox->setToolTip(control->description);
-	this->onCheckBoxChanged = onCheckBoxChanged;
+	this->type = QString(control->type);
+	this->parameter = QString(control->parameter);
+	this->ui->checkBox->setText(QString(control->name));
+	this->ui->checkBox->setToolTip(QString(control->description));
+	// this->onCheckBoxChanged = onCheckBoxChanged;
 }
 
 void CheckBoxWidget::setState(bool state)

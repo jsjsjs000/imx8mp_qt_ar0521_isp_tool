@@ -14,20 +14,25 @@ SliderWidget::~SliderWidget()
 }
 
 void SliderWidget::initialize(MainWindow *mainWindow, const SliderControl *control,
-		void (*onSliderValueChange)(MainWindow *mainWindow, QString type, QString parameter, int value, int divide))
+		void (*onSliderValueChange)(MainWindow *mainWindow, QString &type, QString &parameter, int value, int divide))
 {
 	this->mainWindow = mainWindow;
-	this->type = control->type;
-	this->parameter = control->parameter;
+	qDebug() << control->type << control->parameter;
+	this->type = QString(control->type);
+	this->parameter = QString(control->parameter);
 	this->precision = control->precision;
 	this->multiple = control->multiple;
-	this->ui->name->setText(control->name);
-	this->ui->name->setToolTip(control->description);
+	this->ui->name->setText(QString(control->name));
+	this->ui->name->setToolTip(QString(control->description));
 	this->ui->value->setText(QString::number(control->value));
-	this->ui->horizontalSlider->setMinimum(control->min);
-	this->ui->horizontalSlider->setMaximum(control->max);
-	this->ui->horizontalSlider->setValue(control->value);
-	this->onSliderValueChange = onSliderValueChange;
+	qDebug() << this->type << this->parameter << this->ui->name->text() << this->ui->name->text() << this->ui->name->toolTip();
+	qDebug() << control->min << control->max << control->value << this->ui->horizontalSlider->minimum() << this->ui->horizontalSlider->maximum() << this->ui->horizontalSlider->value();
+	this->ui->horizontalSlider->setRange(control->min, control->max);
+	// this->ui->horizontalSlider->setPageStep(1);
+	// this->ui->horizontalSlider->setSingleStep(1);
+	// this->ui->horizontalSlider->setValue(control->value);
+	//qDebug() << "a:" << this->ui->horizontalSlider->minimum() << this->ui->horizontalSlider->maximum() << this->ui->horizontalSlider->value();
+	// this->onSliderValueChange = onSliderValueChange;
 }
 
 void SliderWidget::setValue(int value)
