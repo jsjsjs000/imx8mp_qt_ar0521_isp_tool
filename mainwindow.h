@@ -22,7 +22,7 @@ public:
 	~MainWindow();
 
 private slots:
-	void onPushButtonClicked();
+	void on_pushButton_clicked();
 
 private:
 	Ui::MainWindow *ui;

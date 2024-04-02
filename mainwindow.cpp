@@ -82,7 +82,7 @@ MainWindow::~MainWindow()
 	delete ui;
 }
 
-void MainWindow::onPushButtonClicked()
+void MainWindow::on_pushButton_clicked()
 {
 	// this->setGeometry(100, 100, 200, 200);
 	// this->move(50, 50);
