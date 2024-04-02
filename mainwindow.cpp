@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	ispControl.OpenVideo();
 
-	Json::Value cproc = ispControl.get_cproc();
+	this->canUpdateControls = true;
 }
 
 void MainWindow::createControls()
@@ -33,14 +33,15 @@ void MainWindow::createControls()
 	{
 		if (const GroupControl *scontrol = dynamic_cast<const GroupControl*>(control))
 		{
-			GroupWidget *gcontrol = new GroupWidget();
-			gcontrol->initialize(scontrol->name);
-			ui->verticalLayout->addWidget(gcontrol, 1);
+			GroupWidget *group = new GroupWidget();
+			group->initialize(scontrol->name);
+			ui->verticalLayout->addWidget(group, 1);
 		}
 		else if (const CheckBoxControl *scontrol = dynamic_cast<const CheckBoxControl*>(control))
 		{
 			CheckBoxWidget *checkBox = new CheckBoxWidget();
 			checkBox->initialize(this, scontrol, &MainWindow::onCheckBoxChanged);
+			this->widgets.insert(QString(scontrol->type + "/" + scontrol->parameter), checkBox);
 			ui->verticalLayout->addWidget(checkBox, 1);
 			checkBox->setState(scontrol->checked);
 		}
@@ -48,6 +49,7 @@ void MainWindow::createControls()
 		{
 			SliderWidget *slider = new SliderWidget();
 			slider->initialize(this, scontrol, &MainWindow::onSliderValueChange);
+			this->widgets.insert(QString(scontrol->type + "/" + scontrol->parameter), slider);
 			ui->verticalLayout->addWidget(slider, 1);
 		}
 	}
@@ -80,10 +82,67 @@ MainWindow::~MainWindow()
 	delete ui;
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::onPushButtonClicked()
 {
-	this->setGeometry(100, 100, 200, 200);
-	this->move(50, 50);
-	this->setFixedSize(300, 300);
+	// this->setGeometry(100, 100, 200, 200);
+	// this->move(50, 50);
+	// this->setFixedSize(300, 300);
 	// qDebug() << this->geometry().left() << "x" << this->geometry().top();
+
+	this->readParameters();
+}
+
+void MainWindow::readParameters()
+{
+	this->canUpdateControls = false;
+
+	Json::Value cprocEn = ispControl.getCprocEn();
+	if (cprocEn)
+		this->updateControlsFromJson(cprocEn, IF_CPROC_S_EN);
+
+	Json::Value cprocCfg = ispControl.getCprocCfg();
+	if (cprocCfg)
+		this->updateControlsFromJson(cprocCfg, IF_CPROC_S_CFG);
+
+	this->canUpdateControls = true;
+}
+
+void MainWindow::updateControlsFromJson(Json::Value json, QString type)
+{
+	for (const auto *control : qAsConst(ControlsDefinition.controls))
+	{
+		if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
+		{
+			SliderWidget *slider = (SliderWidget*)this->widgets[scontrol->type + "/" + scontrol->parameter];
+			if (slider == nullptr)
+				qDebug() << "Widget " << scontrol->type + "/" + scontrol->parameter << " not found";
+			else if (scontrol->type == type)
+			{
+				if (scontrol->precision == 0)
+				{
+					int value = json[scontrol->parameter.toStdString()].asInt();
+					slider->setValue(value);
+					qDebug() << scontrol->parameter << " " << value;
+				}
+				else
+				{
+					float value = json[scontrol->parameter.toStdString()].asFloat();
+					slider->setValueFloat(value);
+					qDebug() << scontrol->parameter << " " << value;
+				}
+			}
+		}
+		else if (const CheckBoxControl *scontrol = dynamic_cast<const CheckBoxControl*>(control))
+		{
+			CheckBoxWidget *checkBox = (CheckBoxWidget*)this->widgets[scontrol->type + "/" + scontrol->parameter];
+			if (checkBox == nullptr)
+				qDebug() << "Widget " << scontrol->type + "/" + scontrol->parameter << " not found";
+			else if (scontrol->type == type)
+			{
+				int state = json[scontrol->parameter.toStdString()].asInt();
+				checkBox->setState((bool)state);
+				qDebug() << scontrol->parameter << " " << state;
+			}
+		}
+	}
 }

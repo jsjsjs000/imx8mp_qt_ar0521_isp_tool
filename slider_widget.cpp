@@ -30,6 +30,19 @@ void SliderWidget::initialize(MainWindow *mainWindow, const SliderControl *contr
 	this->onSliderValueChange = onSliderValueChange;
 }
 
+void SliderWidget::setValue(int value)
+{
+	ui->value->setText(QString::number(value));
+	ui->horizontalSlider->setValue(value);
+}
+
+void SliderWidget::setValueFloat(float value)
+{
+	value *= this->multiple;
+	ui->value->setText(QString::number((float)value / this->multiple, 'g', this->precision));
+	ui->horizontalSlider->setValue(value);
+}
+
 void SliderWidget::on_horizontalSlider_valueChanged(int value)
 {
 	if (this->precision == 0)

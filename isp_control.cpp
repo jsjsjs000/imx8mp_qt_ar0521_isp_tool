@@ -135,10 +135,18 @@ bool IspControl::set_cproc_enable(QString parameter, int value)
 	return viv_private_ioctl(IF_CPROC_S_EN, jRequest, jResponse);
 }
 
-Json::Value IspControl::get_cproc()
+Json::Value IspControl::getCprocCfg()
 {
 	Json::Value jRequest, jResponse;
-	viv_private_ioctl(IF_CPROC_G_CFG, jRequest, jResponse);
-	printf("brightness = %d\n", jResponse[CPROC_BRIGHTNESS_PARAMS].asInt());
+	if (!viv_private_ioctl(IF_CPROC_G_CFG, jRequest, jResponse))
+		return nullptr;
+	return jResponse;
+}
+
+Json::Value IspControl::getCprocEn()
+{
+	Json::Value jRequest, jResponse;
+	if (!viv_private_ioctl(IF_CPROC_G_EN, jRequest, jResponse))
+		return nullptr;
 	return jResponse;
 }

@@ -22,16 +22,19 @@ public:
 	~MainWindow();
 
 private slots:
-	void on_pushButton_clicked();
+	void onPushButtonClicked();
 
 private:
 	Ui::MainWindow *ui;
 	QMediaPlayer *player;
 	QMediaPlaylist *playlist;
 	QVideoWidget *videoWidget;
-	bool canUpdateControls;
+	QMap<QString, QWidget*> widgets;
+	bool canUpdateControls = false;
 
 	void createControls();
+	void readParameters();
+	void updateControlsFromJson(Json::Value json, QString type);
 	static void onCheckBoxChanged(MainWindow *mainWindow, QString type, QString parameter, bool value);
 	static void onSliderValueChange(MainWindow *mainWindow, QString type, QString parameter, int value, int divide);
 };
