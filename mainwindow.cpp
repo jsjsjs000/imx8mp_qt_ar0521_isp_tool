@@ -5,13 +5,13 @@
 #include <QSpacerItem>
 
 #include "controls_definitions.h"
-#include "slider_widget.h"
-#include "group_widget.h"
+#include "widgets/slider_widget.h"
+#include "widgets/group_widget.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "checkbox_widget.h"
-#include "button_widget.h"
-#include "label_widget.h"
+#include "widgets/checkbox_widget.h"
+#include "widgets/button_widget.h"
+#include "widgets/label_widget.h"
 
 IspControl ispControl;
 ControlsDefinitions ControlsDefinition;
@@ -143,6 +143,9 @@ void MainWindow::readParameters()
 	if (params)
 		this->updateControlsFromJson(params, IF_AE_S_ECM);
 
+	params = ispControl.getParam(IF_AE_G_STATUS);
+	if (params)
+		this->updateControlsFromJson(params, IF_AE_G_STATUS);
 
 
 
@@ -164,7 +167,7 @@ void MainWindow::readParameters()
 	this->canUpdateControls = true;
 }
 
-void MainWindow::initializeControlsNotReadable(QString type)
+void MainWindow::initializeControlsNotReadable(QString cmd)
 {
 	for (const auto *control : qAsConst(ControlsDefinition.controls))
 		if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
@@ -172,7 +175,7 @@ void MainWindow::initializeControlsNotReadable(QString type)
 			SliderWidget *slider = (SliderWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
 			if (slider == nullptr)
 				qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
-			else if (scontrol->setCmd == type)
+			else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 			{
 				slider->setRange();
 				slider->setValue(scontrol->value);
@@ -180,7 +183,7 @@ void MainWindow::initializeControlsNotReadable(QString type)
 		}
 }
 
-void MainWindow::updateControlsFromJson(Json::Value json, QString type)
+void MainWindow::updateControlsFromJson(Json::Value json, QString cmd)
 {
 	for (const auto *control : qAsConst(ControlsDefinition.controls))
 	{
@@ -189,7 +192,7 @@ void MainWindow::updateControlsFromJson(Json::Value json, QString type)
 			SliderWidget *slider = (SliderWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
 			if (slider == nullptr)
 				qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
-			else if (scontrol->setCmd == type)
+			else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 			{
 				slider->setRange();
 				if (scontrol->precision == 0)
@@ -211,17 +214,30 @@ void MainWindow::updateControlsFromJson(Json::Value json, QString type)
 			CheckBoxWidget *checkBox = (CheckBoxWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
 			if (checkBox == nullptr)
 				qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
-			else if (scontrol->setCmd == type)
+			else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 			{
 				int state = json[scontrol->parameter.toStdString()].asInt();
 				checkBox->setState((bool)state);
 				// qDebug() << scontrol->parameter << state;
 			}
 		}
+		else if (const LabelControl *scontrol = dynamic_cast<const LabelControl*>(control))
+		{
+			LabelWidget *label = (LabelWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+			if (label == nullptr)
+				qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
+			else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
+			{
+				// const char *s = json[scontrol->parameter.toStdString()].asCString();
+				int s = json[scontrol->parameter.toStdString()].asInt();
+				label->setText(QString(s));
+				// qDebug() << scontrol->parameter << state;
+			}
+		}
 	}
 }
 
-void MainWindow::timerEvent(QTimerEvent *event)
+void MainWindow::timerEvent(QTimerEvent* /* event */)
 {
 	double diff = double(clock() - this->lastTime) / CLOCKS_PER_SEC * 1000;
 	if (diff >= 300)

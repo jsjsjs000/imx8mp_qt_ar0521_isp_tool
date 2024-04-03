@@ -18,12 +18,14 @@ public:
 	explicit LabelWidget(QWidget *parent = nullptr);
 	LabelWidget(QWidget *parent, MainWindow *mainWindow, const LabelControl *Widget);
 	~LabelWidget();
+	void setText(QString s);
 
 private:
 	Ui::LabelWidget *ui;
 	MainWindow *mainWindow;
 	QString getCmd;
 	QString parameter;
+	QString name;
 	QString value;
 	QString label;
 };

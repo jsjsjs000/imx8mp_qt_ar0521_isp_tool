@@ -1,9 +1,9 @@
 #ifndef CONTROLS_DEFINITIONS_H
 #define CONTROLS_DEFINITIONS_H
 
+#include <cmath>
 #include <QVector>
 #include <QString>
-#include <cmath>
 #include "ioctl_cmds.h"
 #include "viv_video_kevent.h"
 #include "cam_device_api.hpp"
@@ -133,7 +133,7 @@ public:
 		controls.append(new SliderControl(IF_AE_G_CFG, IF_AE_S_CFG, AE_SET_POINT_PARAMS,     "Set point",            0, 255, 0,           "Target luminance point"));
 		controls.append(new SliderControl(IF_AE_G_CFG, IF_AE_S_CFG, AE_CLM_TOLERANCE_PARAMS, "Calculation accuracy", 0, 100, 0,           "Calculation accuracy; AE will make adjustments when the difference ratio between set.point and actual point over the clm.tolerance"));
 // $$ array  controls.append(new SliderControl(IF_AE_G_CFG, IF_AE_S_CFG, AE_WEIGHT_PARAMS,        "Weights of 5x5 blocks ", 0, 16, 0,         "Weights of 5x5 blocks"));
-		controls.append(new ButtonControl(NULL,        IF_AE_RESET, NULL,                    "Resets the Auto Exposure control",          ""));
+		controls.append(new ButtonControl(NULL,           IF_AE_RESET, NULL,                 "Resets the Auto Exposure control",          ""));
 		controls.append(new LabelControl( IF_AE_G_STATUS, AE_HIST_PARAMS_BASE64,             "Current histogram of image", ""));
 		controls.append(new LabelControl( IF_AE_G_STATUS, AE_LUMA_PARAMS_BASE64,             "Mean luminance measured",    ""));
 		controls.append(new LabelControl( IF_AE_G_STATUS, AE_OBJECT_REGION_PARAMS_BASE64,    "Measurement windows block",  ""));

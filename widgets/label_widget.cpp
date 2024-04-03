@@ -16,6 +16,7 @@ LabelWidget::LabelWidget(QWidget *parent, MainWindow *mainWindow, const LabelCon
 
 	this->mainWindow = mainWindow;
 	this->label = control->label;
+	this->name = control->name;
 	this->value = control->value;
 	ui->label->setText(control->name + ": " + control->value);
 	ui->label->setToolTip(control->description);
@@ -24,4 +25,10 @@ LabelWidget::LabelWidget(QWidget *parent, MainWindow *mainWindow, const LabelCon
 LabelWidget::~LabelWidget()
 {
 	delete ui;
+}
+
+void LabelWidget::setText(QString s)
+{
+	this->value = s;
+	this->ui->label->setText(this->name + ":" + s);
 }

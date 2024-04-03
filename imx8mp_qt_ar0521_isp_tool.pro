@@ -11,39 +11,39 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-  button_widget.cpp \
-	checkbox_widget.cpp \
-	group_widget.cpp \
-    isp_control.cpp \
-  label_widget.cpp \
-    main.cpp \
-		mainwindow.cpp \
-		lib/jsoncpp/src/lib_json/json_reader.cpp \
-		lib/jsoncpp/src/lib_json/json_value.cpp \
-		lib/jsoncpp/src/lib_json/json_writer.cpp \
+	isp_control.cpp \
+	main.cpp \
+	mainwindow.cpp \
+	lib/jsoncpp/src/lib_json/json_reader.cpp \
+	lib/jsoncpp/src/lib_json/json_value.cpp \
+	lib/jsoncpp/src/lib_json/json_writer.cpp \
   preview_window.cpp \
-  slider_widget.cpp
+	widgets/button_widget.cpp \
+	widgets/checkbox_widget.cpp \
+	widgets/group_widget.cpp \
+	widgets/label_widget.cpp \
+	widgets/slider_widget.cpp
 
 HEADERS += \
-  button_widget.h \
-	checkbox_widget.h \
   controls_definitions.h \
-	group_widget.h \
   isp_control.h \
-  label_widget.h \
-    mainwindow.h \
-		lib/json_helper/json_helper.h \
+	mainwindow.h \
+	lib/json_helper/json_helper.h \
   preview_window.h \
-  slider_widget.h
+	widgets/button_widget.h \
+	widgets/checkbox_widget.h \
+	widgets/group_widget.h \
+	widgets/label_widget.h \
+	widgets/slider_widget.h
 
 FORMS += \
-    button_widget.ui \
-    checkbox_widget.ui \
-    group_widget.ui \
-    label_widget.ui \
-    mainwindow.ui \
-    preview_window.ui \
-    slider_widget.ui
+	mainwindow.ui \
+	preview_window.ui \
+	widgets/button_widget.ui \
+	widgets/checkbox_widget.ui \
+	widgets/group_widget.ui \
+	widgets/label_widget.ui \
+	widgets/slider_widget.ui
 
 INCLUDEPATH += \
   lib/jsoncpp/include \
