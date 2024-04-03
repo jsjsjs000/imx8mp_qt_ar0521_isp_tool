@@ -29,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	this->canUpdateControls = true;
 
+	this->lastTime = clock();
 	timerId = startTimer(200);
 }
 
@@ -133,29 +134,33 @@ void MainWindow::readParameters()
 
 	params = ispControl.getParam(IF_AE_G_EN);
 	if (params)
-		this->updateControlsFromJson(params, IF_AE_S_EN);
+		this->updateControlsFromJson(params, IF_AE_G_EN);
 
 	params = ispControl.getParam(IF_AE_G_CFG);
 	if (params)
-		this->updateControlsFromJson(params, IF_AE_S_CFG);
+		this->updateControlsFromJson(params, IF_AE_G_CFG);
 
 	params = ispControl.getParam(IF_AE_G_ECM);
 	if (params)
-		this->updateControlsFromJson(params, IF_AE_S_ECM);
+		this->updateControlsFromJson(params, IF_AE_G_ECM);
 
 	params = ispControl.getParam(IF_AE_G_STATUS);
 	if (params)
 		this->updateControlsFromJson(params, IF_AE_G_STATUS);
 
+	params = ispControl.getParam(IF_AE_G_ISO);
+	if (params)
+		this->updateControlsFromJson(params, IF_AE_G_ISO);
+
 
 
 	params = ispControl.getParam(IF_CPROC_G_EN);
 	if (params)
-		this->updateControlsFromJson(params, IF_CPROC_S_EN);
+		this->updateControlsFromJson(params, IF_CPROC_G_EN);
 
 	params = ispControl.getParam(IF_CPROC_G_CFG);
 	if (params)
-		this->updateControlsFromJson(params, IF_CPROC_S_CFG);
+		this->updateControlsFromJson(params, IF_CPROC_G_CFG);
 
 	if (!this->notReadableControlsInitialized)
 	{
@@ -228,9 +233,20 @@ void MainWindow::updateControlsFromJson(Json::Value json, QString cmd)
 				qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
 			else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 			{
-				// const char *s = json[scontrol->parameter.toStdString()].asCString();
-				int s = json[scontrol->parameter.toStdString()].asInt();
-				label->setText(QString(s));
+				Json::Value value = json[scontrol->parameter.toStdString()];
+				QString text;
+				if (scontrol->type == &typeid(int[]))
+				{
+					for (uint i = 0; i < value.size(); i++)
+					{
+						if (i > 0)
+							text += ",";
+						text += QString::number(value[i].asInt());
+					}
+				}
+				else if (scontrol->type == &typeid(int))
+					text = QString::number(value.asInt());
+				label->setText(text);
 				// qDebug() << scontrol->parameter << state;
 			}
 		}
@@ -240,6 +256,10 @@ void MainWindow::updateControlsFromJson(Json::Value json, QString cmd)
 void MainWindow::timerEvent(QTimerEvent* /* event */)
 {
 	double diff = double(clock() - this->lastTime) / CLOCKS_PER_SEC * 1000;
+	if (!this->readyForReadJson && diff < 1000)
+		return;
+
+	this->readyForReadJson = true;
 	if (diff >= 300)
 		this->readParameters();
 }

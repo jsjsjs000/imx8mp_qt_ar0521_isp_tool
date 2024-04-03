@@ -34,6 +34,7 @@ private:
 	int timerId;
 	clock_t lastTime = 0;
 	bool notReadableControlsInitialized = false;
+	bool readyForReadJson = false;
 
 	void createControls();
 	void readParameters();

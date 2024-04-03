@@ -17,6 +17,7 @@ public:
 	QString value;
 	QString name;
 	QString description;
+	bool readonly;
 	virtual void v(void) = 0;  // pure virtual, need virtual method for dynamic_cast<>()
 };
 
@@ -41,13 +42,14 @@ public:
 
 	SliderControl();
 	SliderControl(QString getCmd, QString setCmd, QString parameter, QString name, int min, int max, int value,
-			QString description)
+			QString description, bool readonly = false)
 	{
 		this->getCmd = getCmd;
 		this->setCmd = setCmd;
 		this->parameter = parameter;
 		this->name = name;
 		this->description = description;
+		this->readonly = readonly;
 		this->min = min;
 		this->max = max;
 		this->value = value;
@@ -55,13 +57,14 @@ public:
 		this->multiple = 1;
 	}
 	SliderControl(QString getCmd, QString setCmd, QString parameter, QString name, float min, float max, float value,
-			int digits, QString description)
+			int digits, QString description, bool readonly = false)
 	{
 		this->getCmd = getCmd;
 		this->setCmd = setCmd;
 		this->parameter = parameter;
 		this->name = name;
 		this->description = description;
+		this->readonly = readonly;
 		this->precision = digits;
 		this->multiple = std::pow(10, digits);
 		this->min = min * this->multiple;
@@ -103,19 +106,23 @@ public:
 	}
 };
 
+// template <typename T>
+
 class LabelControl : public Control
 {
 public:
 	QString label;
+	const std::type_info *type;
 
 	void v(void) override {}  // required
 
-	LabelControl(QString getCmd, QString parameter, QString name, QString description)
+	LabelControl(QString getCmd, QString parameter, QString name, QString description, const std::type_info *type)
 	{
 		this->getCmd = getCmd;
 		this->parameter = parameter;
 		this->name = name;
 		this->description = description;
+		this->type = type;
 	}
 };
 
@@ -132,21 +139,23 @@ public:
 		controls.append(new SliderControl(IF_AE_G_CFG, IF_AE_S_CFG, AE_DAMP_UNDER_PARAMS,    "Damping lower limit",  0.0f, 1.0f, 0.0f, 3, "Damping lower limit for luminance under set point. The larger the value, the smoother the convergence"));
 		controls.append(new SliderControl(IF_AE_G_CFG, IF_AE_S_CFG, AE_SET_POINT_PARAMS,     "Set point",            0, 255, 0,           "Target luminance point"));
 		controls.append(new SliderControl(IF_AE_G_CFG, IF_AE_S_CFG, AE_CLM_TOLERANCE_PARAMS, "Calculation accuracy", 0, 100, 0,           "Calculation accuracy; AE will make adjustments when the difference ratio between set.point and actual point over the clm.tolerance"));
-// $$ array  controls.append(new SliderControl(IF_AE_G_CFG, IF_AE_S_CFG, AE_WEIGHT_PARAMS,        "Weights of 5x5 blocks ", 0, 16, 0,         "Weights of 5x5 blocks"));
+		controls.append(new LabelControl( IF_AE_G_CFG,              AE_WEIGHT_PARAMS,        "Weights of 5x5 blocks ",                    "", &typeid(int[])));
 		controls.append(new ButtonControl(NULL,           IF_AE_RESET, NULL,                 "Resets the Auto Exposure control",          ""));
-		controls.append(new LabelControl( IF_AE_G_STATUS, AE_HIST_PARAMS_BASE64,             "Current histogram of image", ""));
-		controls.append(new LabelControl( IF_AE_G_STATUS, AE_LUMA_PARAMS_BASE64,             "Mean luminance measured",    ""));
-		controls.append(new LabelControl( IF_AE_G_STATUS, AE_OBJECT_REGION_PARAMS_BASE64,    "Measurement windows block",  ""));
-// IF_AE_G_ISO
-
-
+		controls.append(new LabelControl( IF_AE_G_STATUS, AE_HIST_PARAMS_BASE64,             "Current histogram of image", "", &typeid(int[])));
+		controls.append(new LabelControl( IF_AE_G_STATUS, AE_LUMA_PARAMS_BASE64,             "Mean luminance measured",    "", &typeid(int[])));
+		controls.append(new LabelControl( IF_AE_G_STATUS, AE_OBJECT_REGION_PARAMS_BASE64,    "Measurement windows block",  "", &typeid(int[])));
+		controls.append(new SliderControl(IF_AE_G_ISO,    IF_AE_S_ISO, AE_SENSITIVITY_PARAMS, "Sensitivity (ISO) of Auto Exposure control", 100, 1600, 100, "Can be changed when AE is disabled"));
+		controls.append(new LabelControl( IF_AE_G_ISO,    AE_SENSITIVITY_MIN_PARAMS,          "Minimum Sensitivity", "", &typeid(int)));
+		controls.append(new LabelControl( IF_AE_G_ISO,    AE_SENSITIVITY_MAX_PARAMS,          "Maximum Sensitivity", "", &typeid(int)));
 
 		controls.append(new GroupControl("AE / ECM - Exposure Control Module"));
 		controls.append(new SliderControl(  IF_AE_G_ECM, IF_AE_S_ECM, AE_FLICKER_PERIOD_PARAMS, "The flag of Auto Exposure flicker period", 0, 2, 0, "0: Flicker Period off\n1: 100 Hz\n2: 120 Hz"));
 		controls.append(new CheckBoxControl(IF_AE_G_ECM, IF_AE_S_ECM, AE_AFPS_PARAMS,           "Auto FPS control value ",                  false,   ""));
 
+		controls.append(new GroupControl("AF - Auto Focus (not implemented)"));
 
-
+		controls.append(new GroupControl("AWB - Auto White Balance"));
+// IF_AWB_G_CFG
 
 
 
