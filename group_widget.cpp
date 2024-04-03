@@ -8,6 +8,14 @@ GroupWidget::GroupWidget(QWidget *parent)
 	ui->setupUi(this);
 }
 
+GroupWidget::GroupWidget(QWidget *parent, QString name)
+		: QWidget(parent)
+		, ui(new Ui::GroupWidget)
+{
+	ui->setupUi(this);
+	this->ui->label->setText(name);
+}
+
 GroupWidget::~GroupWidget()
 {
 	delete ui;

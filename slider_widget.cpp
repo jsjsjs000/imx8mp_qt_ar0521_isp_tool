@@ -8,9 +8,9 @@ SliderWidget::SliderWidget(QWidget *parent)
 	ui->setupUi(this);
 }
 
-SliderWidget::SliderWidget(MainWindow *mainWindow, const SliderControl *control,
+SliderWidget::SliderWidget(QWidget *parent, MainWindow *mainWindow, const SliderControl *control,
 		void (*onSliderValueChange)(MainWindow *mainWindow, QString type, QString parameter, int value, int divide))
-		: QWidget()
+		: QWidget(parent)
 		, ui(new Ui::SliderWidget)
 {
 	ui->setupUi(this);

@@ -14,10 +14,7 @@ class GroupWidget : public QWidget
 
 public:
 	explicit GroupWidget(QWidget *parent = nullptr);
-	void initialize(QString name)
-	{
-		this->ui->label->setText(name);
-	}
+	GroupWidget(QWidget *parent, QString name);
 	~GroupWidget();
 
 private:

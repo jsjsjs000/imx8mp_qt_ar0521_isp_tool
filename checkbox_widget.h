@@ -16,7 +16,7 @@ class CheckBoxWidget : public QWidget
 
 public:
 	explicit CheckBoxWidget(QWidget *parent = nullptr);
-	CheckBoxWidget(MainWindow *mainWindow, const CheckBoxControl *control,
+	CheckBoxWidget(QWidget *parent, MainWindow *mainWindow, const CheckBoxControl *control,
 			void (*onCheckBoxChanged)(MainWindow *mainWindow, QString type, QString parameter, bool checked));
 	~CheckBoxWidget();
 	void setState(bool state);

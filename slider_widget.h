@@ -16,7 +16,7 @@ class SliderWidget : public QWidget
 
 public:
 	explicit SliderWidget(QWidget *parent = nullptr);
-	SliderWidget(MainWindow *mainWindow, const SliderControl *control,
+	SliderWidget(QWidget *parent, MainWindow *mainWindow, const SliderControl *control,
 			void (*onSliderValueChange)(MainWindow *mainWindow, QString type, QString parameter, int value, int divide));
 	void setRange();
 	void setValue(int value);

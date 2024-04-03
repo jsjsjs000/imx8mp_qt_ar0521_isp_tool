@@ -42,20 +42,19 @@ void MainWindow::createControls()
 	{
 		if (const GroupControl *scontrol = dynamic_cast<const GroupControl*>(control))
 		{
-			GroupWidget *group = new GroupWidget();
-			group->initialize(scontrol->name);
+			GroupWidget *group = new GroupWidget(this, scontrol->name);
 			ui->verticalLayout->addWidget(group, 1);
 		}
 		else if (const CheckBoxControl *scontrol = dynamic_cast<const CheckBoxControl*>(control))
 		{
-			CheckBoxWidget *checkBox = new CheckBoxWidget(this, scontrol, &MainWindow::onCheckBoxChanged);
+			CheckBoxWidget *checkBox = new CheckBoxWidget(this, this, scontrol, &MainWindow::onCheckBoxChanged);
 			this->widgets.insert(QString(scontrol->type + "/" + scontrol->parameter), checkBox);
 			ui->verticalLayout->addWidget(checkBox, 1);
 			checkBox->setState(scontrol->checked);
 		}
 		else if (const SliderControl *scontrol = static_cast<const SliderControl*>(control))
 		{
-			SliderWidget *slider = new SliderWidget(this, scontrol, &MainWindow::onSliderValueChange);
+			SliderWidget *slider = new SliderWidget(this, this, scontrol, &MainWindow::onSliderValueChange);
 			this->widgets.insert(QString(scontrol->type + "/" + scontrol->parameter), slider);
 			ui->verticalLayout->addWidget(slider, 1);
 		}
@@ -112,7 +111,29 @@ void MainWindow::readParameters()
 	if (cprocCfg)
 		this->updateControlsFromJson(cprocCfg, IF_CPROC_S_CFG);
 
+	if (!this->notReadableControlsInitialized)
+	{
+		this->initializeControlsNotReadable(IF_CPROC_S_COEFF);
+		this->notReadableControlsInitialized = true;
+	}
+
 	this->canUpdateControls = true;
+}
+
+void MainWindow::initializeControlsNotReadable(QString type)
+{
+	for (const auto *control : qAsConst(ControlsDefinition.controls))
+		if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
+		{
+			SliderWidget *slider = (SliderWidget*)this->widgets[scontrol->type + "/" + scontrol->parameter];
+			if (slider == nullptr)
+				qDebug() << "Widget " << scontrol->type + "/" + scontrol->parameter << " not found";
+			else if (scontrol->type == type)
+			{
+				slider->setRange();
+				slider->setValue(scontrol->value);
+			}
+		}
 }
 
 void MainWindow::updateControlsFromJson(Json::Value json, QString type)

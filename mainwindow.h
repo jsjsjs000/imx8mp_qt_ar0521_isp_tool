@@ -33,10 +33,12 @@ private:
 	bool canUpdateControls = false;
 	int timerId;
 	clock_t lastTime = 0;
+	bool notReadableControlsInitialized = false;
 
 	void createControls();
 	void readParameters();
 	void updateControlsFromJson(Json::Value json, QString type);
+	void initializeControlsNotReadable(QString type);
 	static void onCheckBoxChanged(MainWindow *mainWindow, QString type, QString parameter, bool value);
 	static void onSliderValueChange(MainWindow *mainWindow, QString type, QString parameter, int value, int divide);
 	void timerEvent(QTimerEvent *event);
