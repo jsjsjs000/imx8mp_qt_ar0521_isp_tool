@@ -39,8 +39,9 @@ private:
 	void readParameters();
 	void updateControlsFromJson(Json::Value json, QString type);
 	void initializeControlsNotReadable(QString type);
-	static void onCheckBoxChanged(MainWindow *mainWindow, QString type, QString parameter, bool value);
-	static void onSliderValueChange(MainWindow *mainWindow, QString type, QString parameter, int value, int divide);
+	static void onCheckBoxChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, bool value);
+	static void onSliderValueChange(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int value, int divide);
+	static void onButtonClicked(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QString value);
 	void timerEvent(QTimerEvent *event);
 };
 #endif // MAINWINDOW_H

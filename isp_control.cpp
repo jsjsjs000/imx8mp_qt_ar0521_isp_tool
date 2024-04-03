@@ -1,5 +1,4 @@
 #include <sys/ioctl.h>
-#include <QString>
 #include <fcntl.h>
 
 #include "cam_device_api.hpp"
@@ -110,54 +109,43 @@ end:
 	return false;
 }
 
-bool IspControl::setCprocCfg(QString parameter, int value, int divide)
+bool IspControl::setParam(const char *getCmd, const char *setCmd, const char *parameter, int value, int divide)
 {
 	Json::Value jRequest, jResponse;
-	if (!vivIoctl(IF_CPROC_G_CFG, jRequest, jResponse))
+	if (!vivIoctl(getCmd, jRequest, jResponse))
 		return false;
 
 	jRequest = jResponse;
 	if (divide == 1)
-		jRequest[parameter.toStdString()] = value;
+		jRequest[parameter] = value;
 	else
-		jRequest[parameter.toStdString()] = (float)value / divide;
-	return vivIoctl(IF_CPROC_S_CFG, jRequest, jResponse);
+		jRequest[parameter] = (float)value / divide;
+	return vivIoctl(setCmd, jRequest, jResponse);
 }
 
-bool IspControl::setCprocCoeff(QString parameter, int value, int divide)
+bool IspControl::setParamBool(const char *getCmd, const char *setCmd, const char *parameter, bool value)
 {
 	Json::Value jRequest, jResponse;
-	if (divide == 1)
-		jRequest[parameter.toStdString()] = value;
-	else
-		jRequest[parameter.toStdString()] = (float)value / divide;
-	return vivIoctl(IF_CPROC_S_COEFF, jRequest, jResponse);
-}
-
-bool IspControl::setCprocEnable(QString parameter, int value)
-{
-	Json::Value jRequest, jResponse;
-	if (!vivIoctl(IF_CPROC_G_EN, jRequest, jResponse))
+	if (!vivIoctl(getCmd, jRequest, jResponse))
 		return false;
 
 	jRequest = jResponse;
-	jRequest[parameter.toStdString()] = value;
-	return vivIoctl(IF_CPROC_S_EN, jRequest, jResponse);
+	jRequest[parameter] = value;
+	return vivIoctl(setCmd, jRequest, jResponse);
 }
 
-Json::Value IspControl::getCprocCfg()
+bool IspControl::sendCmd(const char *setCmd, const char *parameter, const char *value)
 {
 	Json::Value jRequest, jResponse;
-	if (!vivIoctl(IF_CPROC_G_CFG, jRequest, jResponse))
-		return nullptr;
-
-	return jResponse;
+	if (parameter)
+		jRequest[parameter] = value;
+	return vivIoctl(setCmd, jRequest, jResponse);
 }
 
-Json::Value IspControl::getCprocEn()
+Json::Value IspControl::getParam(const char *getCmd)
 {
 	Json::Value jRequest, jResponse;
-	if (!vivIoctl(IF_CPROC_G_EN, jRequest, jResponse))
+	if (!vivIoctl(getCmd, jRequest, jResponse))
 		return nullptr;
 
 	return jResponse;

@@ -11,9 +11,11 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+  button_widget.cpp \
 	checkbox_widget.cpp \
 	group_widget.cpp \
     isp_control.cpp \
+  label_widget.cpp \
     main.cpp \
 		mainwindow.cpp \
 		lib/jsoncpp/src/lib_json/json_reader.cpp \
@@ -23,18 +25,22 @@ SOURCES += \
   slider_widget.cpp
 
 HEADERS += \
+  button_widget.h \
 	checkbox_widget.h \
   controls_definitions.h \
 	group_widget.h \
   isp_control.h \
+  label_widget.h \
     mainwindow.h \
 		lib/json_helper/json_helper.h \
   preview_window.h \
   slider_widget.h
 
 FORMS += \
+    button_widget.ui \
     checkbox_widget.ui \
     group_widget.ui \
+    label_widget.ui \
     mainwindow.ui \
     preview_window.ui \
     slider_widget.ui

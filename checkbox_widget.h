@@ -17,7 +17,7 @@ class CheckBoxWidget : public QWidget
 public:
 	explicit CheckBoxWidget(QWidget *parent = nullptr);
 	CheckBoxWidget(QWidget *parent, MainWindow *mainWindow, const CheckBoxControl *control,
-			void (*onCheckBoxChanged)(MainWindow *mainWindow, QString type, QString parameter, bool checked));
+			void (*onCheckBoxChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, bool checked));
 	~CheckBoxWidget();
 	void setState(bool state);
 
@@ -27,9 +27,10 @@ private slots:
 private:
 	Ui::CheckBoxWidget *ui;
 	MainWindow *mainWindow;
-	QString type;
+	QString getCmd;
+	QString setCmd;
 	QString parameter;
-	void (*onCheckBoxChanged)(MainWindow *mainWindow, QString type, QString parameter, bool value);
+	void (*onCheckBoxChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, bool value);
 };
 
 #endif // CHECKBOX_WIDGET_H

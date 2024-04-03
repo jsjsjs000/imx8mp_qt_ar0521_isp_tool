@@ -57,7 +57,8 @@ int main(int argc, char *argv[])
 	// 													// desktopSize.height() - 2 * DesktopTaskBarHeight);
 
 	MainWindow mainWindow;
-	mainWindow.move(0, 100);
+	mainWindow.setGeometry(0, DesktopTaskBarHeight,
+			MainWindowWidth + 2 * WindowBorder, desktopSize.height() - 2 * DesktopTaskBarHeight);
 	mainWindow.show();
 
 	return application.exec();

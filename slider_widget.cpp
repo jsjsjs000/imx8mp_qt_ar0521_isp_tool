@@ -9,14 +9,15 @@ SliderWidget::SliderWidget(QWidget *parent)
 }
 
 SliderWidget::SliderWidget(QWidget *parent, MainWindow *mainWindow, const SliderControl *control,
-		void (*onSliderValueChange)(MainWindow *mainWindow, QString type, QString parameter, int value, int divide))
+		void (*onSliderValueChange)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int value, int divide))
 		: QWidget(parent)
 		, ui(new Ui::SliderWidget)
 {
 	ui->setupUi(this);
 
 	this->mainWindow = mainWindow;
-	this->type = control->type;
+	this->getCmd = control->getCmd;
+	this->setCmd = control->setCmd;
 	this->parameter = control->parameter;
 	this->min = control->min;
 	this->max = control->max;
@@ -60,5 +61,5 @@ void SliderWidget::on_horizontalSlider_valueChanged(int value)
 		ui->value->setText(QString::number((float)value / this->multiple, 'g', this->precision));
 	
 	if (this->onSliderValueChange)
-		(*this->onSliderValueChange)(this->mainWindow, this->type, this->parameter, value, this->multiple);
+		(*this->onSliderValueChange)(this->mainWindow, this->getCmd, this->setCmd, this->parameter, value, this->multiple);
 }
