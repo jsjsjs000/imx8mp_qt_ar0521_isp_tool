@@ -221,6 +221,8 @@ public:
 			QMap<int, QString> *coeffMap = new QMap<int, QString>;
 			coeffMap->insert({{1, "index 1"}, {2, "index 2"}});
 		controls.append(new ComboBoxControl(  NULL,           IF_CPROC_S_COEFF, CPROC_INDEX_PARAMS,      "Input coefficient index",    coeffMap,    "index 1: 0.257812, 0.5,      0.101562, -0.148438, -0.289062, 0.4375, 0.4375, -0.367188, -0.070312\nindex 2: 0.296875, 0.585938, 0.117188, -0.171875, -0.328125, 0.5,    0.5,    -0.421875, -0.078125"));
+
+// IF_DEMOSAIC_G_CFG
 	}
 };
 

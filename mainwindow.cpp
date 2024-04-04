@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
 	this->canUpdateControls = true;
 
 	this->lastTime = clock();
-	timerId = startTimer(200);
+	timerId = startTimer(500);
 }
 
 MainWindow::~MainWindow()
@@ -105,11 +105,6 @@ void MainWindow::onSliderValueChange(MainWindow *mainWindow, QString getCmd, QSt
 	qDebug() << setCmd << parameter << ((float)value / divide);
 	ispControl.setParam(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), value, divide);
 
-	// if (type == IF_CPROC_S_CFG)
-	// 	ispControl.setCprocCfg(parameter, value, divide);
-	// else if (type == IF_CPROC_S_COEFF)
-	// 	ispControl.setCprocCoeff(parameter, value, divide);
-
 	mainWindow->lastTime = clock();
 }
 
@@ -133,7 +128,7 @@ void MainWindow::onButtonClicked(MainWindow *mainWindow, QString getCmd, QString
 	if (getCmd == NULL)
 		ispControl.sendCmd(setCmd.toStdString().c_str(), parameter.toStdString().c_str(), value.toStdString().c_str());
 	// else
-	// 	ispControl.setParam(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str());
+	// 	ispControl.setParam(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str()); $$
 }
 
 void MainWindow::on_pushButton_clicked()
