@@ -146,72 +146,19 @@ void MainWindow::readParameters()
 	this->canUpdateControls = false;
 	Json::Value params;
 
-	params = ispControl.getParam(IF_AE_G_EN);
-	if (params)
-		this->updateControlsFromJson(params, IF_AE_G_EN);
-
-	params = ispControl.getParam(IF_AE_G_CFG);
-	if (params)
-		this->updateControlsFromJson(params, IF_AE_G_CFG);
-
-	params = ispControl.getParam(IF_AE_G_ECM);
-	if (params)
-		this->updateControlsFromJson(params, IF_AE_G_ECM);
-
-	params = ispControl.getParam(IF_AE_G_STATUS);
-	if (params)
-		this->updateControlsFromJson(params, IF_AE_G_STATUS);
-
-	params = ispControl.getParam(IF_AE_G_ISO);
-	if (params)
-		this->updateControlsFromJson(params, IF_AE_G_ISO);
-
-	params = ispControl.getParam(IF_AWB_G_CFG);
-	if (params)
-		this->updateControlsFromJson(params, IF_AWB_G_CFG);
-
-	params = ispControl.getParam(IF_AWB_G_EN);
-	if (params)
-		this->updateControlsFromJson(params, IF_AWB_G_EN);
-
-	params = ispControl.getParam(IF_BLS_G_CFG);
-	if (params)
-		this->updateControlsFromJson(params, IF_BLS_G_CFG);
-
-	params = ispControl.getParam(IF_CAC_G_EN);
-	if (params)
-		this->updateControlsFromJson(params, IF_CAC_G_EN);
-
-	params = ispControl.getParam(IF_CNR_G_EN);
-	if (params)
-		this->updateControlsFromJson(params, IF_CNR_G_EN);
-
-	params = ispControl.getParam(IF_CNR_G_CFG);
-	if (params)
-		this->updateControlsFromJson(params, IF_CNR_G_CFG);
-
-	params = ispControl.getParam(IF_CPROC_G_EN);
-	if (params)
-		this->updateControlsFromJson(params, IF_CPROC_G_EN);
-
-	params = ispControl.getParam(IF_CPROC_G_CFG);
-	if (params)
-		this->updateControlsFromJson(params, IF_CPROC_G_CFG);
-
-
-
-
-
-
-
-
-
 	if (!this->notReadableControlsInitialized)
 	{
-		this->initializeControlsNotReadable(IF_CPROC_S_COEFF);
-		this->initializeControlsNotReadable(IF_AE_G_STATUS);
-		this->initializeControlsNotReadable(IF_AWB_S_MEASWIN);
+		for (const QString &paramName : qAsConst(ControlsDefinition.initializeNotReadableControls))
+			this->initializeControlsNotReadable(paramName);
+
 		this->notReadableControlsInitialized = true;
+	}
+
+	for (const QString &paramName : qAsConst(ControlsDefinition.readParams))
+	{
+		params = ispControl.getParam(paramName.toStdString().c_str());
+		if (params)
+			this->updateControlsFromJson(params, paramName);
 	}
 
 	this->canUpdateControls = true;
@@ -302,6 +249,14 @@ void MainWindow::updateControlsFromJson(Json::Value json, QString cmd)
 				}
 				else if (scontrol->type == &typeid(int))
 					text = QString::number(value.asInt());
+				else if (scontrol->type == &typeid(float))
+					text = QString::number(value.asFloat(), 'f', 3);
+				else
+				{
+					text = "(" + scontrol->parameter + " not decoded type)";
+					qDebug() << scontrol->parameter << "not decoded in LabelControl";
+				}
+
 				label->setText(text);
 				// qDebug() << scontrol->parameter << state;
 			}

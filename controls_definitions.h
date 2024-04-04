@@ -12,7 +12,10 @@
 class ControlsDefinitions
 {
 public:
-	QVector<Control*> controls; //= QVector<Control&>
+	QVector<Control*> controls;
+	QList<QString> readParams;
+	QList<QString> initializeNotReadableControls;
+
 	void init(void)
 	{
 		controls.append(new GroupControl("AE - Auto Exposure"));
@@ -85,7 +88,91 @@ public:
 			coeffMap->insert({{1, "index 1"}, {2, "index 2"}});
 		controls.append(new ComboBoxControl(  NULL,           IF_CPROC_S_COEFF, CPROC_INDEX_PARAMS,      "Input coefficient index",    coeffMap,    "index 1: 0.257812, 0.5,      0.101562, -0.148438, -0.289062, 0.4375, 0.4375, -0.367188, -0.070312\nindex 2: 0.296875, 0.585938, 0.117188, -0.171875, -0.328125, 0.5,    0.5,    -0.421875, -0.078125"));
 
-// IF_DEMOSAIC_G_CFG
+		controls.append(new GroupControl("DEMOSAIC"));
+		controls.append(new CheckBoxControl(IF_DEMOSAIC_G_EN,  IF_DEMOSAIC_S_EN,  DEMOSAIC_ENABLE_PARAMS,     "Enabled",                              true,    "The state of the Demosaic control"));
+			QMap<int, QString> *demosaicModeMap = new QMap<int, QString>;
+			demosaicModeMap->insert({{1, "Normal"}, {2, "Bypass"}});
+		controls.append(new ComboBoxControl(IF_DEMOSAIC_G_CFG, IF_DEMOSAIC_S_CFG, DEMOSAIC_MODE_PARAMS, "Demosaic mode", demosaicModeMap, ""));
+		controls.append(new SliderControl(  IF_DEMOSAIC_G_CFG, IF_DEMOSAIC_S_CFG, DEMOSAIC_THRESHOLD_PARAMS, "Demosaic threshold", 0, 255, 0, "0: Maximum edge sensitivity\n255: No texture detection"));
+
+		controls.append(new GroupControl("DPCC -  Defect Pixel Cluster Correction"));
+		controls.append(new CheckBoxControl(IF_DPCC_G_EN, IF_DPCC_S_EN, DPF_ENABLE_PARAMS,         "Enabled",                              true,    "The state of the Defect Pixel Cluster Correction"));
+
+		controls.append(new GroupControl("DPF - De-noising Pre-Filter"));
+		controls.append(new CheckBoxControl(IF_DPF_G_EN,  IF_DPF_S_EN,  DPF_ENABLE_PARAMS,         "Enabled",                              true,    "The state of the De-noising Pre-Filter"));
+		controls.append(new SliderControl(  IF_DPF_G_CFG, IF_DPF_S_CFG, DPF_GRADIENT_PARAMS,       "Gradient value for dynamic strength calculation",        0, 128, 0, ""));
+		controls.append(new SliderControl(  IF_DPF_G_CFG, IF_DPF_S_CFG, DPF_OFFSET_PARAMS,         "Offset value for dynamic strength calculation",       -128, 127, 0, ""));
+		controls.append(new SliderControl(  IF_DPF_G_CFG, IF_DPF_S_CFG, DPF_MIN_PARAMS,            "Upper bound for dynamic strength calculation",           0, 128, 0, ""));
+		controls.append(new SliderControl(  IF_DPF_G_CFG, IF_DPF_S_CFG, DPF_DIV_PARAMS,            "Division factor for dynamic strength calculation ",      0,  64, 0, ""));
+		controls.append(new SliderControl(  IF_DPF_G_CFG, IF_DPF_S_CFG, DPF_SIGMA_GREEN_PARAMS,    "The spatial filter’s sigma of the green channel ",       1, 255, 0, ""));
+		controls.append(new SliderControl(  IF_DPF_G_CFG, IF_DPF_S_CFG, DPF_SIGMA_RED_BLUE_PARAMS, "The spatial filter’s sigma of the Red/Blue channel ",    1, 255, 0, ""));
+
+		controls.append(new GroupControl("EC - Exposure Control"));
+		controls.append(new SliderControl( IF_EC_G_CFG, IF_EC_S_CFG, EC_GAIN_PARAMS,            "Exposure gain",         1.0f, 110.0f, 1.0f, 3, "Diasable AE (Auto Exposure) first"));
+		controls.append(new LabelControl(  IF_EC_G_CFG,              EC_GAIN_MIN_PARAMS,        "Minimum gain",                                 "", &typeid(float)));
+		controls.append(new LabelControl(  IF_EC_G_CFG,              EC_GAIN_MAX_PARAMS,        "Maximum gain",                                 "", &typeid(float)));
+		controls.append(new SliderControl( IF_EC_G_CFG, IF_EC_S_CFG, EC_TIME_PARAMS,            "Exposure time",         0.0f,  0.15f, 0.0f, 3, "Diasable AE (Auto Exposure) first"));
+		controls.append(new LabelControl(  IF_EC_G_CFG,              EC_INTEGRATION_MIN_PARAMS, "Minimum exposure time",                        "", &typeid(float)));
+		controls.append(new LabelControl(  IF_EC_G_CFG,              EC_INTEGRATION_MAX_PARAMS, "Maximum exposure time",                        "", &typeid(float)));
+
+		// controls.append(new LabelControl(  IF_EC_G_STATUS,           EC_GAIN_PARAMS,            "Exposure gain range",                          "", &typeid(int)));  // same data as above
+		// controls.append(new LabelControl(  IF_EC_G_STATUS,           EC_GAIN_MIN_PARAMS,        "Sub-node parameter, Minimum gain",             "", &typeid(int)));  // gain.min
+		// controls.append(new LabelControl(  IF_EC_G_STATUS,           EC_GAIN_MAX_PARAMS,        "Sub-node parameter, Maximum gain",             "", &typeid(int)));
+		// controls.append(new LabelControl(  IF_EC_G_STATUS,           EC_TIME_PARAMS,            "Exposure time range",                          "", &typeid(float)));
+		// controls.append(new LabelControl(  IF_EC_G_STATUS,           EC_INTEGRATION_MIN_PARAMS, "Sub-node parameter, Minimum integration time", "", &typeid(float)));
+		// controls.append(new LabelControl(  IF_EC_G_STATUS,           EC_INTEGRATION_MAX_PARAMS, "Sub-node parameter, Maximum integration time", "", &typeid(float)));
+
+		controls.append(new GroupControl("FILTER"));
+		controls.append(new CheckBoxControl(IF_FILTER_G_EN,  IF_FILTER_S_EN,   FILTER_ENABLE_PARAMS,   "Enabled",                        true,     "The state of the Filter control "));
+		controls.append(new CheckBoxControl(IF_FILTER_G_CFG, IF_FILTER_S_CFG,  FILTER_AUTO_PARAMS,     "Auto control",                   true,     "Auto control; automatically adjusts denoise and sharpen values."));
+		controls.append(new SliderControl(  IF_FILTER_G_CFG, IF_FILTER_S_CFG,  FILTER_DENOISE_PARAMS,  "Denoise level",                  0, 10, 0, ""));
+		controls.append(new SliderControl(  IF_FILTER_G_CFG, IF_FILTER_S_CFG,  FILTER_SHARPEN_PARAMS,  "Sharpen level",                  0, 10, 0, ""));
+		controls.append(new SliderControl(  IF_FILTER_G_CFG, IF_FILTER_S_CFG,  FILTER_CHRHMODE_PARAMS, "Chroma filter horizontal mode ", 0,  3, 0, ""));
+		controls.append(new SliderControl(  IF_FILTER_G_CFG, IF_FILTER_S_CFG,  FILTER_CHRVMODE_PARAMS, "Chroma filter vertical mode ",   0,  3, 0, ""));
+		// controls.append(new LabelControl(   IF_FILTER_G_TBL,                   FILTER_TABLE_PARAMS,    "Filter auto table",                        "", &typeid(std::string)));  // unknown
+		// controls.append(new LabelControl(   IF_FILTER_G_TBL,                   "columns",              "Table's column property",                  "", &typeid(std::string)));
+		// controls.append(new LabelControl(   IF_FILTER_G_TBL,                   "rows",                 "Values of properties in the table",        "", &typeid(std::string)));
+		controls.append(new LabelControl(   IF_FILTER_G_STATUS,                FILTER_GAIN_PARAMS,             "Sensor gain",                  "", &typeid(float)));
+		controls.append(new LabelControl(   IF_FILTER_G_STATUS,                FILTER_INTEGRATION_TIME_PARAMS, "Sensor integration time",      "", &typeid(float)));
+
+		controls.append(new GroupControl("GC - Gamma control"));
+
+
+
+
+
+		readParams.append({
+			IF_AE_G_EN,
+			IF_AE_G_CFG,
+			IF_AE_G_ECM,
+			IF_AE_G_STATUS,
+			IF_AE_G_ISO,
+			IF_AWB_G_CFG,
+			IF_AWB_G_EN,
+			IF_BLS_G_CFG,
+			IF_CAC_G_EN,
+			IF_CNR_G_EN,
+			IF_CNR_G_CFG,
+			IF_CPROC_G_EN,
+			IF_CPROC_G_CFG,
+			IF_DEMOSAIC_G_EN,
+			IF_DEMOSAIC_G_CFG,
+			IF_DPCC_G_EN,
+			IF_DPF_G_EN,
+			IF_DPF_G_CFG,
+			IF_EC_G_CFG,
+			// IF_EC_G_STATUS,
+			IF_FILTER_G_EN,
+			IF_FILTER_G_CFG,
+			// IF_FILTER_G_TBL,  // unknown
+			IF_FILTER_G_STATUS,
+		});
+
+		initializeNotReadableControls.append({
+			IF_CPROC_S_COEFF,
+			IF_AE_G_STATUS,
+			IF_AWB_S_MEASWIN,
+		});
 	}
 };
 
