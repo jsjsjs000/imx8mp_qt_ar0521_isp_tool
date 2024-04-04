@@ -25,7 +25,7 @@ public:
 		controls.append(new SliderControl(IF_AE_G_CFG, IF_AE_S_CFG, AE_DAMP_UNDER_PARAMS,    "Damping lower limit",  0.0f, 1.0f, 0.0f, 3, "Damping lower limit for luminance under set point. The larger the value, the smoother the convergence"));
 		controls.append(new SliderControl(IF_AE_G_CFG, IF_AE_S_CFG, AE_SET_POINT_PARAMS,     "Set point",            0, 255, 0,           "Target luminance point"));
 		controls.append(new SliderControl(IF_AE_G_CFG, IF_AE_S_CFG, AE_CLM_TOLERANCE_PARAMS, "Calculation accuracy", 0, 100, 0,           "Calculation accuracy; AE will make adjustments when the difference ratio between set.point and actual point over the clm.tolerance"));
-		controls.append(new LabelControl( IF_AE_G_CFG,              AE_WEIGHT_PARAMS,        "Weights of 5x5 blocks ",                    "", &typeid(int[])));
+		controls.append(new LabelControl( IF_AE_G_CFG,              AE_WEIGHT_PARAMS,        "Weights of 5x5 blocks",                     "", &typeid(int[])));
 		controls.append(new ButtonControl(NULL,           IF_AE_RESET, NULL,                 "Resets the Auto Exposure control",          ""));
 		controls.append(new LabelControl( IF_AE_G_STATUS, AE_HIST_PARAMS_BASE64,             "Current histogram of image", "", &typeid(int[])));
 		controls.append(new LabelControl( IF_AE_G_STATUS, AE_LUMA_PARAMS_BASE64,             "Mean luminance measured",    "", &typeid(int[])));
@@ -40,7 +40,7 @@ public:
 			QMap<int, QString> *expMap = new QMap<int, QString>;
 			expMap->insert({{0, "0: Flicker Period off"}, {1, "1: 100 Hz"}, {2, "2: 120 Hz"}});
 		controls.append(new ComboBoxControl(  IF_AE_G_ECM, IF_AE_S_ECM, AE_FLICKER_PERIOD_PARAMS, "The flag of Auto Exposure flicker period", expMap, ""));
-		controls.append(new CheckBoxControl(IF_AE_G_ECM, IF_AE_S_ECM, AE_AFPS_PARAMS,           "Auto FPS control value ",                  false,   ""));
+		controls.append(new CheckBoxControl(IF_AE_G_ECM, IF_AE_S_ECM, AE_AFPS_PARAMS,           "Auto FPS control value",                   false,   ""));
 
 		controls.append(new GroupControl("AF - Auto Focus (not implemented)"));
 
@@ -103,9 +103,9 @@ public:
 		controls.append(new SliderControl(  IF_DPF_G_CFG, IF_DPF_S_CFG, DPF_GRADIENT_PARAMS,       "Gradient value for dynamic strength calculation",        0, 128, 0, ""));
 		controls.append(new SliderControl(  IF_DPF_G_CFG, IF_DPF_S_CFG, DPF_OFFSET_PARAMS,         "Offset value for dynamic strength calculation",       -128, 127, 0, ""));
 		controls.append(new SliderControl(  IF_DPF_G_CFG, IF_DPF_S_CFG, DPF_MIN_PARAMS,            "Upper bound for dynamic strength calculation",           0, 128, 0, ""));
-		controls.append(new SliderControl(  IF_DPF_G_CFG, IF_DPF_S_CFG, DPF_DIV_PARAMS,            "Division factor for dynamic strength calculation ",      0,  64, 0, ""));
-		controls.append(new SliderControl(  IF_DPF_G_CFG, IF_DPF_S_CFG, DPF_SIGMA_GREEN_PARAMS,    "The spatial filter’s sigma of the green channel ",       1, 255, 0, ""));
-		controls.append(new SliderControl(  IF_DPF_G_CFG, IF_DPF_S_CFG, DPF_SIGMA_RED_BLUE_PARAMS, "The spatial filter’s sigma of the Red/Blue channel ",    1, 255, 0, ""));
+		controls.append(new SliderControl(  IF_DPF_G_CFG, IF_DPF_S_CFG, DPF_DIV_PARAMS,            "Division factor for dynamic strength calculation",       0,  64, 0, ""));
+		controls.append(new SliderControl(  IF_DPF_G_CFG, IF_DPF_S_CFG, DPF_SIGMA_GREEN_PARAMS,    "The spatial filter’s sigma of the green channel",        1, 255, 0, ""));
+		controls.append(new SliderControl(  IF_DPF_G_CFG, IF_DPF_S_CFG, DPF_SIGMA_RED_BLUE_PARAMS, "The spatial filter’s sigma of the Red/Blue channel",     1, 255, 0, ""));
 
 		controls.append(new GroupControl("EC - Exposure Control"));
 		controls.append(new SliderControl( IF_EC_G_CFG, IF_EC_S_CFG, EC_GAIN_PARAMS,            "Exposure gain",         1.0f, 110.0f, 1.0f, 3, "Diasable AE (Auto Exposure) first"));
@@ -123,12 +123,12 @@ public:
 		// controls.append(new LabelControl(  IF_EC_G_STATUS,           EC_INTEGRATION_MAX_PARAMS, "Sub-node parameter, Maximum integration time", "", &typeid(float)));
 
 		controls.append(new GroupControl("FILTER"));
-		controls.append(new CheckBoxControl(IF_FILTER_G_EN,  IF_FILTER_S_EN,   FILTER_ENABLE_PARAMS,   "Enabled",                        true,     "The state of the Filter control "));
+		controls.append(new CheckBoxControl(IF_FILTER_G_EN,  IF_FILTER_S_EN,   FILTER_ENABLE_PARAMS,   "Enabled",                        true,     "The state of the Filter control"));
 		controls.append(new CheckBoxControl(IF_FILTER_G_CFG, IF_FILTER_S_CFG,  FILTER_AUTO_PARAMS,     "Auto control",                   true,     "Auto control; automatically adjusts denoise and sharpen values."));
 		controls.append(new SliderControl(  IF_FILTER_G_CFG, IF_FILTER_S_CFG,  FILTER_DENOISE_PARAMS,  "Denoise level",                  0, 10, 0, ""));
 		controls.append(new SliderControl(  IF_FILTER_G_CFG, IF_FILTER_S_CFG,  FILTER_SHARPEN_PARAMS,  "Sharpen level",                  0, 10, 0, ""));
-		controls.append(new SliderControl(  IF_FILTER_G_CFG, IF_FILTER_S_CFG,  FILTER_CHRHMODE_PARAMS, "Chroma filter horizontal mode ", 0,  3, 0, ""));
-		controls.append(new SliderControl(  IF_FILTER_G_CFG, IF_FILTER_S_CFG,  FILTER_CHRVMODE_PARAMS, "Chroma filter vertical mode ",   0,  3, 0, ""));
+		controls.append(new SliderControl(  IF_FILTER_G_CFG, IF_FILTER_S_CFG,  FILTER_CHRHMODE_PARAMS, "Chroma filter horizontal mode",  0,  3, 0, ""));
+		controls.append(new SliderControl(  IF_FILTER_G_CFG, IF_FILTER_S_CFG,  FILTER_CHRVMODE_PARAMS, "Chroma filter vertical mode",    0,  3, 0, ""));
 		// controls.append(new LabelControl(   IF_FILTER_G_TBL,                   FILTER_TABLE_PARAMS,    "Filter auto table",                        "", &typeid(std::string)));  // unknown
 		// controls.append(new LabelControl(   IF_FILTER_G_TBL,                   "columns",              "Table's column property",                  "", &typeid(std::string)));
 		// controls.append(new LabelControl(   IF_FILTER_G_TBL,                   "rows",                 "Values of properties in the table",        "", &typeid(std::string)));
@@ -136,42 +136,87 @@ public:
 		controls.append(new LabelControl(   IF_FILTER_G_STATUS,                FILTER_INTEGRATION_TIME_PARAMS, "Sensor integration time",      "", &typeid(float)));
 
 		controls.append(new GroupControl("GC - Gamma control"));
+		controls.append(new CheckBoxControl(IF_GC_G_EN,  IF_GC_S_EN,   GC_ENABLE_PARAMS,   "Enabled",                   true,     "The state of the Gamma Control"));
+		// IF_GC_G_CURVE - the same as IF_GC_G_CFG
+		controls.append(new LabelControl(   IF_GC_G_CURVE,      GC_CURVE_PARAMS,        "Gamma curve",                  "", &typeid(int[]))); // 0...1023
+			QMap<int, QString> *gcmodeMap = new QMap<int, QString>;
+			gcmodeMap->insert({{1, "Logarithmic mode"}, {2, "Equidistant mode"}});
+		controls.append(new ComboBoxControl(IF_GC_G_CFG, IF_GC_S_CFG,      GC_MODE_PARAMS,         "Gamma segmentation mode", gcmodeMap, "Selects the gamma segmentation mode. Logarithmic: logarithmic segmentation from 0 to 4095, (64,64,64,64,128,128,128,128,256,256,256,512,512,512,512,512)\nEquidistant: equidistant segmentation from 0 to 4095, (256, 256, ... ); all 16 segments are 256."));
+
+		controls.append(new GroupControl("HDR - High Dynamic Range"));
+		controls.append(new CheckBoxControl(IF_HDR_G_EN,  IF_HDR_S_EN,   HDR_ENABLE_PARAMS,         "Enabled",         true,     "The state of High Dynamic Range"));
+		controls.append(new SliderControl(  IF_HDR_G_CFG, IF_HDR_S_CFG,  HDR_EXTENSION_BIT_PARAMS,  "Extension bit",   0,  4, 0, ""));
+		controls.append(new SliderControl(  IF_HDR_G_CFG, IF_HDR_S_CFG,  HDR_EXPOSURE_RATIO_PARAMS, "Exposure ration", 0, 16, 0, ""));
+
+		controls.append(new GroupControl("LSC - Lens Shade Correction"));
+		controls.append(new CheckBoxControl(IF_LSC_G_EN,  IF_LSC_S_EN,   LSC_ENABLE_PARAMS,  "Enabled",                true,      "The state of Lens Shade Correction"));
+		controls.append(new LabelControl(   IF_LSC_G_STATUS,             LSC_RED_PARAMS,     "LSC gains red",                     "", &typeid(float[])));
+		controls.append(new LabelControl(   IF_LSC_G_STATUS,             LSC_GREEN_R_PARAMS, "LSC gains green.r",                 "", &typeid(float[])));
+		controls.append(new LabelControl(   IF_LSC_G_STATUS,             LSC_GREEN_B_PARAMS, "LSC gains green.b",                 "", &typeid(float[])));
+		controls.append(new LabelControl(   IF_LSC_G_STATUS,             LSC_BLUE_PARAMS,    "LSC gains blue",                    "", &typeid(float[])));
+		controls.append(new LabelControl(   IF_LSC_G_STATUS,             LSC_XSIZE_PARAMS,   "Horizontal orientation block size", "", &typeid(int[])));
+		controls.append(new LabelControl(   IF_LSC_G_STATUS,             LSC_YSIZE_PARAMS,   "Vertical orientation block size",   "", &typeid(int[])));
+
+		controls.append(new GroupControl("WDR - Wide Dynamic Range"));
+// zawiesza		controls.append(new CheckBoxControl(IF_WDR_G_EN,  IF_WDR_S_EN, WDR_ENABLE_PARAMS,         "Enables or disables WDR", false,        "The state of WDR"));
+		// 	QMap<int, QString> *wdrgenMap = new QMap<int, QString>;
+		// 	wdrgenMap->insert({{0, "0: GWDR (not supported for NXP)"}, {1, "1: WDR2 (not supported for NXP)"}, {2, "2: WDR3"}});
+		// controls.append(new ComboBoxControl(IF_WDR_G_EN,  IF_WDR_S_EN, WDR_GENERATION_PARAMS,     "WDR generation", wdrgenMap,              ""));
+		// 	QMap<int, QString> *wdrgen2Map = new QMap<int, QString>;
+		// 	wdrgen2Map->insert({{0, "0: GWDR (not supported for NXP)"}, {1, "1: WDR2 (not supported for NXP)"}, {2, "2: WDR3"}});
+		// controls.append(new ComboBoxControl(IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_GENERATION_PARAMS,     "WDR generation", wdrgen2Map,              ""));
+		// // controls.append(new LabelControl(   IF_WDR_G_CFG,             WDR_GENERATION_PARAMS,     "WDR generation",                "0: GWDR (not supported for NXP)\n1: WDR2 (not supported for NXP)\n2: WDR3", &typeid(int)));
+		// controls.append(new LabelControl(   IF_WDR_G_CFG,               WDR_Y_M_PARAMS,            "WDR1 curve Ym value",                    "", &typeid(float[])));
+		// controls.append(new LabelControl(   IF_WDR_G_CFG,               WDR_D_Y_PARAMS,            "WDR1 curve dY value",                    "", &typeid(float[])));
+		// controls.append(new CheckBoxControl(IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_AUTO_PARAMS,           "WDR3 running mode", false,               ""));
+		// controls.append(new SliderControl(  IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_AUTO_LEVEL_PARAMS,     "WDR3 auto level",             0, 100, 0, ""));
+		// controls.append(new SliderControl(  IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_STRENGTH_PARAMS,       "WDR2 or WDR3 strench",        0, 128, 0, ""));
+		// controls.append(new SliderControl(  IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_GAIN_MAX_PARAMS,       "WDR3 gain max",               0, 128, 0, ""));
+		// controls.append(new SliderControl(  IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_STRENGTH_GLOBAL_PARAMS, "WDR3 global strength, image global contrast", 0, 128, 0, ""));
 
 
 
 
 
 		readParams.append({
-			IF_AE_G_EN,
-			IF_AE_G_CFG,
-			IF_AE_G_ECM,
-			IF_AE_G_STATUS,
-			IF_AE_G_ISO,
-			IF_AWB_G_CFG,
-			IF_AWB_G_EN,
-			IF_BLS_G_CFG,
-			IF_CAC_G_EN,
-			IF_CNR_G_EN,
-			IF_CNR_G_CFG,
-			IF_CPROC_G_EN,
-			IF_CPROC_G_CFG,
-			IF_DEMOSAIC_G_EN,
-			IF_DEMOSAIC_G_CFG,
-			IF_DPCC_G_EN,
-			IF_DPF_G_EN,
-			IF_DPF_G_CFG,
-			IF_EC_G_CFG,
-			// IF_EC_G_STATUS,
-			IF_FILTER_G_EN,
-			IF_FILTER_G_CFG,
-			// IF_FILTER_G_TBL,  // unknown
-			IF_FILTER_G_STATUS,
+				IF_AE_G_EN,
+				IF_AE_G_CFG,
+				IF_AE_G_ECM,
+				IF_AE_G_STATUS,
+				IF_AE_G_ISO,
+				IF_AWB_G_CFG,
+				IF_AWB_G_EN,
+				IF_BLS_G_CFG,
+				IF_CAC_G_EN,
+				IF_CNR_G_EN,
+				IF_CNR_G_CFG,
+				IF_CPROC_G_EN,
+				IF_CPROC_G_CFG,
+				IF_DEMOSAIC_G_EN,
+				IF_DEMOSAIC_G_CFG,
+				IF_DPCC_G_EN,
+				IF_DPF_G_EN,
+				IF_DPF_G_CFG,
+				IF_EC_G_CFG,
+				// IF_EC_G_STATUS,
+				IF_FILTER_G_EN,
+				IF_FILTER_G_CFG,
+				// IF_FILTER_G_TBL,  // unknown
+				IF_FILTER_G_STATUS,
+				IF_GC_G_CFG,
+				IF_GC_G_EN,
+				IF_HDR_G_CFG,
+				IF_HDR_G_EN,
+				IF_LSC_G_EN,
+				IF_LSC_G_STATUS,
+				IF_WDR_G_CFG,
+				IF_WDR_G_EN,
 		});
 
 		initializeNotReadableControls.append({
-			IF_CPROC_S_COEFF,
-			IF_AE_G_STATUS,
-			IF_AWB_S_MEASWIN,
+				IF_CPROC_S_COEFF,
+				IF_AE_G_STATUS,
+				IF_AWB_S_MEASWIN,
 		});
 	}
 };

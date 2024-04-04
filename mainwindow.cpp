@@ -247,6 +247,15 @@ void MainWindow::updateControlsFromJson(Json::Value json, QString cmd)
 						text += QString::number(value[i].asInt());
 					}
 				}
+				else if (scontrol->type == &typeid(float[]))
+				{
+					for (uint i = 0; i < value.size(); i++)
+					{
+						if (i > 0)
+							text += ", ";
+						text += QString::number(value[i].asFloat(), 'f', 3);
+					}
+				}
 				else if (scontrol->type == &typeid(int))
 					text = QString::number(value.asInt());
 				else if (scontrol->type == &typeid(float))
