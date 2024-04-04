@@ -26,6 +26,7 @@ SOURCES += \
 	widgets/slider_widget.cpp
 
 HEADERS += \
+	controls.h \
   controls_definitions.h \
   isp_control.h \
 	mainwindow.h \

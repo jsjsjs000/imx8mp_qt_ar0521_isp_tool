@@ -261,16 +261,13 @@ void MainWindow::updateControlsFromJson(Json::Value json, QString cmd)
 		}
 		else if (const ComboBoxControl *scontrol = dynamic_cast<const ComboBoxControl*>(control))
 		{
-			if (const ComboBoxControl *scontrol = dynamic_cast<const ComboBoxControl*>(control))
+			ComboBoxWidget *comboBox = (ComboBoxWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+			if (comboBox == nullptr)
+				qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
+			else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 			{
-				ComboBoxWidget *comboBox = (ComboBoxWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
-				if (comboBox == nullptr)
-					qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
-				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
-				{
-					int index = json[scontrol->parameter.toStdString()].asInt();
-					comboBox->setItemIndex(index);
-				}
+				int index = json[scontrol->parameter.toStdString()].asInt();
+				comboBox->setItemIndex(index);
 			}
 		}
 		else if (const CheckBoxControl *scontrol = dynamic_cast<const CheckBoxControl*>(control))
