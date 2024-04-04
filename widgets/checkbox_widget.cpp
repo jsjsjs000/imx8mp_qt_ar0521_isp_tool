@@ -32,7 +32,8 @@ CheckBoxWidget::~CheckBoxWidget()
 
 void CheckBoxWidget::setState(bool state)
 {
-	this->ui->checkBox->setChecked(state);
+	if (this->ui->checkBox->isChecked() != state)
+		this->ui->checkBox->setChecked(state);
 }
 
 void CheckBoxWidget::on_checkBox_stateChanged(int arg1)

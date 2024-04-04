@@ -43,8 +43,11 @@ void SliderWidget::setRange()
 
 void SliderWidget::setValue(int value)
 {
-	ui->value->setText(QString::number(value));
-	ui->horizontalSlider->setValue(value);
+	if (ui->horizontalSlider->value() != value)
+	{
+		ui->value->setText(QString::number(value));
+		ui->horizontalSlider->setValue(value);
+	}
 }
 
 void SliderWidget::setValueFloat(float value)

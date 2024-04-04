@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 
 
 	const int DesktopTaskBarHeight = 32;
-	const int MainWindowWidth = 340;
+	const int MainWindowWidth = 350;
 	const int WindowBorder = 5;
 	const QSize desktopSize = QGuiApplication::primaryScreen()->size();
 

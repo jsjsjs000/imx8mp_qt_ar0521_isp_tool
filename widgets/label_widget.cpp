@@ -29,6 +29,9 @@ LabelWidget::~LabelWidget()
 
 void LabelWidget::setText(QString s)
 {
-	this->value = s;
-	this->ui->label->setText(this->name + ":  " + s);
+	if (this->value != s)
+	{
+		this->value = s;
+		this->ui->label->setText(this->name + ":  " + s);
+	}
 }

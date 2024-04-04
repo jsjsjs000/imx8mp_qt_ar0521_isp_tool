@@ -20,6 +20,7 @@ SOURCES += \
   preview_window.cpp \
 	widgets/button_widget.cpp \
 	widgets/checkbox_widget.cpp \
+  widgets/combobox_widget.cpp \
 	widgets/group_widget.cpp \
 	widgets/label_widget.cpp \
 	widgets/slider_widget.cpp
@@ -32,6 +33,7 @@ HEADERS += \
   preview_window.h \
 	widgets/button_widget.h \
 	widgets/checkbox_widget.h \
+  widgets/combobox_widget.h \
 	widgets/group_widget.h \
 	widgets/label_widget.h \
 	widgets/slider_widget.h
@@ -41,6 +43,7 @@ FORMS += \
 	preview_window.ui \
 	widgets/button_widget.ui \
 	widgets/checkbox_widget.ui \
+	widgets/combobox_widget.ui \
 	widgets/group_widget.ui \
 	widgets/label_widget.ui \
 	widgets/slider_widget.ui

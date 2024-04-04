@@ -1,10 +1,10 @@
 #ifndef SLIDER_WIDGET_H
 #define SLIDER_WIDGET_H
 
+#include <QWidget>
 #include "controls_definitions.h"
 #include "ui_slider_widget.h"
 #include "mainwindow.h"
-#include <QWidget>
 
 namespace Ui {
 class SliderWidget;

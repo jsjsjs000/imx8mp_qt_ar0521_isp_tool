@@ -4,6 +4,8 @@
 #include <QMediaPlaylist>
 #include <QSpacerItem>
 
+#include <widgets/combobox_widget.h>
+
 #include "controls_definitions.h"
 #include "widgets/slider_widget.h"
 #include "widgets/group_widget.h"
@@ -73,6 +75,12 @@ void MainWindow::createControls()
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), label);
 			ui->verticalLayout->addWidget(label, 1);
 		}
+		else if (const ComboBoxControl *scontrol = dynamic_cast<const ComboBoxControl*>(control))
+		{
+			ComboBoxWidget *comboBox = new ComboBoxWidget(this, this, scontrol, &MainWindow::onComboBoxIndexChanged);
+			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), comboBox);
+			ui->verticalLayout->addWidget(comboBox, 1);
+		}
 	}
 
 	ui->verticalLayout->addStretch(2);
@@ -101,6 +109,17 @@ void MainWindow::onSliderValueChange(MainWindow *mainWindow, QString getCmd, QSt
 	// 	ispControl.setCprocCfg(parameter, value, divide);
 	// else if (type == IF_CPROC_S_COEFF)
 	// 	ispControl.setCprocCoeff(parameter, value, divide);
+
+	mainWindow->lastTime = clock();
+}
+
+void MainWindow::onComboBoxIndexChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int key, QString value)
+{
+	if (!mainWindow->canUpdateControls)
+		return;
+
+	qDebug() << setCmd << parameter << key << "(" + value + ")";
+	ispControl.setParam(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), key, 1);
 
 	mainWindow->lastTime = clock();
 }
@@ -152,7 +171,29 @@ void MainWindow::readParameters()
 	if (params)
 		this->updateControlsFromJson(params, IF_AE_G_ISO);
 
+	params = ispControl.getParam(IF_AWB_G_CFG);
+	if (params)
+		this->updateControlsFromJson(params, IF_AWB_G_CFG);
 
+	params = ispControl.getParam(IF_AWB_G_EN);
+	if (params)
+		this->updateControlsFromJson(params, IF_AWB_G_EN);
+
+	params = ispControl.getParam(IF_BLS_G_CFG);
+	if (params)
+		this->updateControlsFromJson(params, IF_BLS_G_CFG);
+
+	params = ispControl.getParam(IF_CAC_G_EN);
+	if (params)
+		this->updateControlsFromJson(params, IF_CAC_G_EN);
+
+	params = ispControl.getParam(IF_CNR_G_EN);
+	if (params)
+		this->updateControlsFromJson(params, IF_CNR_G_EN);
+
+	params = ispControl.getParam(IF_CNR_G_CFG);
+	if (params)
+		this->updateControlsFromJson(params, IF_CNR_G_CFG);
 
 	params = ispControl.getParam(IF_CPROC_G_EN);
 	if (params)
@@ -162,10 +203,19 @@ void MainWindow::readParameters()
 	if (params)
 		this->updateControlsFromJson(params, IF_CPROC_G_CFG);
 
+
+
+
+
+
+
+
+
 	if (!this->notReadableControlsInitialized)
 	{
 		this->initializeControlsNotReadable(IF_CPROC_S_COEFF);
 		this->initializeControlsNotReadable(IF_AE_G_STATUS);
+		this->initializeControlsNotReadable(IF_AWB_S_MEASWIN);
 		this->notReadableControlsInitialized = true;
 	}
 
@@ -211,6 +261,20 @@ void MainWindow::updateControlsFromJson(Json::Value json, QString cmd)
 					float value = json[scontrol->parameter.toStdString()].asFloat();
 					slider->setValueFloat(value);
 					// qDebug() << scontrol->parameter << value;
+				}
+			}
+		}
+		else if (const ComboBoxControl *scontrol = dynamic_cast<const ComboBoxControl*>(control))
+		{
+			if (const ComboBoxControl *scontrol = dynamic_cast<const ComboBoxControl*>(control))
+			{
+				ComboBoxWidget *comboBox = (ComboBoxWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+				if (comboBox == nullptr)
+					qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
+				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
+				{
+					int index = json[scontrol->parameter.toStdString()].asInt();
+					comboBox->setItemIndex(index);
 				}
 			}
 		}
