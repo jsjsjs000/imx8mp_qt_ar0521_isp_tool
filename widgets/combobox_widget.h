@@ -32,6 +32,7 @@ private:
 	QMap<int, QString> *map;
 	QList<int> mapKeys;								// keys list
 	QMap<int, int> mapKeysIndexes;		// keys index
+	bool initialized = false;
 	void (*onComboBoxIndexChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int key, QString value);
 };
 

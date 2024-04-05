@@ -4,9 +4,8 @@
 #include <QVector>
 #include <QString>
 #include <QMap>
+#include "cam_device_module_ids.h"
 #include "ioctl_cmds.h"
-#include "viv_video_kevent.h"
-#include "cam_device_api.hpp"
 #include "controls.h"
 
 class ControlsDefinitions
@@ -20,13 +19,15 @@ public:
 	{
 		controls.append(new GroupControl("AE - Auto Exposure"));
 		controls.append(new CheckBoxControl(IF_AE_G_EN, IF_AE_S_EN, AE_ENABLE_PARAMS,        "Enabled",                    true,          ""));
-		controls.append(new SliderControl(IF_AE_G_CFG, IF_AE_S_CFG, AE_MODE_PARAMS,          "Configuration mode",   1, 3, 1,             "Configuration mode\n1: Disabled evaluation\n2: Fix evaluation\n3: Adaptive evaluation"));
+			QMap<int, QString> *aemodeMap = new QMap<int, QString>;
+			aemodeMap->insert({{1, "Disabled evaluation"}, {2, "Fix evaluation"}, {3, "Adaptive evaluation"}});
+		controls.append(new ComboBoxControl(IF_AE_G_CFG, IF_AE_S_CFG, AE_MODE_PARAMS,          "Configuration mode", aemodeMap,           "Configuration mode"));
 		controls.append(new SliderControl(IF_AE_G_CFG, IF_AE_S_CFG, AE_DAMP_OVER_PARAMS,     "Damping upper limit",  0.0f, 1.0f, 0.0f, 3, "Damping upper limit for luminance over set point. The larger the value, the smoother the convergence"));
 		controls.append(new SliderControl(IF_AE_G_CFG, IF_AE_S_CFG, AE_DAMP_UNDER_PARAMS,    "Damping lower limit",  0.0f, 1.0f, 0.0f, 3, "Damping lower limit for luminance under set point. The larger the value, the smoother the convergence"));
 		controls.append(new SliderControl(IF_AE_G_CFG, IF_AE_S_CFG, AE_SET_POINT_PARAMS,     "Set point",            0, 255, 0,           "Target luminance point"));
 		controls.append(new SliderControl(IF_AE_G_CFG, IF_AE_S_CFG, AE_CLM_TOLERANCE_PARAMS, "Calculation accuracy", 0, 100, 0,           "Calculation accuracy; AE will make adjustments when the difference ratio between set.point and actual point over the clm.tolerance"));
 		controls.append(new LabelControl( IF_AE_G_CFG,              AE_WEIGHT_PARAMS,        "Weights of 5x5 blocks",                     "", &typeid(int[])));
-		controls.append(new ButtonControl(NULL,           IF_AE_RESET, NULL,                 "Resets the Auto Exposure control",          ""));
+		controls.append(new ButtonControl(NULL,           IF_AE_RESET, NULL, "",             "Resets the Auto Exposure control",          ""));
 		controls.append(new LabelControl( IF_AE_G_STATUS, AE_HIST_PARAMS_BASE64,             "Current histogram of image", "", &typeid(int[])));
 		controls.append(new LabelControl( IF_AE_G_STATUS, AE_LUMA_PARAMS_BASE64,             "Mean luminance measured",    "", &typeid(int[])));
 		controls.append(new LabelControl( IF_AE_G_STATUS, AE_OBJECT_REGION_PARAMS_BASE64,    "Measurement windows block",  "", &typeid(int[])));
@@ -40,20 +41,24 @@ public:
 			QMap<int, QString> *expMap = new QMap<int, QString>;
 			expMap->insert({{0, "0: Flicker Period off"}, {1, "1: 100 Hz"}, {2, "2: 120 Hz"}});
 		controls.append(new ComboBoxControl(  IF_AE_G_ECM, IF_AE_S_ECM, AE_FLICKER_PERIOD_PARAMS, "The flag of Auto Exposure flicker period", expMap, ""));
-		controls.append(new CheckBoxControl(IF_AE_G_ECM, IF_AE_S_ECM, AE_AFPS_PARAMS,           "Auto FPS control value",                   false,   ""));
+		controls.append(new CheckBoxControl(IF_AE_G_ECM, IF_AE_S_ECM, AE_AFPS_PARAMS,           "Auto FPS control value",                   false,   "Set manual FPS to disable it (Sensor > FPS)"));
 
 		controls.append(new GroupControl("AF - Auto Focus (not implemented)"));
 
 		controls.append(new GroupControl("AWB - Auto White Balance"));
 		controls.append(new CheckBoxControl(IF_AWB_G_EN, IF_AWB_S_EN, AWB_ENABLE_PARAMS,        "Enabled",                    true,          "The state of the AWB control"));
-		controls.append(new SliderControl(IF_AWB_G_CFG, IF_AWB_S_CFG, AWB_MODE_PARAMS, "AWB mode", 1, 2, 1, "AWB mode; auto mode automatically calculates the appropriate illumination profile.\n1: Manual\n2: Auto"));
-		controls.append(new SliderControl(IF_AWB_G_CFG, IF_AWB_S_CFG, AWB_INDEX_PARAMS, "Index of illumination profile", 0, 4, 0, "The index of the illumination profile; it will affect the AWB adjustment effect:\n0: A\n1: D50\n2: D65\n3: F2 (CWF)\n4: F11 (TL84)"));
+			QMap<int, QString> *awbmodeMap = new QMap<int, QString>;
+			awbmodeMap->insert({{1, "Manual"}, {2, "Auto"}});
+		controls.append(new ComboBoxControl(IF_AWB_G_CFG, IF_AWB_S_CFG, AWB_MODE_PARAMS, "AWB mode", awbmodeMap, "Auto mode automatically calculates the appropriate illumination profile."));
+			QMap<int, QString> *awbprofileMap = new QMap<int, QString>;
+			awbprofileMap->insert({{0, "A"}, {1, "D50"}, {2, "D65"}, {3, "F2 (CWF)"}, {4, "F11 (TL84)"}});
+		controls.append(new ComboBoxControl(IF_AWB_G_CFG, IF_AWB_S_CFG, AWB_INDEX_PARAMS, "Index of illumination profile", awbprofileMap, "The index of the illumination profile; it will affect the AWB adjustment effect"));
 		controls.append(new CheckBoxControl(IF_AWB_G_CFG, IF_AWB_S_CFG, AWB_DAMPING_PARAMS, "Damping", false, "Changes white balance smoothly through temporal damping"));
 		controls.append(new SliderControl(  NULL,         IF_AWB_S_MEASWIN, RECT_LEFT,  "Measuring window left start position", 0, 3840, 0, ""));
 		controls.append(new SliderControl(  NULL,         IF_AWB_S_MEASWIN, RECT_TOP,  "Measuring window top start position", 0, 2160, 0, ""));
 		controls.append(new SliderControl(  NULL,         IF_AWB_S_MEASWIN, RECT_WIDTH,  "Measuring window width", 10, 3840, 1920, ""));
 		controls.append(new SliderControl(  NULL,         IF_AWB_S_MEASWIN, RECT_HEIGHT,  "Measuring window height", 10, 2160, 1080, ""));
-		controls.append(new ButtonControl(NULL,           IF_AWB_RESET, NULL,                 "Resets the Auto White Balance control",          ""));
+		controls.append(new ButtonControl(NULL,           IF_AWB_RESET, NULL, "",             "Resets the Auto White Balance control",          ""));
 
 		controls.append(new GroupControl("BLS - Black Level Subtraction"));
 		controls.append(new SliderControl(IF_BLS_G_CFG, IF_BLS_S_CFG, BLS_RED_PARAMS,  "The red data information", 0, 255, 0, ""));
@@ -115,7 +120,7 @@ public:
 		controls.append(new LabelControl(  IF_EC_G_CFG,              EC_INTEGRATION_MIN_PARAMS, "Minimum exposure time",                        "", &typeid(float)));
 		controls.append(new LabelControl(  IF_EC_G_CFG,              EC_INTEGRATION_MAX_PARAMS, "Maximum exposure time",                        "", &typeid(float)));
 
-		// controls.append(new LabelControl(  IF_EC_G_STATUS,           EC_GAIN_PARAMS,            "Exposure gain range",                          "", &typeid(int)));  // same data as above
+		// controls.append(new LabelControl(  IF_EC_G_STATUS,           EC_GAIN_PARAMS,            "Exposure gain range",                          "", &typeid(int)));  // duplicate data as above
 		// controls.append(new LabelControl(  IF_EC_G_STATUS,           EC_GAIN_MIN_PARAMS,        "Sub-node parameter, Minimum gain",             "", &typeid(int)));  // gain.min
 		// controls.append(new LabelControl(  IF_EC_G_STATUS,           EC_GAIN_MAX_PARAMS,        "Sub-node parameter, Maximum gain",             "", &typeid(int)));
 		// controls.append(new LabelControl(  IF_EC_G_STATUS,           EC_TIME_PARAMS,            "Exposure time range",                          "", &typeid(float)));
@@ -158,25 +163,65 @@ public:
 		controls.append(new LabelControl(   IF_LSC_G_STATUS,             LSC_YSIZE_PARAMS,   "Vertical orientation block size",   "", &typeid(int[])));
 
 		controls.append(new GroupControl("WDR - Wide Dynamic Range"));
-// zawiesza		controls.append(new CheckBoxControl(IF_WDR_G_EN,  IF_WDR_S_EN, WDR_ENABLE_PARAMS,         "Enables or disables WDR", false,        "The state of WDR"));
-		// 	QMap<int, QString> *wdrgenMap = new QMap<int, QString>;
-		// 	wdrgenMap->insert({{0, "0: GWDR (not supported for NXP)"}, {1, "1: WDR2 (not supported for NXP)"}, {2, "2: WDR3"}});
-		// controls.append(new ComboBoxControl(IF_WDR_G_EN,  IF_WDR_S_EN, WDR_GENERATION_PARAMS,     "WDR generation", wdrgenMap,              ""));
-		// 	QMap<int, QString> *wdrgen2Map = new QMap<int, QString>;
-		// 	wdrgen2Map->insert({{0, "0: GWDR (not supported for NXP)"}, {1, "1: WDR2 (not supported for NXP)"}, {2, "2: WDR3"}});
-		// controls.append(new ComboBoxControl(IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_GENERATION_PARAMS,     "WDR generation", wdrgen2Map,              ""));
-		// // controls.append(new LabelControl(   IF_WDR_G_CFG,             WDR_GENERATION_PARAMS,     "WDR generation",                "0: GWDR (not supported for NXP)\n1: WDR2 (not supported for NXP)\n2: WDR3", &typeid(int)));
+		controls.append(new CheckBoxControl(IF_WDR_G_EN,  IF_WDR_S_EN, WDR_ENABLE_PARAMS,           "Enables or disables WDR", false,         "The state of WDR"));
 		// controls.append(new LabelControl(   IF_WDR_G_CFG,               WDR_Y_M_PARAMS,            "WDR1 curve Ym value",                    "", &typeid(float[])));
 		// controls.append(new LabelControl(   IF_WDR_G_CFG,               WDR_D_Y_PARAMS,            "WDR1 curve dY value",                    "", &typeid(float[])));
 		// controls.append(new CheckBoxControl(IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_AUTO_PARAMS,           "WDR3 running mode", false,               ""));
-		// controls.append(new SliderControl(  IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_AUTO_LEVEL_PARAMS,     "WDR3 auto level",             0, 100, 0, ""));
-		// controls.append(new SliderControl(  IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_STRENGTH_PARAMS,       "WDR2 or WDR3 strench",        0, 128, 0, ""));
-		// controls.append(new SliderControl(  IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_GAIN_MAX_PARAMS,       "WDR3 gain max",               0, 128, 0, ""));
-		// controls.append(new SliderControl(  IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_STRENGTH_GLOBAL_PARAMS, "WDR3 global strength, image global contrast", 0, 128, 0, ""));
+		controls.append(new SliderControl(  IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_AUTO_LEVEL_PARAMS,      "WDR3 auto level",             0, 100, 0, ""));
+		controls.append(new SliderControl(  IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_STRENGTH_PARAMS,        "WDR2 or WDR3 strench",        0, 128, 0, ""));
+		controls.append(new SliderControl(  IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_GAIN_MAX_PARAMS,        "WDR3 gain max",               0, 128, 0, ""));
+		controls.append(new SliderControl(  IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_STRENGTH_GLOBAL_PARAMS, "WDR3 global strength, image global contrast", 0, 128, 0, ""));
+		controls.append(new ButtonControl(  NULL, IF_WDR_RESET, WDR_GENERATION_PARAMS, "2", "Reset WDR", ""));
+		controls.append(new LabelControl(   IF_WDR_G_STATUS, WDR_GAIN_PARAMS,             "WDR gain",             "", &typeid(float)));
+		controls.append(new LabelControl(   IF_WDR_G_STATUS, WDR_INTEGRATION_TIME_PARAMS, "WDR integration time", "", &typeid(float)));
+		// controls.append(new LabelControl(   IF_WDR_G_TBL, WDR_TABLE_PARAMS, "WDR table", "", &typeid(std::string[]))); // empty response
 
+		controls.append(new GroupControl("WB - White Balance"));
+		controls.append(new LabelControl(   IF_WB_G_CFG, WB_MATRIX_PARAMS, "Color correction Matrinx (X-Talk)", "", &typeid(float[]))); // $$ edit
+		controls.append(new LabelControl(   IF_WB_G_CFG, WB_OFFSET_PARAMS, "[red, green, blue] offset ", "", &typeid(int[]))); // $$ edit
+		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG, WB_RED_PARAMS,      "WB gains red",             0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));
+		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG, WB_GREEN_R_PARAMS,  "WB gains green.r",         0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));
+		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG, WB_GREEN_B_PARAMS,  "WB gains green.b",         0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));
+		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG, WB_BLUE_PARAMS,     "WB gains blue",            0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));
+		// controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_RED_PARAMS,      "WB gains red",             0.0f, 3.999f, 0.0f, 3, "")); // not works or duplicated (?)
+		// controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_GREEN_R_PARAMS,  "WB gains green.r",         0.0f, 3.999f, 0.0f, 3, ""));
+		// controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_GREEN_B_PARAMS,  "WB gains green.b",         0.0f, 3.999f, 0.0f, 3, ""));
+		// controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_BLUE_PARAMS,     "WB gains blue",            0.0f, 3.999f, 0.0f, 3, ""));
+		// controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_BLUE_PARAMS,     "[red, green, blue] offset",  -2048, 2047, "")); // $$ edit array/matrix
+		// "Color correction Matrix (X-Talk)" IF_WB_S_CCM     $$ edit array/matrix
 
+		controls.append(new GroupControl("DWE - Dewarp"));
+		// controls.append(new LabelControl(   IF_DWE_G_PARAMS, "dwe", "Get the dewarp node", "", &typeid(std::string[]))); // $$ edit subnode
+		// controls.append(new CheckBoxControl(IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "hflip", "", false,         ""));
+		// $$ rest submodes: hflip, vflip, mode, bypass, mat...
+		// jRequest["dwe"]["mode"] = dweParams.mode;
+		// dweParams.vflip = jResponse["dwe"]["vflip"].asBool();
 
+		controls.append(new GroupControl("Crops the image"));
+		// $$ subnodes - nudbox
 
+		controls.append(new GroupControl("Scales the image"));
+		// $$ subnodes - nudbox
+
+		controls.append(new GroupControl("Sensor"));
+		// $$ subnodes - IF_SENSOR_QUERY
+
+		// $$ IF_SENSOR_G_MODE, IF_SENSOR_S_MODE - sensor get/set mode index
+
+		controls.append(new LabelControl(   IF_SENSOR_G_RESW, "resw", "Sensor width", "", &typeid(int)));
+		controls.append(new LabelControl(   IF_SENSOR_G_RESH, "resh", "Sensor height", "", &typeid(int)));
+		controls.append(new SliderControl(  NULL, IF_S_FPS, "fps",  "FPS",         1, 50, 1, ""));
+		// controls.append(new ButtonControl(  NULL, IF_SENSOR_LIB_PRELOAD, "", "", "Reload sensor calibration file (hang up stream)", "")); // not works
+		controls.append(new SliderControl(  IF_SENSOR_G_SEC, IF_SENSOR_S_SEC, "exposure",  "AE start exposure = IntegrationTime x Gain",         0.0f, 3.0f, 0.0f, 3, "Disable AE (Auto Exposure) first"));
+		// controls.append(new SliderControl(  NULL, IF_SENSOR_S_TESTPAT, "test.pattern ",  "Sensor test pattern mode",         0, 10, 0, "")); // not works
+
+		// controls.append(new GroupControl("Pipline"));
+		// controls.append(new ButtonControl(  NULL, IF_PIPELINE_S_WARM_UP, "enable", "true", "Warms up pipeline", "")); // not works
+		// controls.append(new ButtonControl(  NULL, IF_PIPELINE_S_WARM_UP, "enable", "false", "Disable pipeline", "")); // not works
+		// IF_PIPELINE_S_SMP_MODE (simple matrix processor)
+		// IF_PIPELINE_S_DWE_ONOFF
+		// IF_PIPELINE_S_TESTPAT
+		// IF_PIPELINE_G_3A_LOCK / IF_PIPELINE_S_3A_LOCK AF/AE/AWB lock
 
 		readParams.append({
 				IF_AE_G_EN,
@@ -198,7 +243,7 @@ public:
 				IF_DPF_G_EN,
 				IF_DPF_G_CFG,
 				IF_EC_G_CFG,
-				// IF_EC_G_STATUS,
+				// IF_EC_G_STATUS,   // duplicate
 				IF_FILTER_G_EN,
 				IF_FILTER_G_CFG,
 				// IF_FILTER_G_TBL,  // unknown
@@ -209,14 +254,24 @@ public:
 				IF_HDR_G_EN,
 				IF_LSC_G_EN,
 				IF_LSC_G_STATUS,
-				IF_WDR_G_CFG,
 				IF_WDR_G_EN,
+				IF_WDR_G_CFG,
+				IF_WDR_G_STATUS,
+				IF_WDR_G_TBL,
+				IF_WB_G_CFG,
+				IF_DWE_G_PARAMS,
+				IF_SENSOR_QUERY,
+				IF_SENSOR_G_MODE,
+				IF_SENSOR_G_RESW,
+				IF_SENSOR_G_RESH,
+				IF_SENSOR_G_SEC,
 		});
 
 		initializeNotReadableControls.append({
 				IF_CPROC_S_COEFF,
 				IF_AE_G_STATUS,
 				IF_AWB_S_MEASWIN,
+				IF_S_FPS,
 		});
 	}
 };

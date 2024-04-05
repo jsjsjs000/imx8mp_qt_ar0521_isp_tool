@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
 	this->canUpdateControls = true;
 
 	this->lastTime = clock();
-	timerId = startTimer(500);
+	timerId = startTimer(2000); // $$ 500
 }
 
 MainWindow::~MainWindow()
@@ -125,10 +125,14 @@ void MainWindow::onButtonClicked(MainWindow *mainWindow, QString getCmd, QString
 		return;
 
 	qDebug() << setCmd << parameter;
-	if (getCmd == NULL)
-		ispControl.sendCmd(setCmd.toStdString().c_str(), parameter.toStdString().c_str(), value.toStdString().c_str());
-	// else
-	// 	ispControl.setParam(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str()); $$
+	if (strncmp(value.toStdString().c_str(), "true", strlen("true")) == 0)
+		ispControl.setParamBool(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), true);
+	else if (strncmp(value.toStdString().c_str(), "false", strlen("false")) == 0)
+		ispControl.setParamBool(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), false);
+	else
+		ispControl.setParamString(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), value.toStdString().c_str());
+
+	mainWindow->lastTime = clock();
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -213,7 +217,11 @@ void MainWindow::updateControlsFromJson(Json::Value json, QString cmd)
 				qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
 			else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 			{
-				int index = json[scontrol->parameter.toStdString()].asInt();
+				int index;
+				if (json[scontrol->parameter.toStdString()].isBool())
+					index = json[scontrol->parameter.toStdString()].asBool();
+				else
+					index = json[scontrol->parameter.toStdString()].asInt();
 				comboBox->setItemIndex(index);
 			}
 		}
@@ -260,6 +268,17 @@ void MainWindow::updateControlsFromJson(Json::Value json, QString cmd)
 					text = QString::number(value.asInt());
 				else if (scontrol->type == &typeid(float))
 					text = QString::number(value.asFloat(), 'f', 3);
+				else if (scontrol->type == &typeid(std::string))
+					text = QString(value.asCString());
+				else if (scontrol->type == &typeid(std::string[]))
+				{
+					for (uint i = 0; i < value.size(); i++)
+					{
+						if (i > 0)
+							text += ", ";
+						text += QString(value[i].asCString());
+					}
+				}
 				else
 				{
 					text = "(" + scontrol->parameter + " not decoded type)";

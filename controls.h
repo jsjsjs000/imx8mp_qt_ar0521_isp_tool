@@ -119,11 +119,12 @@ class ButtonControl : public Control
 	void v(void) override {}  // required
 
 public:
-	ButtonControl(QString getCmd, QString setCmd, QString parameter, QString name, QString description)
+	ButtonControl(QString getCmd, QString setCmd, QString parameter, QString value, QString name, QString description)
 	{
 		this->getCmd = getCmd;
 		this->setCmd = setCmd;
 		this->parameter = parameter;
+		this->value = value;
 		this->name = name;
 		this->description = description;
 	}

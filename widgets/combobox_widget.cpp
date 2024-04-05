@@ -33,6 +33,7 @@ ComboBoxWidget::ComboBoxWidget(QWidget *parent, MainWindow *mainWindow, const Co
 	}
 
 	this->onComboBoxIndexChanged = onComboBoxIndexChanged;
+	this->initialized = true;
 }
 
 ComboBoxWidget::~ComboBoxWidget()
@@ -58,6 +59,9 @@ void ComboBoxWidget::setItemIndex(int key)
 
 void ComboBoxWidget::on_comboBox_currentIndexChanged(int index)
 {
+	if (!this->initialized)
+		return;
+
 	const int key = this->mapKeys[index];
 	QString value = this->map->value(key);
 	// qDebug() << "on cb index changed" << index << key << value;

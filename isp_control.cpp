@@ -1,12 +1,12 @@
 #include <sys/ioctl.h>
 #include <fcntl.h>
 
-#include "cam_device_api.hpp"
-#include "viv_video_kevent.h"
 #include "ioctl_cmds.h"
+#include "viv_video_kevent.h"
 #include "isp_control.h"
+#include "cam_device_module_ids.h"
 
-// #define DEBUG
+#define DEBUG
 
 IspControl::IspControl() {}
 
@@ -18,7 +18,7 @@ int IspControl::openVideo()
 	this->fd = ::open(szFile, O_RDWR | O_NONBLOCK);
 	if (this->fd < 0)
 	{
-		printf("can't open video file %s", szFile);
+		qDebug("can't open video file %s", szFile);
 		return 1;
 	}
 
@@ -26,26 +26,31 @@ int IspControl::openVideo()
 	int result = ::ioctl(this->fd, VIDIOC_QUERYCAP, &caps);
 	if (result < 0)
 	{
-		printf("failed to get device caps for %s (%d = %s)", szFile, errno, strerror(errno));
+		qDebug("failed to get device caps for %s (%d = %s)", szFile, errno, strerror(errno));
 		return 1;
 	}
 
 #ifdef DEBUG
-	printf("Open: %s \n", szFile);
-	printf("Open: (fd=%d)\n", fd);
-	printf("Open Device: %s (fd=%d)\n", szFile, fd);
-	printf("  Driver: %s\n", caps.driver);
+	qDebug("Open: %s \n", szFile);
+	qDebug("Open: (fd=%d)\n", fd);
+	qDebug("Open Device: %s (fd=%d)\n", szFile, fd);
+	qDebug("  Driver: %s\n", caps.driver);
 #endif
 
 	if (strcmp((const char*)caps.driver, "viv_v4l2_device") == 0)
 	{
-		// printf("found viv video dev %s\n", szFile);
+#ifdef DEBUG
+		qDebug("found viv video dev %s\n", szFile);
+#endif
 		int streamid = -1;
 		::ioctl(this->fd, VIV_VIDIOC_S_STREAMID, &streamid);
+#ifdef DEBUG
+		qDebug("streamid %d\n", streamid);
+#endif
 	}
 	else
 	{
-		printf("Open wrong type of viv video dev\n");
+		qDebug("Open wrong type of viv video dev\n");
 		return 1;
 	}
 
@@ -59,7 +64,7 @@ bool IspControl::vivIoctl(const char *cmd, Json::Value& jsonRequest, Json::Value
 {
 	if (!cmd)
 	{
-		printf("cmd should not be null!");
+		qDebug("cmd should not be null!");
 		return false;
 	}
 	jsonRequest["id"] = cmd;
@@ -79,28 +84,27 @@ bool IspControl::vivIoctl(const char *cmd, Json::Value& jsonRequest, Json::Value
 
 	strncpy(ec.string, jsonRequest.toStyledString().c_str(), VIV_JSON_BUFFER_SIZE);
 #ifdef DEBUG
-	printf("DEBUG out: %s\n", ec.string);
+	qDebug("DEBUG out: %s\n", ec.string);
 	// std::string inputString;
 	// std::getline(std::cin, inputString);
 #endif
 	int ret = ::ioctl(this->fd, VIDIOC_S_EXT_CTRLS, &ecs);
 	if (ret != 0)
 	{
-		printf("failed to set ext ctrl\n");
+		qDebug("failed to set ext ctrl\n");
 		goto end;
 	}
 	else
 	{
 		::ioctl(this->fd, VIDIOC_G_EXT_CTRLS, &ecs);
 #ifdef DEBUG
-		printf("DEBUG in: %s\n", ec.string);
+		qDebug("DEBUG in: %s\n", ec.string);
 #endif
 		Json::Reader reader;
 		reader.parse(ec.string, jsonResponse, true);
 		delete[] ec.string;
 		ec.string = NULL;
 		return jsonResponse["result"].asInt() == 0;
-		// return jsonResponse["MC_RET"].asInt(); // $$ - oryginalnie, ale nie działa
 	}
 
 end:
@@ -109,42 +113,89 @@ end:
 	return false;
 }
 
+void IspControl::fixGetParam(Json::Value *jRequest, const char *getCmd)
+{
+	if (strncmp(getCmd, IF_WDR_G_EN, strlen(IF_WDR_G_EN)) == 0 ||    // fix WDR generation = 2 (WDR3)
+			strncmp(getCmd, IF_WDR_G_CFG, strlen(IF_WDR_G_CFG)) == 0 ||
+			strncmp(getCmd, IF_WDR_G_STATUS, strlen(IF_WDR_G_STATUS)) == 0 ||
+			strncmp(getCmd, IF_WDR_G_TBL, strlen(IF_WDR_G_TBL)) == 0)
+		(*jRequest)[WDR_GENERATION_PARAMS] = 2;           // 2: WDR3
+}
+
+void IspControl::fixSetParam(Json::Value *jRequest, const char *setCmd)
+{
+	if (strncmp(setCmd, IF_WDR_S_EN, strlen(IF_WDR_S_EN)) == 0 ||    // fix WDR generation = 2 (WDR3)
+			strncmp(setCmd, IF_WDR_S_CFG, strlen(IF_WDR_S_CFG)) == 0 ||
+			strncmp(setCmd, IF_WDR_RESET, strlen(IF_WDR_RESET)) == 0)
+		(*jRequest)[WDR_GENERATION_PARAMS] = 2;           // 2: WDR3
+}
+
 bool IspControl::setParam(const char *getCmd, const char *setCmd, const char *parameter, int value, int divide)
 {
 	Json::Value jRequest, jResponse;
-	if (!vivIoctl(getCmd, jRequest, jResponse))
-		return false;
+	if (strlen(getCmd) > 0)
+	{
+		this->fixGetParam(&jRequest, getCmd);
+		if (!vivIoctl(getCmd, jRequest, jResponse))
+			return false;
+	}
 
 	jRequest = jResponse;
-	if (divide == 1)
+	if (strlen(parameter) > 0)
+	{
+		if (divide == 1)
+			jRequest[parameter] = value;
+		else
+			jRequest[parameter] = (float)value / divide;
+	}
+
+	this->fixSetParam(&jRequest, setCmd);
+
+	return vivIoctl(setCmd, jRequest, jResponse);
+}
+
+bool IspControl::setParamString(const char *getCmd, const char *setCmd, const char *parameter, const char *value)
+{
+	Json::Value jRequest, jResponse;
+	if (strlen(getCmd) > 0)
+	{
+		this->fixGetParam(&jRequest, getCmd);
+		if (!vivIoctl(getCmd, jRequest, jResponse))
+			return false;
+	}
+
+	jRequest = jResponse;
+	if (strlen(parameter) > 0)
 		jRequest[parameter] = value;
-	else
-		jRequest[parameter] = (float)value / divide;
+
+	this->fixSetParam(&jRequest, setCmd);
+
 	return vivIoctl(setCmd, jRequest, jResponse);
 }
 
 bool IspControl::setParamBool(const char *getCmd, const char *setCmd, const char *parameter, bool value)
 {
 	Json::Value jRequest, jResponse;
-	if (!vivIoctl(getCmd, jRequest, jResponse))
-		return false;
+	if (strlen(getCmd) > 0)
+	{
+		this->fixGetParam(&jRequest, getCmd);
+		if (!vivIoctl(getCmd, jRequest, jResponse))
+			return false;
+	}
 
 	jRequest = jResponse;
-	jRequest[parameter] = value;
-	return vivIoctl(setCmd, jRequest, jResponse);
-}
-
-bool IspControl::sendCmd(const char *setCmd, const char *parameter, const char *value)
-{
-	Json::Value jRequest, jResponse;
-	if (parameter)
+	if (strlen(parameter) > 0)
 		jRequest[parameter] = value;
+
+	this->fixSetParam(&jRequest, setCmd);
+
 	return vivIoctl(setCmd, jRequest, jResponse);
 }
 
 Json::Value IspControl::getParam(const char *getCmd)
 {
 	Json::Value jRequest, jResponse;
+	this->fixGetParam(&jRequest, getCmd);
 	if (!vivIoctl(getCmd, jRequest, jResponse))
 		return nullptr;
 
