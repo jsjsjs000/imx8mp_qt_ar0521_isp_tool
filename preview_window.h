@@ -28,4 +28,9 @@ private:
 	void setupCamera(void);
 };
 
+// class GstPlayer2 : public GstPlayer
+// {
+// 	void setVideoOutput(QWidget *widget);
+// };
+
 #endif // PREVIEW_WINDOW_H

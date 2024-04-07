@@ -6,7 +6,7 @@
 #include "isp_control.h"
 #include "cam_device_module_ids.h"
 
-#define DEBUG
+// #define DEBUG
 
 IspControl::IspControl() {}
 
@@ -111,6 +111,16 @@ end:
 	delete ec.string;
 	ec.string = NULL;
 	return false;
+}
+
+bool IspControl::getFps()
+{
+	viv_caps_mode_info_s info;
+	if (::ioctl(this->fd, VIV_VIDIOC_S_MODEINFO, &info) != 0)
+		return false;
+
+	qDebug("fps %d", info.fps);
+	return true;
 }
 
 void IspControl::fixGetParam(Json::Value *jRequest, const char *getCmd)

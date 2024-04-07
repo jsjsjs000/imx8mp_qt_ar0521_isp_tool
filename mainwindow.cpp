@@ -301,4 +301,6 @@ void MainWindow::timerEvent(QTimerEvent* /* event */)
 	this->readyForReadJson = true;
 	if (diff >= 300)
 		this->readParameters();
+
+	// ispControl.getFps();
 }

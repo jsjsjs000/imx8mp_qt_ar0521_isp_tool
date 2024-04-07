@@ -19,6 +19,7 @@ public:
 	bool setParam(const char *getCmd, const char *setType, const char *parameter, int value, int divide);
 	bool setParamString(const char *getCmd, const char *setCmd, const char *parameter, const char *value);
 	bool setParamBool(const char *getCmd, const char *setCmd, const char *parameter, bool value);
+	bool getFps();
 };
 
 #endif // ISPCONTROL_H

@@ -61,16 +61,16 @@ public:
 		controls.append(new ButtonControl(  NULL,         IF_AWB_RESET,     NULL, "",           "Resets the Auto White Balance control",                ""));
 
 		controls.append(new GroupControl("BLS - Black Level Subtraction"));
-		controls.append(new SliderControl(  IF_BLS_G_CFG, IF_BLS_S_CFG, BLS_RED_PARAMS,      "The red data information",  0, 255, 0, ""));
-		controls.append(new SliderControl(  IF_BLS_G_CFG, IF_BLS_S_CFG, BLS_GREEN_R_PARAMS,  "The Gr data information",   0, 255, 0, ""));
-		controls.append(new SliderControl(  IF_BLS_G_CFG, IF_BLS_S_CFG, BLS_GREEN_B_PARAMS,  "The Gb data information",   0, 255, 0, ""));
-		controls.append(new SliderControl(  IF_BLS_G_CFG, IF_BLS_S_CFG, BLS_BLUE_PARAMS,     "The blue data information", 0, 255, 0, ""));
+		controls.append(new SliderControl(  IF_BLS_G_CFG, IF_BLS_S_CFG,     BLS_RED_PARAMS,     "The red data information",  0, 255, 0, ""));
+		controls.append(new SliderControl(  IF_BLS_G_CFG, IF_BLS_S_CFG,     BLS_GREEN_R_PARAMS, "The Gr data information",   0, 255, 0, ""));
+		controls.append(new SliderControl(  IF_BLS_G_CFG, IF_BLS_S_CFG,     BLS_GREEN_B_PARAMS, "The Gb data information",   0, 255, 0, ""));
+		controls.append(new SliderControl(  IF_BLS_G_CFG, IF_BLS_S_CFG,     BLS_BLUE_PARAMS,    "The blue data information", 0, 255, 0, ""));
 
 		controls.append(new GroupControl("CAC - Chromatic Aberration Correction"));
-		controls.append(new CheckBoxControl(IF_CAC_G_EN, IF_CAC_S_EN, CAC_ENABLE_PARAMS,        "Enabled",                    true,          "The state of the Chromatic Aberration Correction"));
+		controls.append(new CheckBoxControl(IF_CAC_G_EN,  IF_CAC_S_EN,  CAC_ENABLE_PARAMS,      "Enabled",                    true,          "The state of the Chromatic Aberration Correction"));
 
 		controls.append(new GroupControl("CNR - Chroma Noise Reduction"));
-		controls.append(new CheckBoxControl(IF_CNR_G_EN, IF_CNR_S_EN, CNR_ENABLE_PARAMS,        "Enabled",                    true,          "The state of the Chroma Noise Reduction control"));
+		controls.append(new CheckBoxControl(IF_CNR_G_EN,  IF_CNR_S_EN,  CNR_ENABLE_PARAMS,      "Enabled",                    true,          "The state of the Chroma Noise Reduction control"));
 		controls.append(new SliderControl(  IF_CNR_G_CFG, IF_CNR_S_CFG, CNR_TC1_PARAMS,  "CNR threshold Cb", 0, 32767, 0, "The CNR threshold value of the Cb channel. The larger the value, the stronger the noise reduction"));
 		controls.append(new SliderControl(  IF_CNR_G_CFG, IF_CNR_S_CFG, CNR_TC2_PARAMS,  "CNR threshold Cr", 0, 32767, 0, "The CNR threshold value of the Cr channel. The larger the value, the stronger the noise reduction"));
 
@@ -116,7 +116,7 @@ public:
 		controls.append(new SliderControl(  IF_EC_G_CFG, IF_EC_S_CFG, EC_GAIN_PARAMS,            "Exposure gain",         1.0f, 110.0f, 1.0f, 3, "Diasable AE (Auto Exposure) first"));
 		controls.append(new LabelControl(   IF_EC_G_CFG,              EC_GAIN_MIN_PARAMS,        "Minimum gain",                                 "", &typeid(float)));
 		controls.append(new LabelControl(   IF_EC_G_CFG,              EC_GAIN_MAX_PARAMS,        "Maximum gain",                                 "", &typeid(float)));
-		controls.append(new SliderControl(  IF_EC_G_CFG, IF_EC_S_CFG, EC_TIME_PARAMS,            "Exposure time",         0.0f,  0.15f, 0.0f, 3, "Diasable AE (Auto Exposure) first"));
+		controls.append(new SliderControl(  IF_EC_G_CFG, IF_EC_S_CFG, EC_TIME_PARAMS,            "Exposure time",         0.0f,  0.15f, 0.0f, 5, "Diasable AE (Auto Exposure) first"));
 		controls.append(new LabelControl(   IF_EC_G_CFG,              EC_INTEGRATION_MIN_PARAMS, "Minimum exposure time",                        "", &typeid(float)));
 		controls.append(new LabelControl(   IF_EC_G_CFG,              EC_INTEGRATION_MAX_PARAMS, "Maximum exposure time",                        "", &typeid(float)));
 
