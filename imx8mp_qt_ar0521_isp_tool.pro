@@ -1,6 +1,7 @@
 QT += core gui
 QT += multimediawidgets
 QT += multimedia
+QT += xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -12,6 +13,7 @@ CONFIG += c++17
 
 SOURCES += \
 	isp_control.cpp \
+	isp_xml.cpp \
 	main.cpp \
 	mainwindow.cpp \
 	lib/jsoncpp/src/lib_json/json_reader.cpp \
@@ -29,6 +31,7 @@ HEADERS += \
 	controls.h \
   controls_definitions.h \
   isp_control.h \
+	isp_xml.h \
 	mainwindow.h \
 	lib/json_helper/json_helper.h \
   preview_window.h \

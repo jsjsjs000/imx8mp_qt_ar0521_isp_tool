@@ -1,3 +1,4 @@
+#include "isp_xml.h"
 #include "mainwindow.h"
 #include "preview_window.h"
 
@@ -10,6 +11,10 @@ int main(int argc, char *argv[])
 {
 	// gst_init(0, NULL);
 	// gst_init(&argc, &argv);
+
+	IspXml xml;
+	xml.openXmlFile("/opt/imx8-isp/bin/xml/VM-017-COL_AO062-C_1920x1080.xml");
+	return 0;
 
 	qDebug() << "Debug: Start";
 	QApplication application(argc, argv);
