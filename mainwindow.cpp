@@ -9,6 +9,7 @@
 #include "controls_definitions.h"
 #include "widgets/slider_widget.h"
 #include "widgets/group_widget.h"
+#include "chart.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "widgets/checkbox_widget.h"
@@ -26,6 +27,12 @@ MainWindow::MainWindow(QWidget *parent)
 
 	ControlsDefinition.init();
 	this->createControls();
+
+
+	Chart *chart = new Chart();
+	ui->verticalLayout_2->addWidget(chart, 1);
+	ui->verticalLayout_2->addStretch(0);
+
 
 	// ispControl.openVideo();
 
