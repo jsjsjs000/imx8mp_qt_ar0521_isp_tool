@@ -132,6 +132,19 @@ void IspControl::fixGetParam(Json::Value *jRequest, const char *getCmd)
 		(*jRequest)[WDR_GENERATION_PARAMS] = 2;           // 2: WDR3
 }
 
+// void IspControl::postFixGetParam(Json::Value &jRequest, const char *getCmd)
+// {
+// 	if (strncmp(getCmd, IF_EC_G_CFG, strlen(IF_EC_G_CFG)) == 0)     // read FPS
+// 	{
+// 		float exp = jRequest[EC_TIME_PARAMS].asFloat();
+// 		qDebug("%f", exp);
+// 		if (exp != 0.0f)
+// 			this->fps = 1.0f / exp;
+// 		else
+// 			this->fps = 0.0f;
+// 	}
+// }
+
 void IspControl::fixSetParam(Json::Value *jRequest, const char *setCmd)
 {
 	if (strncmp(setCmd, IF_WDR_S_EN, strlen(IF_WDR_S_EN)) == 0 ||    // fix WDR generation = 2 (WDR3)
@@ -208,6 +221,8 @@ Json::Value IspControl::getParam(const char *getCmd)
 	this->fixGetParam(&jRequest, getCmd);
 	if (!vivIoctl(getCmd, jRequest, jResponse))
 		return nullptr;
+
+	// this->postFixGetParam(jRequest, getCmd);
 
 	return jResponse;
 }

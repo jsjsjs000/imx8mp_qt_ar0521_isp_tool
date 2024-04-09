@@ -67,10 +67,10 @@ void PreviewWindow::setupCamera(void)
 	QCameraViewfinderSettings viewfinderSettings;
 	viewfinderSettings.setResolution(1920, 1080);
 //	viewfinderSettings.setResolution(1280, 768);
-	viewfinderSettings.setPixelAspectRatio(1920, 1080);
-	viewfinderSettings.setMinimumFrameRate(30.0);
-	viewfinderSettings.setMaximumFrameRate(30.0);
-	viewfinderSettings.setPixelFormat(QVideoFrame::Format_RGB24); // Format_YUYV
+	viewfinderSettings.setPixelAspectRatio(1, 1);
+	viewfinderSettings.setMinimumFrameRate(8.0f);
+	viewfinderSettings.setMaximumFrameRate(30.0f);
+	// viewfinderSettings.setPixelFormat(QVideoFrame::Format_RGB24); // Format_YUYV
 	camera->setViewfinderSettings(viewfinderSettings);
 	camera->start();
 
@@ -139,31 +139,45 @@ void PreviewWindow::showEvent(QShowEvent* event)
 	GstElement *pipeline =
 			gst_parse_launch(
 			// "gst-pipeline: videotestsrc ! glimagesink",
-			"gst-pipeline: v4l2src device=/dev/video0 ! video/x-raw,format=YUY2,width=1920,height=1080,framerate=30/1 ! glimagesink render-rectangle='<0,0,1920,1080>'",
+			// "gst-pipeline: v4l2src device=/dev/video0 ! video/x-raw,format=YUY2,width=1920,height=1080,framerate=30/1 ! glimagesink render-rectangle='<0,0,1920,1080>'",
+			"gst-pipeline: v4l2src device=/dev/video0 ! video/x-raw,format=YUY2,width=1920,height=1080,framerate=30/1 ! ximagesink",
 			 NULL);
 */
 
 /**/
+	qDebug() << "GST_V4L2_USE_LIBV4L2 =" << g_getenv("GST_V4L2_USE_LIBV4L2");
+
 	GstElement *pipeline = gst_pipeline_new("xvoverlay");
 	// GstElement *src = gst_element_factory_make("videotestsrc", NULL);
-	GstElement *src = gst_element_factory_make("v4l2src", "camera-input");
-	g_object_set(G_OBJECT(src), "device", "/dev/video0");
+	// GstElement *src = gst_element_factory_make("v4l2src", "camera-input");
+	GstElement *src = gst_element_factory_make("v4l2src", NULL);
+	// g_object_set(G_OBJECT(src), "device", "/dev/video0", NULL);
+	qDebug("src = %llu", (unsigned long long)src);
 
 	GstElement *src_capsfilter = gst_element_factory_make("capsfilter", "source_capsfilter");
+	qDebug("src_capsfilter = %llu", (unsigned long long)src_capsfilter);
 	GstCaps *src_caps = gst_caps_new_simple(
 			"video/x-raw",
 			"format", G_TYPE_STRING, "YUY2",
 			"width", G_TYPE_INT, 1920,
-			"height", G_TYPE_INT,1080,
+			"height", G_TYPE_INT, 1080,
+			"framerate", GST_TYPE_FRACTION, 30, 1,
 			NULL);
+	qDebug("src_caps = %llu", (unsigned long long)src_caps);
 	g_object_set(G_OBJECT(src_capsfilter), "caps", src_caps, NULL);
 
-	GstElement *mid = gst_element_factory_make("video/x-raw,format=YUY2,width=1920,height=1080", NULL);
 	GstElement *sink = gst_element_factory_make("ximagesink", NULL);
-	gst_bin_add_many(GST_BIN(pipeline), src, mid, sink, NULL);
-	gst_element_link_many(src, mid, sink, NULL);
+	qDebug("sink = %llu", (unsigned long long)sink);
+
+	gst_bin_add_many(GST_BIN(pipeline), src, src_capsfilter, sink, NULL);
+	bool b = gst_element_link_many(src, src_capsfilter, sink, NULL);
+	// gst_bin_add_many(GST_BIN(pipeline), src, sink, NULL);
+	// bool b = gst_element_link_many(src, sink, NULL);
+	qDebug("link = %d", b);
+
 // https://github.com/simonqin09/gstest/blob/master/gstest.c
 // https://forums.developer.nvidia.com/t/using-x-raw-memory-nvmm-in-gstreamer-program/42654
+
 
 	videoWidget = new QVideoWidget;
 	ui->horizontalLayout->addWidget(videoWidget);
@@ -173,8 +187,12 @@ void PreviewWindow::showEvent(QShowEvent* event)
 	gst_video_overlay_set_window_handle(GST_VIDEO_OVERLAY(sink), winId);
 
 	GstStateChangeReturn sret = gst_element_set_state(pipeline, GST_STATE_PLAYING);
+	qDebug("sret = %llu", sret);
 
-
+	/* Wait until error or EOS
+	GstBus *bus = gst_element_get_bus (pipeline);
+	GstMessage *msg = gst_bus_timed_pop_filtered (bus, GST_CLOCK_TIME_NONE, (GstMessageType)(GST_MESSAGE_ERROR | GST_MESSAGE_EOS));
+	qDebug() << msg->src->name; */
 
 /*
 	GstElement *pipeline = gst_pipeline_new ("xvoverlay");

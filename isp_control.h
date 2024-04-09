@@ -10,8 +10,11 @@ class IspControl
 	int streamid = 0;
 
 	void fixGetParam(Json::Value *jRequest, const char *getCmd);
+	// void postFixGetParam(Json::Value &jRequest, const char *getCmd);
 	void fixSetParam(Json::Value *jRequest, const char *setCmd);
 public:
+	float fps;
+
 	IspControl();
 	int openVideo(void);
 	bool vivIoctl(const char *cmd, Json::Value& jsonRequest, Json::Value& jsonResponse);

@@ -207,6 +207,9 @@ void MainWindow::updateControlsFromJson(Json::Value json, QString cmd)
 					float value = json[scontrol->parameter.toStdString()].asFloat();
 					slider->setValueFloat(value);
 					// qDebug() << scontrol->parameter << value;
+
+					if (strncmp(scontrol->parameter.toStdString().c_str(), EC_TIME_PARAMS, strlen(EC_TIME_PARAMS)) == 0)
+						qDebug("%f", 1.0 / value);
 				}
 			}
 		}
@@ -300,7 +303,11 @@ void MainWindow::timerEvent(QTimerEvent* /* event */)
 
 	this->readyForReadJson = true;
 	if (diff >= 300)
+	{
 		this->readParameters();
+
+		ui->fpsLabel->setText(QString::number(ispControl.fps));
+	}
 
 	// ispControl.getFps();
 }
