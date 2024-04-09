@@ -1,4 +1,4 @@
-#include "isp_xml.h"
+// #include "isp_xml.h"
 #include "mainwindow.h"
 #include "preview_window.h"
 
@@ -9,12 +9,41 @@
 
 int main(int argc, char *argv[])
 {
-	// gst_init(0, NULL);
-	// gst_init(&argc, &argv);
-
+/*
+	const QString XmlFileName = "/opt/imx8-isp/bin/xml/VM-017-COL_AO062-C_1920x1080.xml";
 	IspXml xml;
-	xml.openXmlFile("/opt/imx8-isp/bin/xml/VM-017-COL_AO062-C_1920x1080.xml");
+	xml.openXmlFile(XmlFileName); // $$ if
+
+	QDomNode n = xml.getElementByTagPath("sensor/AWB/globals/cell/afRg1");
+	if (!n.isNull())
+	{
+		// qDebug() << "result" << n.nodeName() << n.toElement().attribute("size") << IspXml::stripText(n.toElement().text());
+		qDebug() << IspXml::stripText(n.toElement().text());
+		QList<float> array;
+		if (IspXml::parseArrayFloat(n.toElement().text(), array))
+		{
+			for (const float &f : qAsConst(array))
+				qDebug() << f;
+		}
+
+		// array.clear();
+		// for (int i = 0; i < 16; i++)
+		// 	array.push_back(1.23f);
+		QString s = IspXml::arrayFloatToString(array);
+		qDebug() << s;
+	}
+
+	QDomNode n = xml.getElementByTagPath("header/creator");
+	if (!n.isNull())
+	{
+		qDebug() << "result" << n.nodeName() << n.toElement().attribute("type") << IspXml::stripText(n.toElement().text());
+		IspXml::setValue(n, "jsjs aa", "header/creator");
+	}
+
+	xml.saveXmlFile(XmlFileName); // $$ if
+
 	return 0;
+*/
 
 	qDebug() << "Debug: Start";
 	QApplication application(argc, argv);

@@ -27,12 +27,12 @@ MainWindow::MainWindow(QWidget *parent)
 	ControlsDefinition.init();
 	this->createControls();
 
-	ispControl.openVideo();
+	// ispControl.openVideo();
 
 	this->canUpdateControls = true;
 
 	this->lastTime = clock();
-	timerId = startTimer(2000); // $$ 500
+	// timerId = startTimer(2000); // $$ 500
 }
 
 MainWindow::~MainWindow()

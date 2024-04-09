@@ -31,6 +31,8 @@ PreviewWindow::PreviewWindow(QWidget *parent)
 
 void PreviewWindow::setupCamera(void)
 {
+return;
+
 	const QString AllowedCameraDevice = QString("/dev/video0");
 	const QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
 	QCamera *camera = nullptr;
@@ -187,7 +189,7 @@ void PreviewWindow::showEvent(QShowEvent* event)
 	gst_video_overlay_set_window_handle(GST_VIDEO_OVERLAY(sink), winId);
 
 	GstStateChangeReturn sret = gst_element_set_state(pipeline, GST_STATE_PLAYING);
-	qDebug("sret = %llu", sret);
+	qDebug("sret = %u", sret);
 
 	/* Wait until error or EOS
 	GstBus *bus = gst_element_get_bus (pipeline);

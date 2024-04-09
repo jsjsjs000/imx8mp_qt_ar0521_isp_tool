@@ -7,8 +7,6 @@ IspXml::IspXml() {}
 
 bool IspXml::openXmlFile(QString filename)
 {
-	QDomDocument document;
-
 	QFile file(filename);
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
@@ -25,61 +23,122 @@ bool IspXml::openXmlFile(QString filename)
 		file.close();
 	}
 
-	QDomElement root = document.firstChildElement();
-
-	QDomNode n = this->retrievElements(root, "sensor/AWB/globals/cell/afRg1");
-	if (!n.isNull())
-		qDebug() << "result" << n.nodeName() << n.toElement().attribute("size") << n.toElement().text();
-
-	// if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-	// {
-	// 	qDebug() << "Failed to open the file for reading.";
-	// 	return false;
-	// }
-	// else
-	// {
-	// 	QTextStream stream(&file);
-	// 	stream << document.toString();
-	// 	file.close();
-	// }
-
-	qDebug() << "Reading finished";
 	return true;
 }
 
-QDomNode IspXml::retrievElements(QDomNode root, QString tagPath)
+bool IspXml::saveXmlFile(QString filename)
 {
-	int i = tagPath.indexOf('/');
+	QFile file(filename);
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+	{
+		qDebug() << "Failed to open the file for writing.";
+		return false;
+	}
+	else
+	{
+		QTextStream stream(&file);
+		stream << this->document.toString(2);
+		file.close();
+	}
+
+	return true;
+}
+
+QDomNode IspXml::getElementByTagPath(QString tagPath)
+{
+	return this->getElementByTagPath_(this->document.firstChildElement(), tagPath);
+}
+
+QDomNode IspXml::getElementByTagPath_(QDomNode root, QString tagPath)
+{
+	int slashIndex = tagPath.indexOf('/');
 	QString tag;
-	if (i < 0)
+	if (slashIndex < 0)
 	{
 		tag = QString(tagPath);
 		tagPath = "";
 	}
 	else
 	{
-		tag = tagPath.left(i);
-		tagPath = tagPath.mid(i + 1, tagPath.length() - i - 1);
+		tag = tagPath.left(slashIndex);
+		tagPath = tagPath.mid(slashIndex + 1, tagPath.length() - slashIndex - 1);
 	}
 
 	QDomNode n = root.firstChild();
 	while (!n.isNull())
 	{
-		// QDomElement *e = n.toElement();
-
 		if (n.nodeName() == tag)
 		{
-			qDebug() << "in tag" << n.nodeName();
 			if (tagPath == "")
 				return n;
 
-			return this->retrievElements(n, tagPath);
+			return this->getElementByTagPath_(n, tagPath);
 		}
 
 		n = n.nextSibling();
 	}
 
 	return QDomNode();
+}
+
+QString IspXml::stripText(QString text)
+{
+	return text.replace('\r', ' ').replace('\n', ' ').trimmed();
+}
+
+void IspXml::setValue(QDomNode n, QString text, QString forPath)
+{
+	if (n.isNull())
+		return;
+
+	QString newText = "\n    ";
+	QString endingText = "  ";
+
+	for (int i = 0; i < forPath.length(); i++)
+		if (forPath[i] == '/')
+		{
+			newText += "  ";
+			endingText += "  ";
+		}
+
+	newText += text + "\n" + endingText;
+
+	n.firstChild().setNodeValue(newText);
+}
+
+bool IspXml::parseArrayFloat(QString text, QList<float> &array)
+{
+	text = IspXml::stripText(text);
+
+	if (text.length() > 0 && text.startsWith('['))
+		text = text.mid(1);
+	if (text.length() > 0 && text.endsWith(']'))
+		text = text.mid(0, text.length() - 1);
+
+	bool ok;
+	QStringList list = text.split(' ', Qt::SkipEmptyParts);
+	for (const QString &item : list)
+	{
+		float f = item.toFloat(&ok);
+		if (!ok)
+			return false;
+
+		array.push_back(f);
+	}
+
+	return true;
+}
+
+QString IspXml::arrayFloatToString(QList<float> array)
+{
+	QString s = "[";
+	for (int i = 0; i < array.length(); i++)
+	{
+		if (i > 0)
+			s += ", ";
+		s += QString::number(array[i]);
+	}
+	return s + "]";
 }
 
 /*
