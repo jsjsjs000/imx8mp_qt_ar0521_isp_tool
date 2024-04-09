@@ -30,6 +30,11 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 	Chart *chart = new Chart();
+	QList<QPointF> points = QList<QPointF>();
+	points.push_back(QPointF(1, -0.9f));
+	points.push_back(QPointF(3, -0.3f));
+	points.push_back(QPointF(5, -0.5f));
+	chart->initialize(0, 15, -1, 1, 1.0f, 0.1f, points);
 	ui->verticalLayout_2->addWidget(chart, 1);
 	ui->verticalLayout_2->addStretch(0);
 
