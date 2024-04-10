@@ -9,15 +9,15 @@ namespace Ui {
 class Chart;
 }
 
-class Chart : public QWidget
+class ChartWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-	explicit Chart(QWidget *parent = nullptr);
-	Chart(QWidget *parent, MainWindow *mainWindow, const ChartControl *control,
+	explicit ChartWidget(QWidget *parent = nullptr);
+	ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartControl *control,
 			void (*onChartPointsChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter));
-	~Chart();
+	~ChartWidget();
 	void initialize(float x1, float x2, float y1, float y2, float gridX, float gridY, QList<QPointF> points);
 
 protected:

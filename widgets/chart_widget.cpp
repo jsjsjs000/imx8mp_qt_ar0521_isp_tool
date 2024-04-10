@@ -1,21 +1,23 @@
 #include "chart_widget.h"
 #include "qdebug.h"
-#include "ui_chart.h"
+#include "ui_chart_widget.h"
 
 #include <QMouseEvent>
 #include <QPainter>
 
 // #define DEBUG_TIME
 
-Chart::Chart(QWidget *parent)
+ChartWidget::ChartWidget(QWidget *parent)
 		: QWidget(parent)
 		, ui(new Ui::Chart)
 {
 	ui->setupUi(this);
 }
 
-Chart::Chart(QWidget *parent, MainWindow *mainWindow, const ChartControl *chartControl,
+ChartWidget::ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartControl *chartControl,
 		void (*onChartPointsChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter))
+		: QWidget(parent)
+		, ui(new Ui::Chart)
 {
 	ui->setupUi(this);
 
@@ -31,12 +33,12 @@ Chart::Chart(QWidget *parent, MainWindow *mainWindow, const ChartControl *chartC
 	this->setToolTip(chartControl->description);
 }
 
-Chart::~Chart()
+ChartWidget::~ChartWidget()
 {
 	delete ui;
 }
 
-void Chart::initialize(float x1, float x2, float y1, float y2, float gridX, float gridY, QList<QPointF> points)
+void ChartWidget::initialize(float x1, float x2, float y1, float y2, float gridX, float gridY, QList<QPointF> points)
 {
 	this->x1 = x1;
 	this->x2 = x2;
@@ -50,7 +52,7 @@ void Chart::initialize(float x1, float x2, float y1, float y2, float gridX, floa
 	this->repaint();
 }
 
-void Chart::paintEvent(QPaintEvent* /* event */)
+void ChartWidget::paintEvent(QPaintEvent* /* event */)
 {
 	const int circleSize = 6;
 
@@ -100,7 +102,7 @@ void Chart::paintEvent(QPaintEvent* /* event */)
 #endif
 }
 
-void Chart::drawChartArea(QPainter &painter, int x, int y, int w, int h)
+void ChartWidget::drawChartArea(QPainter &painter, int x, int y, int w, int h)
 {
 	const float epsilon = 0.00001f;
 	const QPoint xAxisLabelsPad = QPoint(0, -1);
@@ -156,14 +158,14 @@ void Chart::drawChartArea(QPainter &painter, int x, int y, int w, int h)
 	}
 }
 
-QPointF Chart::localPosTo(QPointF localPos)
+QPointF ChartWidget::localPosTo(QPointF localPos)
 {
 	return QPointF(
 			(localPos.x() - this->padLeft) / this->dx + this->x1,
 			-(localPos.y() - this->padTop - h) / this->dy + this->y1);
 }
 
-void Chart::mousePressEvent(QMouseEvent *event)
+void ChartWidget::mousePressEvent(QMouseEvent *event)
 {
 	// qDebug() << "press" << event->localPos().x() << event->localPos().y() << event->button();
 	if (this->chartControl->readonly)
@@ -176,7 +178,7 @@ void Chart::mousePressEvent(QMouseEvent *event)
 	this->repaint();
 }
 
-void Chart::mouseMoveEvent(QMouseEvent *event)
+void ChartWidget::mouseMoveEvent(QMouseEvent *event)
 {
 	// qDebug() << "move" << event->localPos().x() << event->localPos().y() << event->button();
 	if (this->chartControl->readonly)
@@ -188,7 +190,7 @@ void Chart::mouseMoveEvent(QMouseEvent *event)
 	this->repaint();
 }
 
-void Chart::mouseReleaseEvent(QMouseEvent *event)
+void ChartWidget::mouseReleaseEvent(QMouseEvent *event)
 {
 	// qDebug() << "release" << event->localPos().x() << event->localPos().y() << event->button();
 	// QPointF p = this->localPosTo(event->localPos());
@@ -197,13 +199,13 @@ void Chart::mouseReleaseEvent(QMouseEvent *event)
 		// return;
 }
 
-void Chart::resizeEvent(QResizeEvent *event)
+void ChartWidget::resizeEvent(QResizeEvent *event)
 {
-	// qDebug() << "resize" << event->size() << this->width() << this->height();
+	// qDebug() << "resize" << event->size() << this->width() << this->height() << (this->x2 - this->x1);
 	this->recalculateSize();
 }
 
-void Chart::recalculateSize()
+void ChartWidget::recalculateSize()
 {
 	this->w = this->width() - 1 - this->padLeft - this->padRight;
 	this->h = this->height() - 1 - this->padTop - this->padBottom;

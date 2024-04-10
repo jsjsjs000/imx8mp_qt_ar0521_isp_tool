@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	ControlsDefinition.init();
 	this->createControls();
+
 	PreviewWindow::setupCamera(ui->verticalLayout_2);
 
 /*
@@ -37,7 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
 	points.push_back(QPointF(5, -0.5f));
 	chart->initialize(0, 15, -1, 1, 1.0f, 0.1f, points);
 	ui->verticalLayout_2->addWidget(chart, 1);
-	ui->verticalLayout_2->addStretch(0);
+	// ui->verticalLayout_2->addStretch(0);
 */
 
 	ispControl.openVideo();
@@ -56,7 +57,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::createControls()
 {
-	const int stretch = 0;
+	const int stretch = 1;
 	for (const auto *control : qAsConst(ControlsDefinition.controls))
 	{
 		if (const GroupControl *scontrol = dynamic_cast<const GroupControl*>(control))
@@ -97,13 +98,11 @@ void MainWindow::createControls()
 		}
 		else if (const ChartControl *scontrol = dynamic_cast<const ChartControl*>(control))
 		{
-			Chart *chartControl = new Chart(this, this, scontrol, &MainWindow::onChartControlPointsChanged);
-			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), chartControl);
-			ui->verticalLayout->addWidget(chartControl, stretch);
+			ChartWidget *chart = new ChartWidget(this, this, scontrol, &MainWindow::onChartControlPointsChanged);
+			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), chart);
+			ui->verticalLayout->addWidget(chart, stretch);
 		}
 	}
-
-	// ui->verticalLayout->addStretch(1);
 }
 
 void MainWindow::onCheckBoxChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, bool checked)
@@ -319,7 +318,7 @@ void MainWindow::updateControlsFromJson(Json::Value json, QString cmd)
 		}
 		else if (const ChartControl *scontrol = dynamic_cast<const ChartControl*>(control))
 		{
-			Chart *chart = (Chart*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+			ChartWidget *chart = (ChartWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
 			if (chart == nullptr)
 				qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
 			else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
@@ -366,8 +365,6 @@ void MainWindow::onActivated()
 bool MainWindow::event(QEvent *e)
 {
 	if (e->type() == QEvent::WindowActivate)
-	{
 		this->onActivated();
-	}
 	return QWidget::event(e);
 }

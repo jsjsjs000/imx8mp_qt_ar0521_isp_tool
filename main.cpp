@@ -45,7 +45,6 @@ int main(int argc, char *argv[])
 	return 0;
 */
 
-	qDebug() << "Debug: Start";
 	QApplication application(argc, argv);
 
 	/* QMediaPlayer *player;
