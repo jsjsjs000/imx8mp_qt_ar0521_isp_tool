@@ -31,8 +31,6 @@ PreviewWindow::PreviewWindow(QWidget *parent)
 
 void PreviewWindow::setupCamera(void)
 {
-return;
-
 	const QString AllowedCameraDevice = QString("/dev/video0");
 	const QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
 	QCamera *camera = nullptr;

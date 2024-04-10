@@ -4,8 +4,6 @@
 #include <QMediaPlaylist>
 #include <QSpacerItem>
 
-#include <widgets/combobox_widget.h>
-
 #include "controls_definitions.h"
 #include "widgets/slider_widget.h"
 #include "widgets/group_widget.h"
@@ -15,6 +13,7 @@
 #include "widgets/checkbox_widget.h"
 #include "widgets/button_widget.h"
 #include "widgets/label_widget.h"
+#include <widgets/combobox_widget.h>
 
 IspControl ispControl;
 ControlsDefinitions ControlsDefinition;
@@ -28,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
 	ControlsDefinition.init();
 	this->createControls();
 
-
+/*
 	Chart *chart = new Chart();
 	QList<QPointF> points = QList<QPointF>();
 	points.push_back(QPointF(1, -0.9f));
@@ -37,14 +36,14 @@ MainWindow::MainWindow(QWidget *parent)
 	chart->initialize(0, 15, -1, 1, 1.0f, 0.1f, points);
 	ui->verticalLayout_2->addWidget(chart, 1);
 	ui->verticalLayout_2->addStretch(0);
+*/
 
-
-	// ispControl.openVideo();
+	ispControl.openVideo();
 
 	this->canUpdateControls = true;
 
 	this->lastTime = clock();
-	// timerId = startTimer(2000); // $$ 500
+	timerId = startTimer(500); // $$ 500
 }
 
 MainWindow::~MainWindow()
@@ -92,6 +91,12 @@ void MainWindow::createControls()
 			ComboBoxWidget *comboBox = new ComboBoxWidget(this, this, scontrol, &MainWindow::onComboBoxIndexChanged);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), comboBox);
 			ui->verticalLayout->addWidget(comboBox, 1);
+		}
+		else if (const ChartControl *scontrol = dynamic_cast<const ChartControl*>(control))
+		{
+			Chart *chartControl = new Chart(this, this, scontrol, &MainWindow::onChartControlPointsChanged);
+			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), chartControl);
+			ui->verticalLayout->addWidget(chartControl, 1);
 		}
 	}
 
@@ -145,6 +150,11 @@ void MainWindow::onButtonClicked(MainWindow *mainWindow, QString getCmd, QString
 		ispControl.setParamString(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), value.toStdString().c_str());
 
 	mainWindow->lastTime = clock();
+}
+
+void MainWindow::onChartControlPointsChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter)
+{
+
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -220,8 +230,8 @@ void MainWindow::updateControlsFromJson(Json::Value json, QString cmd)
 					slider->setValueFloat(value);
 					// qDebug() << scontrol->parameter << value;
 
-					if (strncmp(scontrol->parameter.toStdString().c_str(), EC_TIME_PARAMS, strlen(EC_TIME_PARAMS)) == 0)
-						qDebug("%f", 1.0 / value);
+					// if (strncmp(scontrol->parameter.toStdString().c_str(), EC_TIME_PARAMS, strlen(EC_TIME_PARAMS)) == 0)
+					// 	qDebug("%f", 1.0 / value);
 				}
 			}
 		}
@@ -302,6 +312,24 @@ void MainWindow::updateControlsFromJson(Json::Value json, QString cmd)
 
 				label->setText(text);
 				// qDebug() << scontrol->parameter << state;
+			}
+		}
+		else if (const ChartControl *scontrol = dynamic_cast<const ChartControl*>(control))
+		{
+			Chart *chart = (Chart*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+			if (chart == nullptr)
+				qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
+			else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
+			{
+				Json::Value value = json[scontrol->parameter.toStdString()];
+				// if (scontrol->type == &typeid(int[]))
+				// else if (scontrol->type == &typeid(float[]))
+				{
+					QList<QPointF> points;
+					for (uint i = 0; i < value.size(); i++)
+						points.push_back(QPointF(i, value[i].asFloat()));
+					chart->initialize(0, value.size() - 1, scontrol->y1, scontrol->y2, 1.0f, scontrol->gridY, points);
+				}
 			}
 		}
 	}

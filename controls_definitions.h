@@ -24,12 +24,12 @@ public:
 		controls.append(new ComboBoxControl(IF_AE_G_CFG,    IF_AE_S_CFG, AE_MODE_PARAMS,          "Configuration mode", aemodeMap,             "Configuration mode"));
 		controls.append(new SliderControl(  IF_AE_G_CFG,    IF_AE_S_CFG, AE_DAMP_OVER_PARAMS,     "Damping upper limit",  0.0f, 1.0f, 0.0f, 3, "Damping upper limit for luminance over set point. The larger the value, the smoother the convergence"));
 		controls.append(new SliderControl(  IF_AE_G_CFG,    IF_AE_S_CFG, AE_DAMP_UNDER_PARAMS,    "Damping lower limit",  0.0f, 1.0f, 0.0f, 3, "Damping lower limit for luminance under set point. The larger the value, the smoother the convergence"));
-		controls.append(new SliderControl(  IF_AE_G_CFG,    IF_AE_S_CFG, AE_SET_POINT_PARAMS,     "Set point",            0, 255, 0,           "Target luminance point"));
-		controls.append(new SliderControl(  IF_AE_G_CFG,    IF_AE_S_CFG, AE_CLM_TOLERANCE_PARAMS, "Calculation accuracy", 0, 100, 0,           "Calculation accuracy; AE will make adjustments when the difference ratio between set.point and actual point over the clm.tolerance"));
+		controls.append(new SliderControl(  IF_AE_G_CFG,    IF_AE_S_CFG, AE_SET_POINT_PARAMS,     "Set point",               0,  255,    0,    "Target luminance point"));
+		controls.append(new SliderControl(  IF_AE_G_CFG,    IF_AE_S_CFG, AE_CLM_TOLERANCE_PARAMS, "Calculation accuracy",    0,  100,    0,    "Calculation accuracy; AE will make adjustments when the difference ratio between set.point and actual point over the clm.tolerance"));
 		controls.append(new LabelControl(   IF_AE_G_CFG,                 AE_WEIGHT_PARAMS,        "Weights of 5x5 blocks",                     "", &typeid(int[])));
 		controls.append(new ButtonControl(  NULL,           IF_AE_RESET, NULL, "",                "Resets the Auto Exposure control",          ""));
-		controls.append(new LabelControl(   IF_AE_G_STATUS, AE_HIST_PARAMS_BASE64,                "Current histogram of image",                "", &typeid(int[])));
-		controls.append(new LabelControl(   IF_AE_G_STATUS, AE_LUMA_PARAMS_BASE64,                "Mean luminance measured",                   "", &typeid(int[])));
+		controls.append(new ChartControl(   IF_AE_G_STATUS, AE_HIST_PARAMS_BASE64,                "Current histogram of image",                "", 0, 30000, 5000, true));
+		controls.append(new ChartControl(   IF_AE_G_STATUS, AE_LUMA_PARAMS_BASE64,                "Mean luminance measured",                   "", 0,   255,   50, true));
 		controls.append(new LabelControl(   IF_AE_G_STATUS, AE_OBJECT_REGION_PARAMS_BASE64,       "Measurement windows block",                 "", &typeid(int[])));
 			QMap<int, QString> *isoMap = new QMap<int, QString>;
 			isoMap->insert({{100, "100"}, {200, "200"}, {400, "400"}, {800, "800"}, {1600, "1600"}});
@@ -39,7 +39,7 @@ public:
 
 		controls.append(new GroupControl("AE / ECM - Exposure Control Module"));
 			QMap<int, QString> *expMap = new QMap<int, QString>;
-			expMap->insert({{0, "0: Flicker Period off"}, {1, "1: 100 Hz"}, {2, "2: 120 Hz"}});
+			expMap->insert({{0, "Flicker Period off"}, {1, "100 Hz"}, {2, "120 Hz"}});
 		controls.append(new ComboBoxControl(IF_AE_G_ECM, IF_AE_S_ECM, AE_FLICKER_PERIOD_PARAMS, "The flag of Auto Exposure flicker period", expMap, ""));
 		controls.append(new CheckBoxControl(IF_AE_G_ECM, IF_AE_S_ECM, AE_AFPS_PARAMS,           "Auto FPS control value", false,             "Set manual FPS to disable it (Sensor > FPS)"));
 
@@ -78,15 +78,15 @@ public:
 		controls.append(new CheckBoxControl(IF_CPROC_G_EN,  IF_CPROC_S_EN,    CPROC_ENABLE_PARAMS,     "Enabled",                              true,    "The state of the CPROC"));
 		controls.append(new SliderControl(  IF_CPROC_G_CFG, IF_CPROC_S_CFG,   CPROC_BRIGHTNESS_PARAMS, "Brightness",              -128,   127,    0,    "Brightness value"));
 			QMap<int, QString> *chromaMap = new QMap<int, QString>;
-			chromaMap->insert({{1, "1: CbCr_out clipping range [16 … 240] according to ITU-R BT.601 standard"}, {2, "2: full UV_out clipping range [0 ... 255]"}});
+			chromaMap->insert({{1, "CbCr_out clipping range [16 … 240] according to ITU-R BT.601 standard"}, {2, "full UV_out clipping range [0 ... 255]"}});
 		controls.append(new ComboBoxControl(IF_CPROC_G_CFG, IF_CPROC_S_CFG,   CPROC_CHROMA_OUT_PARAMS, "Chrominance", chromaMap,                        "CPROC chrominance pixel clipping range at output"));
 		controls.append(new SliderControl(  IF_CPROC_G_CFG, IF_CPROC_S_CFG,   CPROC_CONTRAST_PARAMS,   "Contrast",                0.0f, 1.99f, 1.0f, 3, "Contrast value"));
 		controls.append(new SliderControl(  IF_CPROC_G_CFG, IF_CPROC_S_CFG,   CPROC_HUE_PARAMS,        "Hue",                      -90,    89,    0,    "Hue value"));
 			QMap<int, QString> *lumainMap = new QMap<int, QString>;
-			lumainMap->insert({{1, "1: Y_in range [64 … 940] according to ITU-R BT.601 standard; offset of 64 is subtracted from Y_in"}, {2, "2: Y_in full range [0 ... 1023]; no offset is subtracted from Y_in"}});
+			lumainMap->insert({{1, "Y_in range [64 … 940] according to ITU-R BT.601 standard; offset of 64 is subtracted from Y_in"}, {2, "Y_in full range [0 ... 1023]; no offset is subtracted from Y_in"}});
 		controls.append(new ComboBoxControl(IF_CPROC_G_CFG, IF_CPROC_S_CFG, CPROC_LUMA_IN_PARAMS,    "Luminance input", lumainMap, "CPROC luminance input range (offset processing)"));
 			QMap<int, QString> *lumaoutMap = new QMap<int, QString>;
-			lumaoutMap->insert({{1, "1: Y_out clipping range [16 … 235]; offset of 16 is added to Y_out according to ITU-R BT.601 standard"}, {2, "2: Y_out clipping range [0 ... 255]; no offset is added to Y_out"}});
+			lumaoutMap->insert({{1, "Y_out clipping range [16 … 235]; offset of 16 is added to Y_out according to ITU-R BT.601 standard"}, {2, "Y_out clipping range [0 ... 255]; no offset is added to Y_out"}});
 		controls.append(new ComboBoxControl(IF_CPROC_G_CFG, IF_CPROC_S_CFG,   CPROC_LUMA_OUT_PARAMS,   "Luminance output", lumaoutMap, "CPROC luminance output clipping range"));
 		controls.append(new SliderControl(  IF_CPROC_G_CFG, IF_CPROC_S_CFG,   CPROC_SATURATION_PARAMS, "Saturation",              0.0f, 1.99f, 1.0f, 3, "Saturation value"));
 			QMap<int, QString> *coeffMap = new QMap<int, QString>;

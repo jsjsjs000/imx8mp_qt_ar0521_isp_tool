@@ -148,4 +148,25 @@ public:
 	}
 };
 
+class ChartControl : public Control
+{
+	void v(void) override {}  // required
+
+public:
+	float y1, y2, gridY;
+	bool readonly;
+
+	ChartControl(QString getCmd, QString parameter, QString name, QString description, float y1, float y2, float gridY, bool readonly)
+	{
+		this->getCmd = getCmd;
+		this->parameter = parameter;
+		this->name = name;
+		this->description = description;
+		this->y1 = y1;
+		this->y2 = y2;
+		this->gridY = gridY;
+		this->readonly = readonly;
+	}
+};
+
 #endif // CONTROLS_H

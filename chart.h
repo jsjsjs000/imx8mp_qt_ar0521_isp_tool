@@ -1,6 +1,8 @@
 #ifndef CHART_H
 #define CHART_H
 
+#include "controls.h"
+#include "mainwindow.h"
 #include <QWidget>
 
 namespace Ui {
@@ -13,8 +15,10 @@ class Chart : public QWidget
 
 public:
 	explicit Chart(QWidget *parent = nullptr);
+	Chart(QWidget *parent, MainWindow *mainWindow, const ChartControl *control,
+			void (*onChartPointsChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter));
 	~Chart();
-	void initialize(float x1, float y1, float x2, float y2, float gridX, float gridY, QList<QPointF> points);
+	void initialize(float x1, float x2, float y1, float y2, float gridX, float gridY, QList<QPointF> points);
 
 protected:
 	void paintEvent(QPaintEvent *event);
@@ -24,16 +28,34 @@ protected:
 	void resizeEvent(QResizeEvent *event);
 
 private:
+	QString title;
+	QString description;
 	const int padLeft = 27;
-	const int padTop = 20;
+	const int padTop = 18;
 	const int padRight = 10;
 	const int padBottom = 15;
-	float x1, x2, y1, y2;
+	float x1 = 0.0f;
+	float x2 = 1.0f;
+	float y1 = 0.0f;
+	float y2 = 1.0f;
 	float gridX, gridY;
+	int w = 1;
+	int h = 1;
+	float dx = 1.0f;
+	float dy = 1.0f;
+
+	MainWindow *mainWindow;
+	ChartControl *chartControl;
+	QString getCmd;
+	QString setCmd;
+	QString parameter;
+
 	Ui::Chart *ui;
 	QList<QPointF> points;
 	void drawChartArea(QPainter &painter, int x, int y, int w, int h);
 	QPointF localPosTo(QPointF localPos);
+	void recalculateSize();
+	void (*onChartPointsChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter);
 };
 
 #endif // CHART_H
