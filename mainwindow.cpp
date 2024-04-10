@@ -13,6 +13,7 @@
 #include "widgets/label_widget.h"
 #include <widgets/combobox_widget.h>
 #include "mainwindow.h"
+#include "preview_window.h"
 #include "ui_mainwindow.h"
 
 IspControl ispControl;
@@ -26,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	ControlsDefinition.init();
 	this->createControls();
+	// PreviewWindow::setupCamera(ui->verticalLayout_2);
 
 /*
 	Chart *chart = new Chart();

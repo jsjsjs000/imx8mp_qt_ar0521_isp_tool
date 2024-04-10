@@ -29,7 +29,7 @@ PreviewWindow::PreviewWindow(QWidget *parent)
 	ui->setupUi(this);
 }
 
-void PreviewWindow::setupCamera(void)
+void PreviewWindow::setupCamera(QBoxLayout *horizontalLayout)
 {
 	const QString AllowedCameraDevice = QString("/dev/video0");
 	const QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
@@ -48,17 +48,16 @@ void PreviewWindow::setupCamera(void)
 		return;
 	}
 
-	int w = 1700;
-	int h = w * 1080 / 1920;
-	qDebug() << w << "x" << h;
-
-	this->setGeometry(0, 0, w, h);
+	// int w = 1700;
+	// int h = w * 1080 / 1920;
+	// qDebug() << w << "x" << h;
+	// this->setGeometry(0, 0, w, h);
 	// this->setGeometry(0, 0, 100, 100);
 
-	videoWidget = new QVideoWidget;
+	QVideoWidget *videoWidget = new QVideoWidget;
 	// videoWidget->setGeometry(0, 0, 200, 100);
 	// videoWidget->show();
-	ui->horizontalLayout->addWidget(videoWidget);
+	horizontalLayout->addWidget(videoWidget);
 	// ui->verticalLayout->setGeometry(QRect(0, 0, 400, 400));
 
 	camera->setViewfinder(videoWidget);
@@ -109,7 +108,7 @@ PreviewWindow::~PreviewWindow()
 void PreviewWindow::showEvent(QShowEvent* event)
 {
 	QWidget::showEvent(event);
-	this->setupCamera();
+	this->setupCamera(this->ui->horizontalLayout);
 	qDebug() << "shown";
 	return;
 

@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QVideoWidget>
+#include <QHBoxLayout>
 
 namespace Ui {
 class PreviewWindow;
@@ -15,6 +16,7 @@ class PreviewWindow : public QWidget
 public:
 	explicit PreviewWindow(QWidget *parent = nullptr);
 	~PreviewWindow();
+	static void setupCamera(QBoxLayout *horizontalLayout);
 
 private slots:
 	// void on_pushButton_clicked();
@@ -25,7 +27,6 @@ protected:
 private:
 	Ui::PreviewWindow *ui;
 	QVideoWidget *videoWidget;
-	void setupCamera(void);
 };
 
 // class GstPlayer2 : public GstPlayer
