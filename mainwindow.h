@@ -23,6 +23,7 @@ public:
 
 private slots:
 	void on_pushButton_clicked();
+	bool event(QEvent *e);
 
 private:
 	Ui::MainWindow *ui;
@@ -35,11 +36,13 @@ private:
 	clock_t lastTime = 0;
 	bool notReadableControlsInitialized = false;
 	bool readyForReadJson = false;
+	bool isActivated = false;
 
 	void createControls();
 	void readParameters();
 	void updateControlsFromJson(Json::Value json, QString type);
 	void initializeControlsNotReadable(QString type);
+	void onActivated();
 	static void onCheckBoxChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, bool value);
 	static void onSliderValueChange(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int value, int divide);
 	static void onComboBoxIndexChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int key, QString value);

@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	ControlsDefinition.init();
 	this->createControls();
-	// PreviewWindow::setupCamera(ui->verticalLayout_2);
+	PreviewWindow::setupCamera(ui->verticalLayout_2);
 
 /*
 	Chart *chart = new Chart();
@@ -56,53 +56,54 @@ MainWindow::~MainWindow()
 
 void MainWindow::createControls()
 {
+	const int stretch = 0;
 	for (const auto *control : qAsConst(ControlsDefinition.controls))
 	{
 		if (const GroupControl *scontrol = dynamic_cast<const GroupControl*>(control))
 		{
 			GroupWidget *group = new GroupWidget(this, scontrol->name);
-			ui->verticalLayout->addWidget(group, 1);
+			ui->verticalLayout->addWidget(group, stretch);
 		}
 		else if (const CheckBoxControl *scontrol = dynamic_cast<const CheckBoxControl*>(control))
 		{
 			CheckBoxWidget *checkBox = new CheckBoxWidget(this, this, scontrol, &MainWindow::onCheckBoxChanged);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), checkBox);
-			ui->verticalLayout->addWidget(checkBox, 1);
+			ui->verticalLayout->addWidget(checkBox, stretch);
 			checkBox->setState(scontrol->checked);
 		}
 		else if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
 		{
 			SliderWidget *slider = new SliderWidget(this, this, scontrol, &MainWindow::onSliderValueChange);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), slider);
-			ui->verticalLayout->addWidget(slider, 1);
+			ui->verticalLayout->addWidget(slider, stretch);
 		}
 		else if (const ButtonControl *scontrol = dynamic_cast<const ButtonControl*>(control))
 		{
 			ButtonWidget *button = new ButtonWidget(this, this, scontrol, &MainWindow::onButtonClicked);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), button);
-			ui->verticalLayout->addWidget(button, 1);
+			ui->verticalLayout->addWidget(button, stretch);
 		}
 		else if (const LabelControl *scontrol = dynamic_cast<const LabelControl*>(control))
 		{
 			LabelWidget *label = new LabelWidget(this, this, scontrol);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), label);
-			ui->verticalLayout->addWidget(label, 1);
+			ui->verticalLayout->addWidget(label, stretch);
 		}
 		else if (const ComboBoxControl *scontrol = dynamic_cast<const ComboBoxControl*>(control))
 		{
 			ComboBoxWidget *comboBox = new ComboBoxWidget(this, this, scontrol, &MainWindow::onComboBoxIndexChanged);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), comboBox);
-			ui->verticalLayout->addWidget(comboBox, 1);
+			ui->verticalLayout->addWidget(comboBox, stretch);
 		}
 		else if (const ChartControl *scontrol = dynamic_cast<const ChartControl*>(control))
 		{
 			Chart *chartControl = new Chart(this, this, scontrol, &MainWindow::onChartControlPointsChanged);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), chartControl);
-			ui->verticalLayout->addWidget(chartControl, 1);
+			ui->verticalLayout->addWidget(chartControl, stretch);
 		}
 	}
 
-	ui->verticalLayout->addStretch(2);
+	// ui->verticalLayout->addStretch(1);
 }
 
 void MainWindow::onCheckBoxChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, bool checked)
@@ -352,4 +353,21 @@ void MainWindow::timerEvent(QTimerEvent* /* event */)
 	}
 
 	// ispControl.getFps();
+}
+
+void MainWindow::onActivated()
+{
+	if (this->isActivated)
+		return;
+
+	this->isActivated = true;
+}
+
+bool MainWindow::event(QEvent *e)
+{
+	if (e->type() == QEvent::WindowActivate)
+	{
+		this->onActivated();
+	}
+	return QWidget::event(e);
 }
