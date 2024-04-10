@@ -1,4 +1,4 @@
-#include "chart.h"
+#include "chart_widget.h"
 #include "qdebug.h"
 #include "ui_chart.h"
 
@@ -64,7 +64,7 @@ void Chart::paintEvent(QPaintEvent* /* event */)
 	QFont titleFont = painter.font();
 	titleFont.setBold(true);
 	painter.setFont(titleFont);
-	painter.drawText(0, 3, this->w, this->padTop - 3, Qt::AlignHCenter, this->chartControl->name);
+	painter.drawText(0, 3, this->width(), this->padTop - 3, Qt::AlignHCenter, this->chartControl->name);
 
 	painter.setFont(font);
 	painter.setPen(QColor(200, 200, 200));

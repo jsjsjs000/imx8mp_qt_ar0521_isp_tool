@@ -7,13 +7,13 @@
 #include "controls_definitions.h"
 #include "widgets/slider_widget.h"
 #include "widgets/group_widget.h"
-#include "chart.h"
-#include "mainwindow.h"
-#include "ui_mainwindow.h"
+#include "widgets/chart_widget.h"
 #include "widgets/checkbox_widget.h"
 #include "widgets/button_widget.h"
 #include "widgets/label_widget.h"
 #include <widgets/combobox_widget.h>
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
 
 IspControl ispControl;
 ControlsDefinitions ControlsDefinition;
