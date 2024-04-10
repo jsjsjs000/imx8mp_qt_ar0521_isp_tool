@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 12.0.2, 2024-04-10T21:19:33. -->
+<!-- Written by QtCreator 12.0.2, 2024-04-11T00:45:44. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -261,6 +261,9 @@
     <value type="int" key="PE.EnvironmentAspect.Base">1</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes">
      <value type="QString">DISPLAY=:0</value>
+     <value type="QString">GST_V4L2_USE_LIBV4L2=1</value>
+     <value type="QString">GDK_BACKEND=X11</value>
+     <value type="QString">QT_QPA_PLATFORM=xcb</value>
     </valuelist>
     <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">imx8mp_qt_ar0521_isp_tool (na %{nazwa urządzenia})</value>

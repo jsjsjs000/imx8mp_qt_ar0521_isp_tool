@@ -108,9 +108,11 @@ PreviewWindow::~PreviewWindow()
 void PreviewWindow::showEvent(QShowEvent* event)
 {
 	QWidget::showEvent(event);
-	this->setupCamera(this->ui->horizontalLayout);
 	qDebug() << "shown";
-	return;
+
+	// this->setupCamera(this->ui->horizontalLayout);
+	// return;
+}
 
 /*
 	videoWidget = new QVideoWidget;
@@ -131,6 +133,8 @@ void PreviewWindow::showEvent(QShowEvent* event)
 	// WId id = QWidget::winId();
 */
 
+void PreviewWindow::setupCamera2(QBoxLayout *horizontalLayout)
+{
 	gst_init(0, NULL);
 
 
@@ -148,9 +152,9 @@ void PreviewWindow::showEvent(QShowEvent* event)
 
 	GstElement *pipeline = gst_pipeline_new("xvoverlay");
 	// GstElement *src = gst_element_factory_make("videotestsrc", NULL);
-	// GstElement *src = gst_element_factory_make("v4l2src", "camera-input");
-	GstElement *src = gst_element_factory_make("v4l2src", NULL);
-	// g_object_set(G_OBJECT(src), "device", "/dev/video0", NULL);
+	GstElement *src = gst_element_factory_make("v4l2src", "camera-input");
+	g_object_set(G_OBJECT(src), "device", "/dev/video0", NULL);
+	g_object_set(G_OBJECT(src), "num-buffers", 300, NULL);
 	qDebug("src = %llu", (unsigned long long)src);
 
 	GstElement *src_capsfilter = gst_element_factory_make("capsfilter", "source_capsfilter");
@@ -158,6 +162,10 @@ void PreviewWindow::showEvent(QShowEvent* event)
 	GstCaps *src_caps = gst_caps_new_simple(
 			"video/x-raw",
 			"format", G_TYPE_STRING, "YUY2",
+			// "format", G_TYPE_STRING, "NV12",
+			// "format", G_TYPE_STRING, "UYVY",
+			// "format", G_TYPE_STRING, "YUYV",
+			// "format", G_TYPE_STRING, "RGBA",
 			"width", G_TYPE_INT, 1920,
 			"height", G_TYPE_INT, 1080,
 			"framerate", GST_TYPE_FRACTION, 30, 1,
@@ -178,12 +186,15 @@ void PreviewWindow::showEvent(QShowEvent* event)
 // https://forums.developer.nvidia.com/t/using-x-raw-memory-nvmm-in-gstreamer-program/42654
 
 
-	videoWidget = new QVideoWidget;
-	ui->horizontalLayout->addWidget(videoWidget);
+	QVideoWidget *videoWidget = new QVideoWidget;
+	horizontalLayout->addWidget(videoWidget);
 	// videoWidget->show();
 	// videoWidget->setGeometry(20, 20, 1000, 800);
 	WId winId = videoWidget->winId();
 	gst_video_overlay_set_window_handle(GST_VIDEO_OVERLAY(sink), winId);
+	// QWindow *winId = videoWidget->windowHandle();
+	// gst_video_overlay_set_window_handle(GST_VIDEO_OVERLAY(sink), (guintptr)winId);
+	qDebug("winid = %llu", winId);
 
 	GstStateChangeReturn sret = gst_element_set_state(pipeline, GST_STATE_PLAYING);
 	qDebug("sret = %u", sret);
@@ -224,16 +235,6 @@ void PreviewWindow::showEvent(QShowEvent* event)
 
 	qDebug() << "end";
 }
-
-/*
-https://gstreamer.freedesktop.org/documentation/installing/on-linux.html?gi-language=c
-apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
-
-pd22.1.1
-pkg-config --cflags --libs gstreamer-video-1.0
-
-*/
-
 
 
 // void GstPlayer::setVideoOutput(QWidget *widget)

@@ -95,7 +95,58 @@ int main(int argc, char *argv[])
 	MainWindow mainWindow;
 	// mainWindow.setGeometry(0, DesktopTaskBarHeight,
 			// MainWindowWidth + 2 * WindowBorder, desktopSize.height() - 2 * DesktopTaskBarHeight);
-	mainWindow.showMaximized();
+	mainWindow.show();
+	// mainWindow.showMaximized();
 
 	return application.exec();
 }
+
+/*
+
+Projekty > ARM_PD_22.1.1 > Uruchamianie > Środowisko:
+	DISPLAY=:0
+	GST_V4L2_USE_LIBV4L2=1
+
+Projekty > ARM_PD_22.1.1 > Uruchamianie > Środowisko:
+	DISPLAY=:0
+	GDK_BACKEND=X11
+	GST_V4L2_USE_LIBV4L2=1
+	QT_QPA_PLATFORM=xcb
+
+Projekty > ARM_PD_22.1.1 > Uruchamianie > Środowisko: (nie działa wideo)
+	DISPLAY=:0:0
+	GST_V4L2_USE_LIBV4L2=1
+	QT_QPA_PLATFORM=wayland
+
+	run in console:
+export DISPLAY=:0
+export GST_V4L2_USE_LIBV4L2=1
+/opt/imx8mp_qt_ar0521_isp_tool/bin/imx8mp_qt_ar0521_isp_tool
+
+	run in console:
+DISPLAY=:0
+GDK_BACKEND=X11
+GST_V4L2_USE_LIBV4L2=1
+QT_QPA_PLATFORM=xcb
+/opt/imx8mp_qt_ar0521_isp_tool/bin/imx8mp_qt_ar0521_isp_tool
+
+	run in console (is video working?):
+export DISPLAY=:0:0
+export GST_V4L2_USE_LIBV4L2=1
+export QT_QPA_PLATFORM=wayland
+/opt/imx8mp_qt_ar0521_isp_tool/bin/imx8mp_qt_ar0521_isp_tool
+
+	install:
+https://gstreamer.freedesktop.org/documentation/installing/on-linux.html?gi-language=c
+apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
+
+	get libraries list:
+pd22.1.1
+pkg-config --cflags --libs gstreamer-video-1.0
+
+*/
+
+https://stackoverflow.com/questions/76201961/can-not-display-gstreamer-inside-widget-qt-wayland
+
+https://www.nxp.com/docs/en/user-guide/IMX_LINUX_USERS_GUIDE.pdf
+7.3.1.6.3 Multiple videos overlay

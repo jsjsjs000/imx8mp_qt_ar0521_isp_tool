@@ -28,7 +28,8 @@ MainWindow::MainWindow(QWidget *parent)
 	ControlsDefinition.init();
 	this->createControls();
 
-	PreviewWindow::setupCamera(ui->verticalLayout_2);
+	// PreviewWindow::setupCamera(ui->verticalLayout_2);
+	PreviewWindow::setupCamera2(ui->verticalLayout_2);
 
 /*
 	Chart *chart = new Chart();
@@ -46,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent)
 	this->canUpdateControls = true;
 
 	this->lastTime = clock();
-	timerId = startTimer(500); // $$ 500
+	timerId = startTimer(2000); // $$ 500
 }
 
 MainWindow::~MainWindow()
@@ -57,50 +58,49 @@ MainWindow::~MainWindow()
 
 void MainWindow::createControls()
 {
-	const int stretch = 1;
 	for (const auto *control : qAsConst(ControlsDefinition.controls))
 	{
 		if (const GroupControl *scontrol = dynamic_cast<const GroupControl*>(control))
 		{
 			GroupWidget *group = new GroupWidget(this, scontrol->name);
-			ui->verticalLayout->addWidget(group, stretch);
+			ui->verticalLayout->addWidget(group);
 		}
 		else if (const CheckBoxControl *scontrol = dynamic_cast<const CheckBoxControl*>(control))
 		{
 			CheckBoxWidget *checkBox = new CheckBoxWidget(this, this, scontrol, &MainWindow::onCheckBoxChanged);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), checkBox);
-			ui->verticalLayout->addWidget(checkBox, stretch);
+			ui->verticalLayout->addWidget(checkBox);
 			checkBox->setState(scontrol->checked);
 		}
 		else if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
 		{
 			SliderWidget *slider = new SliderWidget(this, this, scontrol, &MainWindow::onSliderValueChange);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), slider);
-			ui->verticalLayout->addWidget(slider, stretch);
+			ui->verticalLayout->addWidget(slider);
 		}
 		else if (const ButtonControl *scontrol = dynamic_cast<const ButtonControl*>(control))
 		{
 			ButtonWidget *button = new ButtonWidget(this, this, scontrol, &MainWindow::onButtonClicked);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), button);
-			ui->verticalLayout->addWidget(button, stretch);
+			ui->verticalLayout->addWidget(button);
 		}
 		else if (const LabelControl *scontrol = dynamic_cast<const LabelControl*>(control))
 		{
 			LabelWidget *label = new LabelWidget(this, this, scontrol);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), label);
-			ui->verticalLayout->addWidget(label, stretch);
+			ui->verticalLayout->addWidget(label);
 		}
 		else if (const ComboBoxControl *scontrol = dynamic_cast<const ComboBoxControl*>(control))
 		{
 			ComboBoxWidget *comboBox = new ComboBoxWidget(this, this, scontrol, &MainWindow::onComboBoxIndexChanged);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), comboBox);
-			ui->verticalLayout->addWidget(comboBox, stretch);
+			ui->verticalLayout->addWidget(comboBox);
 		}
 		else if (const ChartControl *scontrol = dynamic_cast<const ChartControl*>(control))
 		{
 			ChartWidget *chart = new ChartWidget(this, this, scontrol, &MainWindow::onChartControlPointsChanged);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), chart);
-			ui->verticalLayout->addWidget(chart, stretch);
+			ui->verticalLayout->addWidget(chart);
 		}
 	}
 }
@@ -154,7 +154,7 @@ void MainWindow::onButtonClicked(MainWindow *mainWindow, QString getCmd, QString
 	mainWindow->lastTime = clock();
 }
 
-void MainWindow::onChartControlPointsChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter)
+void MainWindow::onChartControlPointsChanged(MainWindow* /*mainWindow*/, QString /* getCmd */, QString /* setCmd */, QString /* parameter */)
 {
 
 }

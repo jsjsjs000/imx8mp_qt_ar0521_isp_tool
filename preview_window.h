@@ -17,6 +17,7 @@ public:
 	explicit PreviewWindow(QWidget *parent = nullptr);
 	~PreviewWindow();
 	static void setupCamera(QBoxLayout *horizontalLayout);
+	static void setupCamera2(QBoxLayout *horizontalLayout);
 
 private slots:
 	// void on_pushButton_clicked();

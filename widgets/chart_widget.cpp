@@ -63,12 +63,10 @@ void ChartWidget::paintEvent(QPaintEvent* /* event */)
 	QPainter painter(this);
 	QFont font = painter.font();
 
-	QFont titleFont = painter.font();
-	titleFont.setBold(true);
-	painter.setFont(titleFont);
+		/* Title */
 	painter.drawText(0, 3, this->width(), this->padTop - 3, Qt::AlignHCenter, this->chartControl->name);
 
-	painter.setFont(font);
+		/* Outline rect */
 	painter.setPen(QColor(200, 200, 200));
 	painter.drawRect(0, 0, this->width() - 1, this->height() - 1);
 
@@ -107,8 +105,6 @@ void ChartWidget::drawChartArea(QPainter &painter, int x, int y, int w, int h)
 	const float epsilon = 0.00001f;
 	const QPoint xAxisLabelsPad = QPoint(0, -1);
 	const QPoint yAxisLabelsPad = QPoint(3, 0);
-
-	painter.drawRect(x, y, w, h);
 
 		/* Draw grid */
 	painter.setPen(QColor(220, 220, 220));
@@ -151,7 +147,10 @@ void ChartWidget::drawChartArea(QPainter &painter, int x, int y, int w, int h)
 	{
 		float fyi = h + y - (yi - this->y1) * this->dy;
 		QString text;
-		text = text.asprintf("%.2f", yi);
+		if (this->y2 - this->y1 >= 10.0f)
+			text = text.asprintf("%.0f", yi);
+		else
+			text = text.asprintf("%.2f", yi);
 		QRect rect = painter.boundingRect(0, 0, 100, 100, 0, text);
 		painter.drawText(this->x1 + yAxisLabelsPad.x(), fyi + rect.height() / 2 + yAxisLabelsPad.y(), text);
 		yi += this->gridY;
@@ -190,7 +189,7 @@ void ChartWidget::mouseMoveEvent(QMouseEvent *event)
 	this->repaint();
 }
 
-void ChartWidget::mouseReleaseEvent(QMouseEvent *event)
+void ChartWidget::mouseReleaseEvent(QMouseEvent* /* event */)
 {
 	// qDebug() << "release" << event->localPos().x() << event->localPos().y() << event->button();
 	// QPointF p = this->localPosTo(event->localPos());
@@ -199,9 +198,9 @@ void ChartWidget::mouseReleaseEvent(QMouseEvent *event)
 		// return;
 }
 
-void ChartWidget::resizeEvent(QResizeEvent *event)
+void ChartWidget::resizeEvent(QResizeEvent* /* event */)
 {
-	// qDebug() << "resize" << event->size() << this->width() << this->height() << (this->x2 - this->x1);
+	// qDebug() << "resize" << event->size() << this->width() << this->height();
 	this->recalculateSize();
 }
 
