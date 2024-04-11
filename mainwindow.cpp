@@ -399,7 +399,7 @@ void MainWindow::updateControls2()
 				if (controls2Definition.getArrayNode(scontrol->node, array))
 				{
 					QList<QPointF> points;
-					for (uint i = 0; i < array.size(); i++)
+					for (int i = 0; i < array.size(); i++)
 						points.push_back(QPointF(i, array[i]));
 					chart->initialize(0, array.size() - 1, scontrol->y1, scontrol->y2, 1.0f, scontrol->gridY, points);
 				}

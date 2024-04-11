@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 12.0.2, 2024-04-11T14:49:00. -->
+<!-- Written by QtCreator 12.0.2, 2024-04-11T14:56:22. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -263,6 +263,7 @@
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes">
      <value type="QString">DISPLAY=:0</value>
      <value type="QString">QT_DEBUG_PLUGINS=</value>
+     <value type="QString">QT_QPA_PLATFORM_=wayland</value>
     </valuelist>
     <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">imx8mp_qt_ar0521_isp_tool (na %{nazwa urządzenia})</value>
