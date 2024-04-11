@@ -76,12 +76,12 @@ int main(int argc, char *argv[])
 	myLabel.setPixmap(QPixmap::fromImage(myImage));
 	myLabel.show(); */
 
-/*
 	const int DesktopTaskBarHeight = 32;
-	const int MainWindowWidth = 350;
+	const int MainWindowWidth = 360;
 	const int WindowBorder = 5;
 	const QSize desktopSize = QGuiApplication::primaryScreen()->size();
 
+/*
 	PreviewWindow previewWindow;
 	previewWindow.show();
 	previewWindow.setGeometry(MainWindowWidth + 2 * WindowBorder, DesktopTaskBarHeight,
@@ -93,10 +93,10 @@ int main(int argc, char *argv[])
 														// desktopSize.height() - 2 * DesktopTaskBarHeight);
 */
 	MainWindow mainWindow;
-	// mainWindow.setGeometry(0, DesktopTaskBarHeight,
-			// MainWindowWidth + 2 * WindowBorder, desktopSize.height() - 2 * DesktopTaskBarHeight);
-	mainWindow.show();
+	mainWindow.setGeometry(0, DesktopTaskBarHeight,
+			MainWindowWidth + 2 * WindowBorder, desktopSize.height() - 2 * DesktopTaskBarHeight);
 	// mainWindow.showMaximized();
+	mainWindow.show();
 
 	return application.exec();
 }
@@ -144,9 +144,10 @@ apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreame
 pd22.1.1
 pkg-config --cflags --libs gstreamer-video-1.0
 
-*/
 
 https://stackoverflow.com/questions/76201961/can-not-display-gstreamer-inside-widget-qt-wayland
 
 https://www.nxp.com/docs/en/user-guide/IMX_LINUX_USERS_GUIDE.pdf
 7.3.1.6.3 Multiple videos overlay
+
+*/

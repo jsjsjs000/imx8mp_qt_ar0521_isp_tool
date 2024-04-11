@@ -3,6 +3,7 @@
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
 #include <QSpacerItem>
+#include <QProcess>
 
 #include "controls_definitions.h"
 #include "widgets/slider_widget.h"
@@ -29,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
 	this->createControls();
 
 	// PreviewWindow::setupCamera(ui->verticalLayout_2);
-	PreviewWindow::setupCamera2(ui->verticalLayout_2);
+	// PreviewWindow::setupCamera2(ui->verticalLayout_2);
 
 /*
 	Chart *chart = new Chart();
@@ -42,18 +43,28 @@ MainWindow::MainWindow(QWidget *parent)
 	// ui->verticalLayout_2->addStretch(0);
 */
 
+	this->createGStreamerProcess();
+
 	ispControl.openVideo();
 
 	this->canUpdateControls = true;
 
-	this->lastTime = clock();
-	timerId = startTimer(2000); // $$ 500
+	this->elapsedTimer.start();
+	this->lastTime = this->elapsedTimer.elapsed();
+	timerId = startTimer(1000); // $$ 500
 }
 
 MainWindow::~MainWindow()
 {
 	killTimer(timerId);
 	delete ui;
+}
+
+void MainWindow::createGStreamerProcess()
+{
+	QProcess *process = new QProcess(this);
+	QString program = "gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,format=YUY2,width=1920,height=1080 ! waylandsink window-width=1560 window-height=878";
+	process->start(program);
 }
 
 void MainWindow::createControls()
@@ -113,7 +124,7 @@ void MainWindow::onCheckBoxChanged(MainWindow *mainWindow, QString getCmd, QStri
 	qDebug() << setCmd << parameter << int(checked);
 	ispControl.setParamBool(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), checked);
 
-	mainWindow->lastTime = clock();
+	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
 
 void MainWindow::onSliderValueChange(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int value, int divide)
@@ -124,7 +135,7 @@ void MainWindow::onSliderValueChange(MainWindow *mainWindow, QString getCmd, QSt
 	qDebug() << setCmd << parameter << ((float)value / divide);
 	ispControl.setParam(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), value, divide);
 
-	mainWindow->lastTime = clock();
+	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
 
 void MainWindow::onComboBoxIndexChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int key, QString value)
@@ -135,7 +146,7 @@ void MainWindow::onComboBoxIndexChanged(MainWindow *mainWindow, QString getCmd, 
 	qDebug() << setCmd << parameter << key << "(" + value + ")";
 	ispControl.setParam(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), key, 1);
 
-	mainWindow->lastTime = clock();
+	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
 
 void MainWindow::onButtonClicked(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QString value)
@@ -151,7 +162,7 @@ void MainWindow::onButtonClicked(MainWindow *mainWindow, QString getCmd, QString
 	else
 		ispControl.setParamString(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), value.toStdString().c_str());
 
-	mainWindow->lastTime = clock();
+	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
 
 void MainWindow::onChartControlPointsChanged(MainWindow* /*mainWindow*/, QString /* getCmd */, QString /* setCmd */, QString /* parameter */)
@@ -339,7 +350,7 @@ void MainWindow::updateControlsFromJson(Json::Value json, QString cmd)
 
 void MainWindow::timerEvent(QTimerEvent* /* event */)
 {
-	double diff = double(clock() - this->lastTime) / CLOCKS_PER_SEC * 1000;
+	int diff = this->elapsedTimer.elapsed() - this->lastTime;
 	if (!this->readyForReadJson && diff < 1000)
 		return;
 

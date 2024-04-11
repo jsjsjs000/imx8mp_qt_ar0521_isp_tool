@@ -153,8 +153,8 @@ void PreviewWindow::setupCamera2(QBoxLayout *horizontalLayout)
 	GstElement *pipeline = gst_pipeline_new("xvoverlay");
 	// GstElement *src = gst_element_factory_make("videotestsrc", NULL);
 	GstElement *src = gst_element_factory_make("v4l2src", "camera-input");
-	g_object_set(G_OBJECT(src), "device", "/dev/video0", NULL);
-	g_object_set(G_OBJECT(src), "num-buffers", 300, NULL);
+	// g_object_set(G_OBJECT(src), "device", "/dev/video0", NULL);
+	// g_object_set(G_OBJECT(src), "num-buffers", 300, NULL);
 	qDebug("src = %llu", (unsigned long long)src);
 
 	GstElement *src_capsfilter = gst_element_factory_make("capsfilter", "source_capsfilter");
@@ -173,17 +173,24 @@ void PreviewWindow::setupCamera2(QBoxLayout *horizontalLayout)
 	qDebug("src_caps = %llu", (unsigned long long)src_caps);
 	g_object_set(G_OBJECT(src_capsfilter), "caps", src_caps, NULL);
 
-	GstElement *sink = gst_element_factory_make("ximagesink", NULL);
+	// GstElement *sink = gst_element_factory_make("ximagesink", NULL);
+	GError *error = nullptr;
+	GstElement *pipe_display = gst_parse_launch("gst-pipeline: videotestsrc ! ximagesink", &error);
+	GstElement *sink = (gst_bin_get_by_interface(GST_BIN(pipe_display), GST_TYPE_VIDEO_OVERLAY));
 	qDebug("sink = %llu", (unsigned long long)sink);
 
-	gst_bin_add_many(GST_BIN(pipeline), src, src_capsfilter, sink, NULL);
-	bool b = gst_element_link_many(src, src_capsfilter, sink, NULL);
+	// gst_bin_add_many(GST_BIN(pipeline), src, src_capsfilter, sink, NULL);
+	// bool b = gst_element_link_many(src, src_capsfilter, sink, NULL);
 	// gst_bin_add_many(GST_BIN(pipeline), src, sink, NULL);
 	// bool b = gst_element_link_many(src, sink, NULL);
-	qDebug("link = %d", b);
+	// qDebug("link = %d", b);
 
 // https://github.com/simonqin09/gstest/blob/master/gstest.c
 // https://forums.developer.nvidia.com/t/using-x-raw-memory-nvmm-in-gstreamer-program/42654
+
+	// gst_element_set_state(pipeline, GST_STATE_READY); // sret
+
+
 
 
 	QVideoWidget *videoWidget = new QVideoWidget;
@@ -198,6 +205,9 @@ void PreviewWindow::setupCamera2(QBoxLayout *horizontalLayout)
 
 	GstStateChangeReturn sret = gst_element_set_state(pipeline, GST_STATE_PLAYING);
 	qDebug("sret = %u", sret);
+
+
+	// gst_bin_get_by_name
 
 	/* Wait until error or EOS
 	GstBus *bus = gst_element_get_bus (pipeline);

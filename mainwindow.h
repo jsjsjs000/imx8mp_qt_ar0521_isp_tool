@@ -5,6 +5,7 @@
 #include <QVideoWidget>
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
+#include <QElapsedTimer>
 #include "isp_control.h"
 
 QT_BEGIN_NAMESPACE
@@ -37,11 +38,13 @@ private:
 	bool notReadableControlsInitialized = false;
 	bool readyForReadJson = false;
 	bool isActivated = false;
+	QElapsedTimer elapsedTimer;
 
 	void createControls();
 	void readParameters();
 	void updateControlsFromJson(Json::Value json, QString type);
 	void initializeControlsNotReadable(QString type);
+	void createGStreamerProcess();
 	void onActivated();
 	static void onCheckBoxChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, bool value);
 	static void onSliderValueChange(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int value, int divide);
