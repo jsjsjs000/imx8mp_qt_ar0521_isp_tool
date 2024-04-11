@@ -1,9 +1,10 @@
 #ifndef CHART_H
 #define CHART_H
 
-#include "controls.h"
-#include "mainwindow.h"
 #include <QWidget>
+#include "controls.h"
+#include "controls2.h"
+#include "mainwindow.h"
 
 namespace Ui {
 class Chart;
@@ -17,6 +18,8 @@ public:
 	explicit ChartWidget(QWidget *parent = nullptr);
 	ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartControl *control,
 			void (*onChartPointsChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter));
+	ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartControl2 *chartControl2,
+			void (*onChartPointsChanged)(MainWindow *mainWindow, QString node));
 	~ChartWidget();
 	void initialize(float x1, float x2, float y1, float y2, float gridX, float gridY, QList<QPointF> points);
 
@@ -46,9 +49,12 @@ private:
 
 	MainWindow *mainWindow;
 	ChartControl *chartControl;
+	ChartControl2 *chartControl2;
 	QString getCmd;
 	QString setCmd;
 	QString parameter;
+	QString node;
+	bool readonly;
 
 	Ui::Chart *ui;
 	QList<QPointF> points;
@@ -56,6 +62,7 @@ private:
 	QPointF localPosTo(QPointF localPos);
 	void recalculateSize();
 	void (*onChartPointsChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter);
+	void (*onChartPointsChanged2)(MainWindow *mainWindow, QString node);
 };
 
 #endif // CHART_H

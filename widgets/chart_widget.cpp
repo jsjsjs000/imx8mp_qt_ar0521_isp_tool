@@ -26,11 +26,30 @@ ChartWidget::ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartCon
 	this->getCmd = chartControl->getCmd;
 	this->setCmd = chartControl->setCmd;
 	this->parameter = chartControl->parameter;
+	this->readonly = chartControl->readonly;
 	this->onChartPointsChanged = onChartPointsChanged;
 
 	this->recalculateSize();
 
 	this->setToolTip(chartControl->description);
+}
+
+ChartWidget::ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartControl2 *chartControl2,
+		void (*onChartPointsChanged2)(MainWindow *mainWindow, QString node))
+		: QWidget(parent)
+		, ui(new Ui::Chart)
+{
+	ui->setupUi(this);
+
+	this->mainWindow = mainWindow;
+	this->chartControl2 = (ChartControl2*)chartControl2;
+	this->node = chartControl2->node;
+	this->readonly = chartControl2->readonly;
+	this->onChartPointsChanged2 = onChartPointsChanged2;
+
+	this->recalculateSize();
+
+	this->setToolTip(chartControl2->description);
 }
 
 ChartWidget::~ChartWidget()
@@ -64,7 +83,10 @@ void ChartWidget::paintEvent(QPaintEvent* /* event */)
 	QFont font = painter.font();
 
 		/* Title */
-	painter.drawText(0, 3, this->width(), this->padTop - 3, Qt::AlignHCenter, this->chartControl->name);
+	if (this->chartControl != nullptr)
+		painter.drawText(0, 3, this->width(), this->padTop - 3, Qt::AlignHCenter, this->chartControl->name);
+	else if (this->chartControl2 != nullptr)
+		painter.drawText(0, 3, this->width(), this->padTop - 3, Qt::AlignHCenter, this->chartControl2->name);
 
 		/* Outline rect */
 	painter.setPen(QColor(200, 200, 200));
@@ -167,26 +189,32 @@ QPointF ChartWidget::localPosTo(QPointF localPos)
 void ChartWidget::mousePressEvent(QMouseEvent *event)
 {
 	// qDebug() << "press" << event->localPos().x() << event->localPos().y() << event->button();
-	if (this->chartControl->readonly)
+	if (this->readonly)
 		return;
 
 	QPointF p = this->localPosTo(event->localPos());
 	// qDebug() << p.x() << p.y();
-	this->points[0].setX(p.x());
-	this->points[0].setY(p.y());
-	this->repaint();
+	int x = round(p.x());
+	if (x >= 0 && x < this->points.count())
+	{
+		this->points[x].setY(p.y());
+		this->repaint();
+	}
 }
 
 void ChartWidget::mouseMoveEvent(QMouseEvent *event)
 {
 	// qDebug() << "move" << event->localPos().x() << event->localPos().y() << event->button();
-	if (this->chartControl->readonly)
+	if (this->readonly)
 		return;
 
 	QPointF p = this->localPosTo(event->localPos());
-	this->points[0].setX(p.x());
-	this->points[0].setY(p.y());
-	this->repaint();
+	int x = round(p.x());
+	if (x >= 0 && x < this->points.count())
+	{
+		this->points[x].setY(p.y());
+		this->repaint();
+	}
 }
 
 void ChartWidget::mouseReleaseEvent(QMouseEvent* /* event */)
@@ -194,7 +222,7 @@ void ChartWidget::mouseReleaseEvent(QMouseEvent* /* event */)
 	// qDebug() << "release" << event->localPos().x() << event->localPos().y() << event->button();
 	// QPointF p = this->localPosTo(event->localPos());
 
-	// if (this->chartControl->readonly)
+	// if (this->readonly)
 		// return;
 }
 

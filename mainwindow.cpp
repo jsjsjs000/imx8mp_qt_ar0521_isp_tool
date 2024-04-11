@@ -13,12 +13,14 @@
 #include "widgets/button_widget.h"
 #include "widgets/label_widget.h"
 #include <widgets/combobox_widget.h>
+#include "controls2_definitions.h"
 #include "mainwindow.h"
 #include "preview_window.h"
 #include "ui_mainwindow.h"
 
 IspControl ispControl;
-ControlsDefinitions ControlsDefinition;
+ControlsDefinitions controlsDefinition;
+Controls2Definitions controls2Definition;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -26,8 +28,10 @@ MainWindow::MainWindow(QWidget *parent)
 {
 	ui->setupUi(this);
 
-	ControlsDefinition.init();
+	controlsDefinition.init();
+	controls2Definition.init();
 	this->createControls();
+	this->createControls2();
 
 	// PreviewWindow::setupCamera(ui->verticalLayout_2);
 	// PreviewWindow::setupCamera2(ui->verticalLayout_2);
@@ -43,9 +47,13 @@ MainWindow::MainWindow(QWidget *parent)
 	// ui->verticalLayout_2->addStretch(0);
 */
 
+	this->killGStreamerProcess();
 	this->createGStreamerProcess();
 
 	ispControl.openVideo();
+
+	controls2Definition.readXml();
+	this->updateControls2();
 
 	this->canUpdateControls = true;
 
@@ -60,58 +68,81 @@ MainWindow::~MainWindow()
 	delete ui;
 }
 
+
+void MainWindow::killGStreamerProcess()
+{
+	QProcess *process = new QProcess(this);
+	QString program = "killall -s KILL gst-launch-1.0";
+	process->start(program);
+	process->waitForFinished(1000);
+}
+
 void MainWindow::createGStreamerProcess()
 {
 	QProcess *process = new QProcess(this);
 	QString program = "gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,format=YUY2,width=1920,height=1080 ! waylandsink window-width=1560 window-height=878";
 	process->start(program);
+	process->waitForFinished(1000);
 }
 
 void MainWindow::createControls()
 {
-	for (const auto *control : qAsConst(ControlsDefinition.controls))
+	for (const auto *control : qAsConst(controlsDefinition.controls))
 	{
 		if (const GroupControl *scontrol = dynamic_cast<const GroupControl*>(control))
 		{
 			GroupWidget *group = new GroupWidget(this, scontrol->name);
-			ui->verticalLayout->addWidget(group);
+			ui->verticalLayout_1->addWidget(group);
 		}
 		else if (const CheckBoxControl *scontrol = dynamic_cast<const CheckBoxControl*>(control))
 		{
 			CheckBoxWidget *checkBox = new CheckBoxWidget(this, this, scontrol, &MainWindow::onCheckBoxChanged);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), checkBox);
-			ui->verticalLayout->addWidget(checkBox);
+			ui->verticalLayout_1->addWidget(checkBox);
 			checkBox->setState(scontrol->checked);
 		}
 		else if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
 		{
 			SliderWidget *slider = new SliderWidget(this, this, scontrol, &MainWindow::onSliderValueChange);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), slider);
-			ui->verticalLayout->addWidget(slider);
+			ui->verticalLayout_1->addWidget(slider);
 		}
 		else if (const ButtonControl *scontrol = dynamic_cast<const ButtonControl*>(control))
 		{
 			ButtonWidget *button = new ButtonWidget(this, this, scontrol, &MainWindow::onButtonClicked);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), button);
-			ui->verticalLayout->addWidget(button);
+			ui->verticalLayout_1->addWidget(button);
 		}
 		else if (const LabelControl *scontrol = dynamic_cast<const LabelControl*>(control))
 		{
 			LabelWidget *label = new LabelWidget(this, this, scontrol);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), label);
-			ui->verticalLayout->addWidget(label);
+			ui->verticalLayout_1->addWidget(label);
 		}
 		else if (const ComboBoxControl *scontrol = dynamic_cast<const ComboBoxControl*>(control))
 		{
 			ComboBoxWidget *comboBox = new ComboBoxWidget(this, this, scontrol, &MainWindow::onComboBoxIndexChanged);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), comboBox);
-			ui->verticalLayout->addWidget(comboBox);
+			ui->verticalLayout_1->addWidget(comboBox);
 		}
 		else if (const ChartControl *scontrol = dynamic_cast<const ChartControl*>(control))
 		{
 			ChartWidget *chart = new ChartWidget(this, this, scontrol, &MainWindow::onChartControlPointsChanged);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), chart);
-			ui->verticalLayout->addWidget(chart);
+			ui->verticalLayout_1->addWidget(chart);
+		}
+	}
+}
+
+void MainWindow::createControls2()
+{
+	for (const auto *control : qAsConst(controls2Definition.controls))
+	{
+		if (const ChartControl2 *scontrol = dynamic_cast<const ChartControl2*>(control))
+		{
+			ChartWidget *chart = new ChartWidget(this, this, scontrol, &MainWindow::onChartControl2PointsChanged);
+			this->widgets2.insert(QString(scontrol->node), chart);
+			ui->verticalLayout_2->addWidget(chart);
 		}
 	}
 }
@@ -170,6 +201,11 @@ void MainWindow::onChartControlPointsChanged(MainWindow* /*mainWindow*/, QString
 
 }
 
+void MainWindow::onChartControl2PointsChanged(MainWindow* /*mainWindow*/, QString /* node */)
+{
+
+}
+
 void MainWindow::on_pushButton_clicked()
 {
 	// this->setGeometry(100, 100, 200, 200);
@@ -187,13 +223,13 @@ void MainWindow::readParameters()
 
 	if (!this->notReadableControlsInitialized)
 	{
-		for (const QString &paramName : qAsConst(ControlsDefinition.initializeNotReadableControls))
+		for (const QString &paramName : qAsConst(controlsDefinition.initializeNotReadableControls))
 			this->initializeControlsNotReadable(paramName);
 
 		this->notReadableControlsInitialized = true;
 	}
 
-	for (const QString &paramName : qAsConst(ControlsDefinition.readParams))
+	for (const QString &paramName : qAsConst(controlsDefinition.readParams))
 	{
 		params = ispControl.getParam(paramName.toStdString().c_str());
 		if (params)
@@ -205,7 +241,7 @@ void MainWindow::readParameters()
 
 void MainWindow::initializeControlsNotReadable(QString cmd)
 {
-	for (const auto *control : qAsConst(ControlsDefinition.controls))
+	for (const auto *control : qAsConst(controlsDefinition.controls))
 		if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
 		{
 			SliderWidget *slider = (SliderWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
@@ -221,7 +257,7 @@ void MainWindow::initializeControlsNotReadable(QString cmd)
 
 void MainWindow::updateControlsFromJson(Json::Value json, QString cmd)
 {
-	for (const auto *control : qAsConst(ControlsDefinition.controls))
+	for (const auto *control : qAsConst(controlsDefinition.controls))
 	{
 		if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
 		{
@@ -348,6 +384,30 @@ void MainWindow::updateControlsFromJson(Json::Value json, QString cmd)
 	}
 }
 
+void MainWindow::updateControls2()
+{
+	for (const auto *control : qAsConst(controls2Definition.controls))
+	{
+		if (const ChartControl2 *scontrol = dynamic_cast<const ChartControl2*>(control))
+		{
+			ChartWidget *chart = (ChartWidget*)this->widgets2[scontrol->node];
+			if (chart == nullptr)
+				qDebug() << "Widget " << scontrol->node << " not found";
+			else
+			{
+				QList<float> array;
+				if (controls2Definition.getArrayNode(scontrol->node, array))
+				{
+					QList<QPointF> points;
+					for (uint i = 0; i < array.size(); i++)
+						points.push_back(QPointF(i, array[i]));
+					chart->initialize(0, array.size() - 1, scontrol->y1, scontrol->y2, 1.0f, scontrol->gridY, points);
+				}
+			}
+		}
+	}
+}
+
 void MainWindow::timerEvent(QTimerEvent* /* event */)
 {
 	int diff = this->elapsedTimer.elapsed() - this->lastTime;
@@ -357,9 +417,12 @@ void MainWindow::timerEvent(QTimerEvent* /* event */)
 	this->readyForReadJson = true;
 	if (diff >= 300)
 	{
-		this->readParameters();
+		if (this->ui->tabWidget->currentIndex() == 0)
+			this->readParameters();
+		// else if (this->ui->tabWidget->currentIndex() == 1)
+			// ;
 
-		ui->fpsLabel->setText(QString::number(ispControl.fps));
+		// ui->fpsLabel->setText(QString::number(ispControl.fps));
 	}
 
 	// ispControl.getFps();
