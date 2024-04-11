@@ -1,4 +1,3 @@
-#include <ctime>
 #include <QVideoWidget>
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
@@ -15,7 +14,6 @@
 #include <widgets/combobox_widget.h>
 #include "controls2_definitions.h"
 #include "mainwindow.h"
-#include "preview_window.h"
 #include "ui_mainwindow.h"
 
 IspControl ispControl;
@@ -53,7 +51,6 @@ MainWindow::MainWindow(QWidget *parent)
 	ispControl.openVideo();
 
 	controls2Definition.readXml();
-	this->updateControls2();
 
 	this->canUpdateControls = true;
 
@@ -134,19 +131,6 @@ void MainWindow::createControls()
 	}
 }
 
-void MainWindow::createControls2()
-{
-	for (const auto *control : qAsConst(controls2Definition.controls))
-	{
-		if (const ChartControl2 *scontrol = dynamic_cast<const ChartControl2*>(control))
-		{
-			ChartWidget *chart = new ChartWidget(this, this, scontrol, &MainWindow::onChartControl2PointsChanged);
-			this->widgets2.insert(QString(scontrol->node), chart);
-			ui->verticalLayout_2->addWidget(chart);
-		}
-	}
-}
-
 void MainWindow::onCheckBoxChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, bool checked)
 {
 	if (!mainWindow->canUpdateControls)
@@ -196,25 +180,53 @@ void MainWindow::onButtonClicked(MainWindow *mainWindow, QString getCmd, QString
 	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
 
-void MainWindow::onChartControlPointsChanged(MainWindow* /*mainWindow*/, QString /* getCmd */, QString /* setCmd */, QString /* parameter */)
+void MainWindow::onChartControlPointsChanged(MainWindow *mainWindow, QString /* getCmd */, QString /* setCmd */, QString /* parameter */)
 {
+	if (!mainWindow->canUpdateControls)
+		return;
 
+	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
 
-void MainWindow::onChartControl2PointsChanged(MainWindow* /*mainWindow*/, QString /* node */)
-{
 
+void MainWindow::createControls2()
+{
+	for (const auto *control : qAsConst(controls2Definition.controls))
+	{
+		if (const SliderControl2 *scontrol = dynamic_cast<const SliderControl2*>(control))
+		{
+			SliderWidget *slider = new SliderWidget(this, this, scontrol, &MainWindow::onSlider2ValueChange);
+			this->widgets2.insert(QString(scontrol->node), slider);
+			ui->verticalLayout_2->addWidget(slider);
+		}
+		if (const ChartControl2 *scontrol = dynamic_cast<const ChartControl2*>(control))
+		{
+			ChartWidget *chart = new ChartWidget(this, this, scontrol, &MainWindow::onChartControl2PointsChanged);
+			this->widgets2.insert(QString(scontrol->node), chart);
+			ui->verticalLayout_2->addWidget(chart);
+		}
+	}
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::onSlider2ValueChange(MainWindow *mainWindow, QString node, int value, int divide)
 {
-	// this->setGeometry(100, 100, 200, 200);
-	// this->move(50, 50);
-	// this->setFixedSize(300, 300);
-	// qDebug() << this->geometry().left() << "x" << this->geometry().top();
+	if (!mainWindow->canUpdateControls)
+		return;
 
-	// this->readParameters();
+	qDebug() << node << ((float)value / divide);
+	// ispControl.setParam(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), value, divide);
+
+	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
+
+void MainWindow::onChartControl2PointsChanged(MainWindow *mainWindow, QString /* node */)
+{
+	if (!mainWindow->canUpdateControls)
+		return;
+
+	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
+}
+
 
 void MainWindow::readParameters()
 {
@@ -267,6 +279,7 @@ void MainWindow::updateControlsFromJson(Json::Value json, QString cmd)
 			else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 			{
 				slider->setRange();
+
 				if (scontrol->precision == 0)
 				{
 					int value = json[scontrol->parameter.toStdString()].asInt();
@@ -384,11 +397,35 @@ void MainWindow::updateControlsFromJson(Json::Value json, QString cmd)
 	}
 }
 
-void MainWindow::updateControls2()
+void MainWindow::updateControls2fromXml()
 {
 	for (const auto *control : qAsConst(controls2Definition.controls))
 	{
-		if (const ChartControl2 *scontrol = dynamic_cast<const ChartControl2*>(control))
+		if (const SliderControl2 *scontrol = dynamic_cast<const SliderControl2*>(control))
+		{
+			SliderWidget *slider = (SliderWidget*)this->widgets2[scontrol->node];
+			if (slider == nullptr)
+				qDebug() << "Widget " << scontrol->node << " not found";
+			else
+			{
+				slider->setRange();
+				// if (scontrol->precision == 0)
+				// {
+				// 	// QList<float> array;
+				// 	// if (controls2Definition.getArrayNode(scontrol->node, array))
+				// 	// 	if (array.count() == 1)
+				// 	// 		slider->setValueFloat(array[0]);
+				// }
+				// else
+				// {
+					QList<float> array;
+					if (controls2Definition.getArrayNode(scontrol->node, array))
+						if (array.count() == 1)
+							slider->setValueFloat(array[0]);
+				// }
+			}
+		}
+		else if (const ChartControl2 *scontrol = dynamic_cast<const ChartControl2*>(control))
 		{
 			ChartWidget *chart = (ChartWidget*)this->widgets2[scontrol->node];
 			if (chart == nullptr)
@@ -414,13 +451,13 @@ void MainWindow::timerEvent(QTimerEvent* /* event */)
 	if (!this->readyForReadJson && diff < 1000)
 		return;
 
-	this->readyForReadJson = true;
+	if (!this->readyForReadJson)
+		this->readyForReadJson = true;
+
 	if (diff >= 300)
 	{
 		if (this->ui->tabWidget->currentIndex() == 0)
 			this->readParameters();
-		// else if (this->ui->tabWidget->currentIndex() == 1)
-			// ;
 
 		// ui->fpsLabel->setText(QString::number(ispControl.fps));
 	}
@@ -434,6 +471,8 @@ void MainWindow::onActivated()
 		return;
 
 	this->isActivated = true;
+
+	this->updateControls2fromXml();
 }
 
 bool MainWindow::event(QEvent *e)
@@ -441,4 +480,12 @@ bool MainWindow::event(QEvent *e)
 	if (e->type() == QEvent::WindowActivate)
 		this->onActivated();
 	return QWidget::event(e);
+}
+
+void MainWindow::on_saveButton_clicked()
+{
+	// this->setGeometry(100, 100, 200, 200);
+	// this->move(50, 50);
+	// this->setFixedSize(300, 300);
+	// qDebug() << this->geometry().left() << "x" << this->geometry().top();
 }

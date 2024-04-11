@@ -30,7 +30,7 @@ private:
 	QString getCmd;
 	QString setCmd;
 	QString parameter;
-	void (*onCheckBoxChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, bool value);
+	void (*onCheckBoxChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, bool value) = nullptr;
 };
 
 #endif // CHECKBOX_WIDGET_H

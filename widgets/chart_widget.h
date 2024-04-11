@@ -61,8 +61,8 @@ private:
 	void drawChartArea(QPainter &painter, int x, int y, int w, int h);
 	QPointF localPosTo(QPointF localPos);
 	void recalculateSize();
-	void (*onChartPointsChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter);
-	void (*onChartPointsChanged2)(MainWindow *mainWindow, QString node);
+	void (*onChartPointsChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter) = nullptr;
+	void (*onChartPointsChanged2)(MainWindow *mainWindow, QString node) = nullptr;
 };
 
 #endif // CHART_H

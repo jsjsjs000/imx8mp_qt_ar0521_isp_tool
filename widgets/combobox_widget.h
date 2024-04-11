@@ -33,7 +33,7 @@ private:
 	QList<int> mapKeys;								// keys list
 	QMap<int, int> mapKeysIndexes;		// keys index
 	bool initialized = false;
-	void (*onComboBoxIndexChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int key, QString value);
+	void (*onComboBoxIndexChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int key, QString value) = nullptr;
 };
 
 #endif // COMBOBOX_WIDGET_H

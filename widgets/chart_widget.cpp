@@ -1,5 +1,4 @@
 #include "chart_widget.h"
-#include "qdebug.h"
 #include "ui_chart_widget.h"
 
 #include <QMouseEvent>
@@ -127,6 +126,15 @@ void ChartWidget::drawChartArea(QPainter &painter, int x, int y, int w, int h)
 	const float epsilon = 0.00001f;
 	const QPoint xAxisLabelsPad = QPoint(0, -1);
 	const QPoint yAxisLabelsPad = QPoint(3, 0);
+
+painter.setPen(Qt::blue);
+if (this->points.count() > 0)
+{
+QString s;
+s = s.asprintf("(%d, %0.2f)", (int)this->points[0].x(), this->points[0].y());
+painter.drawText(x, y + 0, w, 20, Qt::AlignRight, s);
+// QString::number(this->points[0].y(), 'f', 3)
+}
 
 		/* Draw grid */
 	painter.setPen(QColor(220, 220, 220));

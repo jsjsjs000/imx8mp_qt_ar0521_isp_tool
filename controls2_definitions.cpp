@@ -1,10 +1,9 @@
 #include <QDebug>
 #include "controls2_definitions.h"
 
-void Controls2Definitions::readXml()
+bool Controls2Definitions::readXml()
 {
-	const QString XmlFileName = "/opt/imx8-isp/bin/xml/VM-017-COL_AO062-C_1920x1080.xml";
-	this->xml.openXmlFile(XmlFileName); // $$ if
+	return this->xml.openXmlFile(Controls2Definitions::XmlFileName);
 }
 
 bool Controls2Definitions::getArrayNode(QString node, QList<float> &array)
@@ -15,12 +14,9 @@ bool Controls2Definitions::getArrayNode(QString node, QList<float> &array)
 
 	// qDebug() << "result" << n.nodeName() << n.toElement().attribute("size") << IspXml::stripText(n.toElement().text());
 	// qDebug() << IspXml::stripText(n.toElement().text());
-	// QList<float> array;
+
 	if (!IspXml::parseArrayFloat(n.toElement().text(), array))
 		return false;
-
-	// for (const float &f : qAsConst(array))
-		// qDebug() << f;
 
 	// array.clear();
 	// for (int i = 0; i < 16; i++)
@@ -29,7 +25,10 @@ bool Controls2Definitions::getArrayNode(QString node, QList<float> &array)
 	// qDebug() << s;
 
 	return true;
+}
 
+bool Controls2Definitions::saveXml()
+{
 	// QDomNode n = xml.getElementByTagPath("header/creator");
 	// if (!n.isNull())
 	// {
@@ -37,5 +36,5 @@ bool Controls2Definitions::getArrayNode(QString node, QList<float> &array)
 	// 	IspXml::setValue(n, "jsjs aa", "header/creator");
 	// }
 
-	// xml.saveXmlFile(XmlFileName); // $$ if
+	return xml.saveXmlFile(Controls2Definitions::XmlFileName);
 }

@@ -30,7 +30,7 @@ private:
 	QString setCmd;
 	QString parameter;
 	QString value;
-	void (*onButtonClicked)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QString value);
+	void (*onButtonClicked)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QString value) = nullptr;
 };
 
 #endif // BUTTON_WIDGET_H
