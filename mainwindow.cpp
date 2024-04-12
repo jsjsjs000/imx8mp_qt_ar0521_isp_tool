@@ -51,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
 	ispControl.openVideo();
 
 	controls2Definition.readXml();
+	this->updateControls2fromXml();
 
 	this->canUpdateControls = true;
 
@@ -471,8 +472,6 @@ void MainWindow::onActivated()
 		return;
 
 	this->isActivated = true;
-
-	this->updateControls2fromXml();
 }
 
 bool MainWindow::event(QEvent *e)

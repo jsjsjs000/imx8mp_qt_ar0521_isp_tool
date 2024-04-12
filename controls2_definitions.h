@@ -24,7 +24,7 @@ public:
 
 	void init()
 	{
-		controls.append(new GroupControl2("Global group"));
+		controls.append(new GroupControl2("AWB"));
 		controls.append(new ChartControl2( "sensor/AWB/globals/cell/SVDMeanValue",              "SVD mean value",            -3.0f,  3.0f, 1.0f, false, "Mean of singular value decomposition"));
 		controls.append(new ChartControl2( "sensor/AWB/globals/cell/PCAMatrix",                 "PCAMatrix [3x2]",           -3.0f,  3.0f, 1.0f, false, "Transformation matrix of the PCA domain."));
 		controls.append(new ChartControl2( "sensor/AWB/globals/cell/CenterLine",                "CenterLine",                -3.0f,  3.0f, 1.0f, false, "Position the coordinates of first-order straight lines fitted from white points during AWB calibration. See the orange-dotted line in Figure 1."));

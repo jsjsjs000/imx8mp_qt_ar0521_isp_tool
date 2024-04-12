@@ -24,10 +24,13 @@ public:
 	void initialize(float x1, float x2, float y1, float y2, float gridX, float gridY, QList<QPointF> points);
 
 protected:
+	bool event(QEvent *event);
 	void paintEvent(QPaintEvent *event);
 	void mousePressEvent(QMouseEvent *event);
-	void mouseReleaseEvent(QMouseEvent *event);
 	void mouseMoveEvent(QMouseEvent *event);
+	void mouseReleaseEvent(QMouseEvent *event);
+	void hooverEnterEvent(QHoverEvent *event);
+	void hooverLeaveEvent(QHoverEvent *event);
 	void resizeEvent(QResizeEvent *event);
 
 private:
@@ -58,6 +61,8 @@ private:
 
 	Ui::Chart *ui;
 	QList<QPointF> points;
+	bool showMousePosition;
+	QPointF mousePosition;
 	void drawChartArea(QPainter &painter, int x, int y, int w, int h);
 	QPointF localPosTo(QPointF localPos);
 	void recalculateSize();

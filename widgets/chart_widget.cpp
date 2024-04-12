@@ -19,6 +19,8 @@ ChartWidget::ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartCon
 		, ui(new Ui::Chart)
 {
 	ui->setupUi(this);
+	this->setMouseTracking(true);
+	this->setAttribute(Qt::WA_Hover);
 
 	this->mainWindow = mainWindow;
 	this->chartControl = (ChartControl*)chartControl;
@@ -39,6 +41,8 @@ ChartWidget::ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartCon
 		, ui(new Ui::Chart)
 {
 	ui->setupUi(this);
+	this->setMouseTracking(true);
+	this->setAttribute(Qt::WA_Hover);
 
 	this->mainWindow = mainWindow;
 	this->chartControl2 = (ChartControl2*)chartControl2;
@@ -68,6 +72,27 @@ void ChartWidget::initialize(float x1, float x2, float y1, float y2, float gridX
 
 	this->recalculateSize();
 	this->repaint();
+}
+
+bool ChartWidget::event(QEvent *event)
+{
+	switch(event->type())
+	{
+		case QEvent::HoverEnter:
+			hooverEnterEvent(static_cast<QHoverEvent*>(event));
+			return true;
+			break;
+		case QEvent::HoverLeave:
+			hooverLeaveEvent(static_cast<QHoverEvent*>(event));
+			return true;
+			break;
+		// case QEvent::HoverMove:
+			// return true;
+			// break;
+		default:
+			break;
+	}
+	return QWidget::event(event);
 }
 
 void ChartWidget::paintEvent(QPaintEvent* /* event */)
@@ -127,14 +152,14 @@ void ChartWidget::drawChartArea(QPainter &painter, int x, int y, int w, int h)
 	const QPoint xAxisLabelsPad = QPoint(0, -1);
 	const QPoint yAxisLabelsPad = QPoint(3, 0);
 
-painter.setPen(Qt::blue);
-if (this->points.count() > 0)
-{
-QString s;
-s = s.asprintf("(%d, %0.2f)", (int)this->points[0].x(), this->points[0].y());
-painter.drawText(x, y + 0, w, 20, Qt::AlignRight, s);
-// QString::number(this->points[0].y(), 'f', 3)
-}
+	painter.setPen(Qt::blue);
+	if (this->showMousePosition)
+	{
+		QString s;
+		s = s.asprintf("(%d, %0.2f)", (int)this->mousePosition.x(), this->mousePosition.y());
+		painter.drawText(x, y + 0, w, 20, Qt::AlignRight, s);
+		// QString::number(this->points[0].y(), 'f', 3)
+	}
 
 		/* Draw grid */
 	painter.setPen(QColor(220, 220, 220));
@@ -197,41 +222,52 @@ QPointF ChartWidget::localPosTo(QPointF localPos)
 void ChartWidget::mousePressEvent(QMouseEvent *event)
 {
 	// qDebug() << "press" << event->localPos().x() << event->localPos().y() << event->button();
-	if (this->readonly)
-		return;
 
 	QPointF p = this->localPosTo(event->localPos());
-	// qDebug() << p.x() << p.y();
-	int x = round(p.x());
-	if (x >= 0 && x < this->points.count())
+	if (!this->readonly && event->button() == Qt::LeftButton)
 	{
-		this->points[x].setY(p.y());
-		this->repaint();
+		int x = round(p.x());
+		if (x >= 0 && x < this->points.count())
+		{
+			this->points[x].setY(p.y());
+			this->repaint();
+		}
 	}
 }
 
 void ChartWidget::mouseMoveEvent(QMouseEvent *event)
 {
-	// qDebug() << "move" << event->localPos().x() << event->localPos().y() << event->button();
-	if (this->readonly)
-		return;
+	// qDebug() << "move" << event->localPos().x() << event->localPos().y() << event->buttons();
 
 	QPointF p = this->localPosTo(event->localPos());
-	int x = round(p.x());
-	if (x >= 0 && x < this->points.count())
+
+	this->mousePosition = QPointF(event->localPos().x(), event->localPos().y());
+	this->showMousePosition = true;
+
+	if (!this->readonly && event->buttons() == Qt::LeftButton)
 	{
-		this->points[x].setY(p.y());
-		this->repaint();
+		int x = round(p.x());
+		if (x >= 0 && x < this->points.count())
+			this->points[x].setY(p.y());
 	}
+
+	this->repaint();
 }
 
 void ChartWidget::mouseReleaseEvent(QMouseEvent* /* event */)
 {
 	// qDebug() << "release" << event->localPos().x() << event->localPos().y() << event->button();
-	// QPointF p = this->localPosTo(event->localPos());
+}
 
-	// if (this->readonly)
-		// return;
+void ChartWidget::hooverEnterEvent(QHoverEvent* /* event */)
+{
+}
+
+void ChartWidget::hooverLeaveEvent(QHoverEvent* /* event */)
+{
+	qDebug() << "leave";
+	this->showMousePosition = false;
+	this->repaint();
 }
 
 void ChartWidget::resizeEvent(QResizeEvent* /* event */)
