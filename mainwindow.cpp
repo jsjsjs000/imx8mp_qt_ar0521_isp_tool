@@ -78,7 +78,7 @@ void MainWindow::killGStreamerProcess()
 void MainWindow::createGStreamerProcess()
 {
 	QProcess *process = new QProcess(this);
-	QString program = "gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,format=YUY2,width=1920,height=1080 ! waylandsink window-width=1560 window-height=878";
+	QString program = "gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,format=YUY2,width=1920,height=1080,framerate=7/1 ! waylandsink window-width=1560 window-height=878";
 	process->start(program);
 	process->waitForFinished(1000);
 }
@@ -181,7 +181,7 @@ void MainWindow::onButtonClicked(MainWindow *mainWindow, QString getCmd, QString
 	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
 
-void MainWindow::onChartControlPointsChanged(MainWindow *mainWindow, QString /* getCmd */, QString /* setCmd */, QString /* parameter */)
+void MainWindow::onChartControlPointsChanged(MainWindow *mainWindow, QString /* getCmd */, QString /* setCmd */, QString /* parameter */, QList<QPointF> /* points */)
 {
 	if (!mainWindow->canUpdateControls)
 		return;
@@ -194,7 +194,12 @@ void MainWindow::createControls2()
 {
 	for (const auto *control : qAsConst(controls2Definition.controls))
 	{
-		if (const SliderControl2 *scontrol = dynamic_cast<const SliderControl2*>(control))
+		if (const GroupControl2 *scontrol = dynamic_cast<const GroupControl2*>(control))
+		{
+			GroupWidget *group = new GroupWidget(this, scontrol->name);
+			ui->verticalLayout_2->addWidget(group);
+		}
+		else if (const SliderControl2 *scontrol = dynamic_cast<const SliderControl2*>(control))
 		{
 			SliderWidget *slider = new SliderWidget(this, this, scontrol, &MainWindow::onSlider2ValueChange);
 			this->widgets2.insert(QString(scontrol->node), slider);
@@ -214,16 +219,22 @@ void MainWindow::onSlider2ValueChange(MainWindow *mainWindow, QString node, int 
 	if (!mainWindow->canUpdateControls)
 		return;
 
-	qDebug() << node << ((float)value / divide);
-	// ispControl.setParam(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), value, divide);
+	// qDebug() << node << ((float)value / divide);
+	float f = (float)value / divide;
+	QList<float> array;
+	array.push_back(f);
+	controls2Definition.setArrayNode(node, array);
 
 	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
 
-void MainWindow::onChartControl2PointsChanged(MainWindow *mainWindow, QString /* node */)
+void MainWindow::onChartControl2PointsChanged(MainWindow *mainWindow, QString node, QList<QPointF> points)
 {
 	if (!mainWindow->canUpdateControls)
 		return;
+
+	// qDebug() << node << points;
+	controls2Definition.setArrayNode(node, points);
 
 	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
@@ -483,8 +494,17 @@ bool MainWindow::event(QEvent *e)
 
 void MainWindow::on_saveButton_clicked()
 {
-	// this->setGeometry(100, 100, 200, 200);
-	// this->move(50, 50);
-	// this->setFixedSize(300, 300);
-	// qDebug() << this->geometry().left() << "x" << this->geometry().top();
+	controls2Definition.saveXml();
+
+	this->killGStreamerProcess();
+	this->reloadDriver();
+	this->createGStreamerProcess();
+}
+
+void MainWindow::reloadDriver()
+{
+	QProcess *process = new QProcess(this);
+	QString program = "systemctl restart imx8-phycam-isp.service";
+	process->start(program);
+	process->waitForFinished(1000);
 }

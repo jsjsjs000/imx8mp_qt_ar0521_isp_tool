@@ -3,7 +3,9 @@
 
 bool Controls2Definitions::readXml()
 {
-	return this->xml.openXmlFile(Controls2Definitions::XmlFileName);
+	bool ok1 = this->xml.openXmlFile(Controls2Definitions::XmlFileName);
+	bool ok2 = this->xmlDefault.openXmlFile(Controls2Definitions::XmlFileName);
+	return ok1 && ok2;
 }
 
 bool Controls2Definitions::getArrayNode(QString node, QList<float> &array)
@@ -24,6 +26,28 @@ bool Controls2Definitions::getArrayNode(QString node, QList<float> &array)
 	// QString s = IspXml::arrayFloatToString(array);
 	// qDebug() << s;
 
+	return true;
+}
+
+bool Controls2Definitions::setArrayNode(QString node, QList<float> array)
+{
+	QDomNode n = this->xml.getElementByTagPath(node);
+	if (n.isNull())
+		return false;
+
+	QString s = IspXml::arrayFloatToString(array);
+	IspXml::setValue(n, s, node);
+	return true;
+}
+
+bool Controls2Definitions::setArrayNode(QString node, QList<QPointF> array)
+{
+	QDomNode n = this->xml.getElementByTagPath(node);
+	if (n.isNull())
+		return false;
+
+	QString s = IspXml::arrayFloatToString(array);
+	IspXml::setValue(n, s, node);
 	return true;
 }
 

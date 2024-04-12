@@ -141,6 +141,18 @@ QString IspXml::arrayFloatToString(QList<float> array)
 	return s + "]";
 }
 
+QString IspXml::arrayFloatToString(QList<QPointF> array)
+{
+	QString s = "[";
+	for (int i = 0; i < array.length(); i++)
+	{
+		if (i > 0)
+			s += " ";
+		s += QString::number(array[i].y(), 'f');
+	}
+	return s + "]";
+}
+
 /*
 	Xml examples:
 https://www.bogotobogo.com/Qt/Qt5_QtXML_QDOM_Reading_XML.php

@@ -14,7 +14,7 @@ ChartWidget::ChartWidget(QWidget *parent)
 }
 
 ChartWidget::ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartControl *chartControl,
-		void (*onChartPointsChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter))
+		void (*onChartPointsChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QList<QPointF> points))
 		: QWidget(parent)
 		, ui(new Ui::Chart)
 {
@@ -36,7 +36,7 @@ ChartWidget::ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartCon
 }
 
 ChartWidget::ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartControl2 *chartControl2,
-		void (*onChartPointsChanged2)(MainWindow *mainWindow, QString node))
+		void (*onChartPointsChanged2)(MainWindow *mainWindow, QString node, QList<QPointF> points))
 		: QWidget(parent)
 		, ui(new Ui::Chart)
 {
@@ -156,9 +156,9 @@ void ChartWidget::drawChartArea(QPainter &painter, int x, int y, int w, int h)
 	if (this->showMousePosition)
 	{
 		QString s;
-		s = s.asprintf("(%d, %0.2f)", (int)this->mousePosition.x(), this->mousePosition.y());
+		s = s.asprintf("(%d, %0.2f)", (int)round(this->mousePosition.x()), this->mousePosition.y());
+		// s = QString::number(this->points[0].y(), 'f', 3)
 		painter.drawText(x, y + 0, w, 20, Qt::AlignRight, s);
-		// QString::number(this->points[0].y(), 'f', 3)
 	}
 
 		/* Draw grid */
@@ -219,6 +219,14 @@ QPointF ChartWidget::localPosTo(QPointF localPos)
 			-(localPos.y() - this->padTop - h) / this->dy + this->y1);
 }
 
+void ChartWidget::executeChangedEvent()
+{
+	if (this->onChartPointsChanged != nullptr)
+		(*this->onChartPointsChanged)(this->mainWindow, this->getCmd, this->setCmd, this->parameter, this->points);
+	if (this->onChartPointsChanged2 != nullptr)
+		(*this->onChartPointsChanged2)(this->mainWindow, this->node, this->points);
+}
+
 void ChartWidget::mousePressEvent(QMouseEvent *event)
 {
 	// qDebug() << "press" << event->localPos().x() << event->localPos().y() << event->button();
@@ -235,6 +243,8 @@ void ChartWidget::mousePressEvent(QMouseEvent *event)
 		{
 			this->points[x].setY(p.y());
 			this->repaint();
+
+			this->executeChangedEvent();
 		}
 	}
 }
@@ -244,15 +254,28 @@ void ChartWidget::mouseMoveEvent(QMouseEvent *event)
 	// qDebug() << "move" << event->localPos().x() << event->localPos().y() << event->buttons();
 
 	QPointF p = this->localPosTo(event->localPos());
+	int x = round(p.x());
 
-	this->mousePosition = QPointF(p.x(), p.y());
-	this->showMousePosition = true;
+	if (event->buttons() == Qt::LeftButton)
+	{
+		this->mousePosition = QPointF(p.x(), p.y());
+		this->showMousePosition = true;
+	}
+	else if (x >= 0 && x < this->points.count())
+	{
+		this->mousePosition = QPointF(x, this->points[x].y());
+		this->showMousePosition = true;
+	}
+	else
+		this->showMousePosition = false;
 
 	if (!this->readonly && event->buttons() == Qt::LeftButton)
 	{
-		int x = round(p.x());
 		if (x >= 0 && x < this->points.count())
+		{
 			this->points[x].setY(p.y());
+			this->executeChangedEvent();
+		}
 	}
 
 	this->repaint();

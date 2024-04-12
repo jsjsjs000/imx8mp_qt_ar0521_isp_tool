@@ -17,9 +17,9 @@ class ChartWidget : public QWidget
 public:
 	explicit ChartWidget(QWidget *parent = nullptr);
 	ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartControl *control,
-			void (*onChartPointsChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter));
+			void (*onChartPointsChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QList<QPointF> points));
 	ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartControl2 *chartControl2,
-			void (*onChartPointsChanged)(MainWindow *mainWindow, QString node));
+			void (*onChartPointsChanged)(MainWindow *mainWindow, QString node, QList<QPointF> points));
 	~ChartWidget();
 	void initialize(float x1, float x2, float y1, float y2, float gridX, float gridY, QList<QPointF> points);
 
@@ -34,12 +34,13 @@ protected:
 	void resizeEvent(QResizeEvent *event);
 
 private:
-	QString title;
-	QString description;
 	const int padLeft = 27;
 	const int padTop = 18;
 	const int padRight = 10;
 	const int padBottom = 15;
+
+	QString title;
+	QString description;
 	float x1 = 0.0f;
 	float x2 = 1.0f;
 	float y1 = 0.0f;
@@ -61,13 +62,14 @@ private:
 
 	Ui::Chart *ui;
 	QList<QPointF> points;
+	void executeChangedEvent();
 	bool showMousePosition;
 	QPointF mousePosition;
 	void drawChartArea(QPainter &painter, int x, int y, int w, int h);
 	QPointF localPosTo(QPointF localPos);
 	void recalculateSize();
-	void (*onChartPointsChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter) = nullptr;
-	void (*onChartPointsChanged2)(MainWindow *mainWindow, QString node) = nullptr;
+	void (*onChartPointsChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QList<QPointF> points) = nullptr;
+	void (*onChartPointsChanged2)(MainWindow *mainWindow, QString node, QList<QPointF> points) = nullptr;
 };
 
 #endif // CHART_H

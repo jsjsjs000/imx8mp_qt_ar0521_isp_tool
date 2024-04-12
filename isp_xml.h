@@ -3,11 +3,13 @@
 
 #include <QString>
 #include <QDomDocument>
+#include <QPointF>
 
 class IspXml
 {
 	QDomDocument document;
 	QDomNode getElementByTagPath_(QDomNode root, QString tagPath);
+
 public:
 	IspXml();
 	bool openXmlFile(QString filename);
@@ -17,6 +19,7 @@ public:
 	static void setValue(QDomNode n, QString text, QString forPath);
 	static bool parseArrayFloat(QString text, QList<float> &array);
 	static QString arrayFloatToString(QList<float> array);
+	static QString arrayFloatToString(QList<QPointF> array);
 };
 
 #endif // ISP_XML_H

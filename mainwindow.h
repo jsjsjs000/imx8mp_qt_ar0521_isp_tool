@@ -50,15 +50,16 @@ private:
 	void killGStreamerProcess();
 	void createGStreamerProcess();
 	void onActivated();
+	void reloadDriver();
 
 	static void onCheckBoxChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, bool value);
 	static void onSliderValueChange(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int value, int divide);
 	static void onComboBoxIndexChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int key, QString value);
 	static void onButtonClicked(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QString value);
-	static void onChartControlPointsChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter);
+	static void onChartControlPointsChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QList<QPointF> points);
 
 	static void onSlider2ValueChange(MainWindow *mainWindow, QString node, int value, int divide);
-	static void onChartControl2PointsChanged(MainWindow *mainWindow, QString node);
+	static void onChartControl2PointsChanged(MainWindow *mainWindow, QString node, QList<QPointF> points);
 	void timerEvent(QTimerEvent *event);
 };
 #endif // MAINWINDOW_H
