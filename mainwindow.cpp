@@ -66,20 +66,22 @@ MainWindow::~MainWindow()
 	delete ui;
 }
 
-
 void MainWindow::killGStreamerProcess()
 {
 	QProcess *process = new QProcess(this);
-	QString program = "killall -s KILL gst-launch-1.0";
-	process->start(program);
+	QString program = "killall";
+	process->start(program, QStringList({"-s", "KILL", "gst-launch-1.0"}));
 	process->waitForFinished(1000);
 }
 
 void MainWindow::createGStreamerProcess()
 {
 	QProcess *process = new QProcess(this);
-	QString program = "gst-launch-1.0 v4l2src device=/dev/video0 ! video/x-raw,format=YUY2,width=1920,height=1080,framerate=7/1 ! waylandsink window-width=1560 window-height=878";
-	process->start(program);
+	QString program = "gst-launch-1.0";
+	process->start(program, QStringList({
+			"v4l2src", "device=/dev/video0", "!",
+			"video/x-raw,format=YUY2,width=1920,height=1080,framerate=7/1", "!",
+			"waylandsink", "window-width=1560", "window-height=878"}));
 	process->waitForFinished(1000);
 }
 
@@ -504,7 +506,17 @@ void MainWindow::on_saveButton_clicked()
 void MainWindow::reloadDriver()
 {
 	QProcess *process = new QProcess(this);
-	QString program = "systemctl restart imx8-phycam-isp.service";
-	process->start(program);
+	QString program = "systemctl";
+	process->start(program, QStringList({"restart", "imx8-phycam-isp.service"}));
 	process->waitForFinished(1000);
 }
+
+/*
+
+	todo:
+- FPS
+- thread
+- reset/default
+- presets
+
+*/
