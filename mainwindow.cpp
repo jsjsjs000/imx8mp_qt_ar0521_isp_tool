@@ -347,7 +347,7 @@ void MainWindow::onActivated()
 void MainWindow::onClose()
 {
 	this->thread->Stop = true;
-	QThread::msleep(300);
+	QThread::msleep(100);
 
 	this->killGStreamerProcess();
 }
