@@ -59,6 +59,7 @@ private:
 	void killGStreamerProcess();
 	void createGStreamerProcess();
 	void onActivated();
+	void onClose();
 	void reloadDriver();
 
 	static void onCheckBoxChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, bool value);

@@ -19,7 +19,8 @@ void IspProcThread::run()
 {
 	while (!this->Stop)
 	{
-		msleep(300);
+		for (int i = 0; i < 10 && !this->Stop; i++)
+			msleep(30);
 
 		this->readParameters();
 	}
@@ -29,6 +30,9 @@ void IspProcThread::readParameters()
 {
 	for (const QString &paramName : qAsConst(controlsDefinition.readParams))
 	{
+		if (this->Stop)
+			break;
+
 		Json::Value params = ispControl.getParam(paramName.toStdString().c_str());
 		if (params)
 			this->updateControlsFromJson(params, paramName);
@@ -39,6 +43,9 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 {
 	for (const auto *control : qAsConst(controlsDefinition.controls))
 	{
+		if (this->Stop)
+			break;
+
 		if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
 		{
 			SliderWidget *slider = (SliderWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];

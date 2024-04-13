@@ -3,6 +3,7 @@
 #include <QMediaPlaylist>
 #include <QSpacerItem>
 #include <QProcess>
+#include <QThread>
 
 #include "controls_definitions.h"
 #include <widgets/chart_widget.h>
@@ -343,10 +344,20 @@ void MainWindow::onActivated()
 	this->isActivated = true;
 }
 
+void MainWindow::onClose()
+{
+	this->thread->Stop = true;
+	QThread::msleep(300);
+
+	this->killGStreamerProcess();
+}
+
 bool MainWindow::event(QEvent *e)
 {
 	if (e->type() == QEvent::WindowActivate)
 		this->onActivated();
+	else if (e->type() == QEvent::Close)
+		this->onClose();
 	return QWidget::event(e);
 }
 
