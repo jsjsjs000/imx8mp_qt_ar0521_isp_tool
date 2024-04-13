@@ -256,12 +256,12 @@ void ChartWidget::mouseMoveEvent(QMouseEvent *event)
 	QPointF p = this->localPosTo(event->localPos());
 	int x = round(p.x());
 
-	if (event->buttons() == Qt::LeftButton)
+	if (this->points.count() > 0 && event->buttons() == Qt::LeftButton)
 	{
 		this->mousePosition = QPointF(p.x(), p.y());
 		this->showMousePosition = true;
 	}
-	else if (x >= 0 && x < this->points.count())
+	else if (this->points.count() > 0 && x >= 0 && x < this->points.count())
 	{
 		this->mousePosition = QPointF(x, this->points[x].y());
 		this->showMousePosition = true;

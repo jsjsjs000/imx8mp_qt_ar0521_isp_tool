@@ -27,6 +27,8 @@ SliderWidget::SliderWidget(QWidget *parent, MainWindow *mainWindow, const Slider
 	ui->name->setToolTip(control->description);
 	ui->value->setText(QString::number(control->value));
 	ui->horizontalSlider->setEnabled(!control->readonly);
+	this->setRange();
+	this->setValue(control->value);
 	this->onSliderValueChange = onSliderValueChange;
 }
 
@@ -47,6 +49,8 @@ SliderWidget::SliderWidget(QWidget *parent, MainWindow *mainWindow, const Slider
 	ui->name->setToolTip(control->description);
 	ui->value->setText(QString::number(control->value));
 	ui->horizontalSlider->setEnabled(!control->readonly);
+	this->setRange();
+	this->setValue(control->value);
 	this->onSlider2ValueChange = onSlider2ValueChange;
 }
 

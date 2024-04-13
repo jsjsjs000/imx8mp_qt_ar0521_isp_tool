@@ -1,7 +1,6 @@
 #ifndef CHECKBOX_WIDGET_H
 #define CHECKBOX_WIDGET_H
 
-#include "controls_definitions.h"
 #include "mainwindow.h"
 
 #include <QWidget>

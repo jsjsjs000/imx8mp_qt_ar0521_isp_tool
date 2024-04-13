@@ -13,7 +13,6 @@ class ControlsDefinitions
 public:
 	QVector<Control*> controls;
 	QList<QString> readParams;
-	QList<QString> initializeNotReadableControls;
 
 	void init(void)
 	{
@@ -265,13 +264,6 @@ public:
 				IF_SENSOR_G_RESW,
 				IF_SENSOR_G_RESH,
 				IF_SENSOR_G_SEC,
-		});
-
-		initializeNotReadableControls.append({
-				IF_CPROC_S_COEFF,
-				IF_AE_G_STATUS,
-				IF_AWB_S_MEASWIN,
-				IF_S_FPS,
 		});
 	}
 };

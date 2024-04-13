@@ -5,16 +5,18 @@
 #include <QProcess>
 
 #include "controls_definitions.h"
-#include "widgets/slider_widget.h"
-#include "widgets/group_widget.h"
-#include "widgets/chart_widget.h"
-#include "widgets/checkbox_widget.h"
-#include "widgets/button_widget.h"
-#include "widgets/label_widget.h"
+#include <widgets/chart_widget.h>
+#include <widgets/checkbox_widget.h>
 #include <widgets/combobox_widget.h>
+#include <widgets/label_widget.h>
+#include <widgets/slider_widget.h>
 #include "controls2_definitions.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "isp_proc_thread.h"
+
+#include <widgets/button_widget.h>
+#include <widgets/group_widget.h>
 
 IspControl ispControl;
 ControlsDefinitions controlsDefinition;
@@ -30,6 +32,9 @@ MainWindow::MainWindow(QWidget *parent)
 	controls2Definition.init();
 	this->createControls();
 	this->createControls2();
+
+	// for (const QString &paramName : qAsConst(controlsDefinition.initializeNotReadableControls))
+		// this->initializeControlsNotReadable(paramName);
 
 	// PreviewWindow::setupCamera(ui->verticalLayout_2);
 	// PreviewWindow::setupCamera2(ui->verticalLayout_2);
@@ -57,13 +62,33 @@ MainWindow::MainWindow(QWidget *parent)
 
 	this->elapsedTimer.start();
 	this->lastTime = this->elapsedTimer.elapsed();
-	timerId = startTimer(1000); // $$ 500
+	timerId = startTimer(500);
+
+	this->runProcFsThread();
 }
 
 MainWindow::~MainWindow()
 {
 	killTimer(timerId);
 	delete ui;
+}
+
+void MainWindow::runProcFsThread()
+{
+	thread = new IspProcThread(this, ispControl, controlsDefinition, this->widgets);
+	connect(thread, &IspProcThread::signal_update_slider_control_int,
+			this, &MainWindow::signal_update_slider_control_int);
+	connect(thread, &IspProcThread::signal_update_slider_control_float,
+					this, &MainWindow::signal_update_slider_control_float);
+	connect(thread, &IspProcThread::signal_update_comboBox_item_index,
+					this, &MainWindow::signal_update_comboBox_item_index);
+	connect(thread, &IspProcThread::signal_update_checkBox_set_state,
+					this, &MainWindow::signal_update_checkBox_set_state);
+	connect(thread, &IspProcThread::signal_update_label_set_text,
+					this, &MainWindow::signal_update_label_set_text);
+	connect(thread, &IspProcThread::signal_update_chart,
+					this, &MainWindow::signal_update_chart);
+	thread->start();
 }
 
 void MainWindow::killGStreamerProcess()
@@ -242,175 +267,6 @@ void MainWindow::onChartControl2PointsChanged(MainWindow *mainWindow, QString no
 }
 
 
-void MainWindow::readParameters()
-{
-	this->canUpdateControls = false;
-	Json::Value params;
-
-	if (!this->notReadableControlsInitialized)
-	{
-		for (const QString &paramName : qAsConst(controlsDefinition.initializeNotReadableControls))
-			this->initializeControlsNotReadable(paramName);
-
-		this->notReadableControlsInitialized = true;
-	}
-
-	for (const QString &paramName : qAsConst(controlsDefinition.readParams))
-	{
-		params = ispControl.getParam(paramName.toStdString().c_str());
-		if (params)
-			this->updateControlsFromJson(params, paramName);
-	}
-
-	this->canUpdateControls = true;
-}
-
-void MainWindow::initializeControlsNotReadable(QString cmd)
-{
-	for (const auto *control : qAsConst(controlsDefinition.controls))
-		if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
-		{
-			SliderWidget *slider = (SliderWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
-			if (slider == nullptr)
-				qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
-			else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
-			{
-				slider->setRange();
-				slider->setValue(scontrol->value);
-			}
-		}
-}
-
-void MainWindow::updateControlsFromJson(Json::Value json, QString cmd)
-{
-	for (const auto *control : qAsConst(controlsDefinition.controls))
-	{
-		if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
-		{
-			SliderWidget *slider = (SliderWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
-			if (slider == nullptr)
-				qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
-			else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
-			{
-				slider->setRange();
-
-				if (scontrol->precision == 0)
-				{
-					int value = json[scontrol->parameter.toStdString()].asInt();
-					slider->setValue(value);
-					// qDebug() << scontrol->parameter << value;
-				}
-				else
-				{
-					float value = json[scontrol->parameter.toStdString()].asFloat();
-					slider->setValueFloat(value);
-					// qDebug() << scontrol->parameter << value;
-
-					// if (strncmp(scontrol->parameter.toStdString().c_str(), EC_TIME_PARAMS, strlen(EC_TIME_PARAMS)) == 0)
-					// 	qDebug("%f", 1.0 / value);
-				}
-			}
-		}
-		else if (const ComboBoxControl *scontrol = dynamic_cast<const ComboBoxControl*>(control))
-		{
-			ComboBoxWidget *comboBox = (ComboBoxWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
-			if (comboBox == nullptr)
-				qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
-			else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
-			{
-				int index;
-				if (json[scontrol->parameter.toStdString()].isBool())
-					index = json[scontrol->parameter.toStdString()].asBool();
-				else
-					index = json[scontrol->parameter.toStdString()].asInt();
-				comboBox->setItemIndex(index);
-			}
-		}
-		else if (const CheckBoxControl *scontrol = dynamic_cast<const CheckBoxControl*>(control))
-		{
-			CheckBoxWidget *checkBox = (CheckBoxWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
-			if (checkBox == nullptr)
-				qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
-			else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
-			{
-				int state = json[scontrol->parameter.toStdString()].asInt();
-				checkBox->setState((bool)state);
-				// qDebug() << scontrol->parameter << state;
-			}
-		}
-		else if (const LabelControl *scontrol = dynamic_cast<const LabelControl*>(control))
-		{
-			LabelWidget *label = (LabelWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
-			if (label == nullptr)
-				qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
-			else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
-			{
-				Json::Value value = json[scontrol->parameter.toStdString()];
-				QString text;
-				if (scontrol->type == &typeid(int[]))
-				{
-					for (uint i = 0; i < value.size(); i++)
-					{
-						if (i > 0)
-							text += ",";
-						text += QString::number(value[i].asInt());
-					}
-				}
-				else if (scontrol->type == &typeid(float[]))
-				{
-					for (uint i = 0; i < value.size(); i++)
-					{
-						if (i > 0)
-							text += ", ";
-						text += QString::number(value[i].asFloat(), 'f', 3);
-					}
-				}
-				else if (scontrol->type == &typeid(int))
-					text = QString::number(value.asInt());
-				else if (scontrol->type == &typeid(float))
-					text = QString::number(value.asFloat(), 'f', 3);
-				else if (scontrol->type == &typeid(std::string))
-					text = QString(value.asCString());
-				else if (scontrol->type == &typeid(std::string[]))
-				{
-					for (uint i = 0; i < value.size(); i++)
-					{
-						if (i > 0)
-							text += ", ";
-						text += QString(value[i].asCString());
-					}
-				}
-				else
-				{
-					text = "(" + scontrol->parameter + " not decoded type)";
-					qDebug() << scontrol->parameter << "not decoded in LabelControl";
-				}
-
-				label->setText(text);
-				// qDebug() << scontrol->parameter << state;
-			}
-		}
-		else if (const ChartControl *scontrol = dynamic_cast<const ChartControl*>(control))
-		{
-			ChartWidget *chart = (ChartWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
-			if (chart == nullptr)
-				qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
-			else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
-			{
-				Json::Value value = json[scontrol->parameter.toStdString()];
-				// if (scontrol->type == &typeid(int[]))
-				// else if (scontrol->type == &typeid(float[]))
-				{
-					QList<QPointF> points;
-					for (uint i = 0; i < value.size(); i++)
-						points.push_back(QPointF(i, value[i].asFloat()));
-					chart->initialize(0, value.size() - 1, scontrol->y1, scontrol->y2, 1.0f, scontrol->gridY, points);
-				}
-			}
-		}
-	}
-}
-
 void MainWindow::updateControls2fromXml()
 {
 	for (const auto *control : qAsConst(controls2Definition.controls))
@@ -470,8 +326,8 @@ void MainWindow::timerEvent(QTimerEvent* /* event */)
 
 	if (diff >= 300)
 	{
-		if (this->ui->tabWidget->currentIndex() == 0)
-			this->readParameters();
+		// if (this->ui->tabWidget->currentIndex() == 0)
+		// 	this->readParameters();
 
 		// ui->fpsLabel->setText(QString::number(ispControl.fps));
 	}
@@ -511,12 +367,55 @@ void MainWindow::reloadDriver()
 	process->waitForFinished(1000);
 }
 
+void MainWindow::signal_update_slider_control_int(SliderWidget *slider, int value)
+{
+	this->canUpdateControls = false;
+	slider->setValue(value);
+	this->canUpdateControls = true;
+}
+
+void MainWindow::signal_update_slider_control_float(SliderWidget *slider, float value)
+{
+	this->canUpdateControls = false;
+	slider->setValueFloat(value);
+	this->canUpdateControls = true;
+}
+
+void MainWindow::signal_update_comboBox_item_index(ComboBoxWidget *comboBox, int index)
+{
+	this->canUpdateControls = false;
+	comboBox->setItemIndex(index);
+	this->canUpdateControls = true;
+}
+
+void MainWindow::signal_update_checkBox_set_state(CheckBoxWidget *checkBox, bool state)
+{
+	this->canUpdateControls = false;
+	checkBox->setState((bool)state);
+	this->canUpdateControls = true;
+}
+
+void MainWindow::signal_update_label_set_text(LabelWidget *label, QString text)
+{
+	this->canUpdateControls = false;
+	label->setText(text);
+	this->canUpdateControls = true;
+}
+
+void MainWindow::signal_update_chart(ChartWidget *chart, float x1, float x2, float y1, float y2, float gridX, float gridY, QList<QPointF> points)
+{
+	this->canUpdateControls = false;
+	chart->initialize(x1, x2, y1, y2, gridX, gridY, points);
+	this->canUpdateControls = true;
+}
+
 /*
 
-	todo:
+	to do:
++ thread
 - FPS
-- thread
-- reset/default
+- reset to initial/default
 - presets
+- AE parameters
 
 */

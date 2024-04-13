@@ -63,7 +63,7 @@ private:
 	Ui::Chart *ui;
 	QList<QPointF> points;
 	void executeChangedEvent();
-	bool showMousePosition;
+	bool showMousePosition = false;
 	QPointF mousePosition;
 	void drawChartArea(QPainter &painter, int x, int y, int w, int h);
 	QPointF localPosTo(QPointF localPos);

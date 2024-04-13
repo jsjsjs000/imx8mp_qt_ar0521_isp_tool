@@ -13,6 +13,7 @@ CONFIG += c++17
 SOURCES += \
   controls2_definitions.cpp \
 	isp_control.cpp \
+	isp_proc_thread.cpp \
 	isp_xml.cpp \
 	main.cpp \
 	mainwindow.cpp \
@@ -34,6 +35,7 @@ HEADERS += \
   controls2_definitions.h \
   controls_definitions.h \
   isp_control.h \
+	isp_proc_thread.h \
 	isp_xml.h \
 	mainwindow.h \
 	lib/json_helper/json_helper.h \

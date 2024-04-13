@@ -1,12 +1,15 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "isp_proc_thread.h"
+
+#include <QList>
+#include <QPointF>
 #include <QMainWindow>
 #include <QVideoWidget>
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
 #include <QElapsedTimer>
-#include "isp_control.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -25,9 +28,16 @@ public:
 private slots:
 	void on_saveButton_clicked();
 	bool event(QEvent *e);
+	void signal_update_slider_control_int(SliderWidget *slider, int value);
+	void signal_update_slider_control_float(SliderWidget *slider, float value);
+	void signal_update_comboBox_item_index(ComboBoxWidget *comboBox, int index);
+	void signal_update_checkBox_set_state(CheckBoxWidget *checkBox, bool state);
+	void signal_update_label_set_text(LabelWidget *label, QString text);
+	void signal_update_chart(ChartWidget *chart, float x1, float x2, float y1, float y2, float gridX, float gridY, QListQPointF points);
 
 private:
 	Ui::MainWindow *ui;
+	IspProcThread *thread;
 	QMediaPlayer *player;
 	QMediaPlaylist *playlist;
 	QVideoWidget *videoWidget;
@@ -36,17 +46,16 @@ private:
 	bool canUpdateControls = false;
 	int timerId;
 	clock_t lastTime = 0;
-	bool notReadableControlsInitialized = false;
 	bool readyForReadJson = false;
 	bool isActivated = false;
 	QElapsedTimer elapsedTimer;
 
+	void runProcFsThread();
 	void createControls();
 	void createControls2();
 	void readParameters();
 	void updateControlsFromJson(Json::Value json, QString type);
 	void updateControls2fromXml();
-	void initializeControlsNotReadable(QString type);
 	void killGStreamerProcess();
 	void createGStreamerProcess();
 	void onActivated();
