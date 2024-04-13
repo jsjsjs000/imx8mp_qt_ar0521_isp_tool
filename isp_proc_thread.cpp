@@ -12,7 +12,7 @@ IspProcThread::IspProcThread(QObject *parent, IspControl &ispControl, ControlsDe
 		QMap<QString, QWidget*> &widgets) : QThread(parent), ispControl(ispControl),
 		controlsDefinition(controlsDefinition), widgets(widgets)
 {
-	qRegisterMetaType<QListQPointF>("QListQPointF");   // need for emit signal_update_chart()
+	qRegisterMetaType<QListQPointF>("QListQPointF");   // need for emit signal_update_chart( QList<QPointF> )
 }
 
 void IspProcThread::run()
