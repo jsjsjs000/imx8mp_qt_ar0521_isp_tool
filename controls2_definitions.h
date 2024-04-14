@@ -10,10 +10,12 @@
 
 class Controls2Definitions
 {
-	const QString XmlFileName = "/opt/imx8-isp/bin/xml/VM-017-COL_AO062-C_1920x1080.xml";
+	const QString XmlFileName =        "/opt/imx8-isp/bin/xml/VM-017-COL_AO062-C_1920x1080.xml";
+	const QString XmlFactoryFileName = "/opt/imx8-isp/bin/xml/VM-017-COL_AO062-C_1920x1080_factory.xml";
 
 	IspXml xml;
 	IspXml xmlDefault;
+	IspXml xmlFactory;
 
 public:
 	QVector<Control2*> controls;
@@ -21,8 +23,8 @@ public:
 	bool readXml();
 	bool saveXml();
 	bool getIntNode(QString node, int &i);
-	bool getFloatNode(QString node, float &f);
 	bool getArrayNode(QString node, QList<float> &array);
+	bool getFactoryArrayNode(QString node, QList<float> &array);
 	bool setArrayNode(QString node, QList<float> array);
 	bool setArrayNode(QString node, QList<QPointF> array);
 

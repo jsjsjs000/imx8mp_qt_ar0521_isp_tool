@@ -21,9 +21,16 @@ public:
 	ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartControl2 *chartControl2,
 			void (*onChartPointsChanged)(MainWindow *mainWindow, QString node, QList<QPointF> points));
 	~ChartWidget();
-	void initialize(float x1, float x2, float y1, float y2, float gridX, float gridY, QList<QPointF> points);
+	void initialize(float x1, float x2, float y1, float y2, float gridX, float gridY,
+			QList<QPointF> points);
+	void initializeDefaultAndFactoryPoints(QList<QPointF> defaultPoints, QList<QPointF> factoryPoints);
+
+private slots:
+	void actionResetDefaultSlot();
+	void actionResetFactorySlot();
 
 protected:
+	void slotCustomMenuRequested(QPoint pos);
 	bool event(QEvent *event);
 	void paintEvent(QPaintEvent *event);
 	void mousePressEvent(QMouseEvent *event);
@@ -51,7 +58,12 @@ private:
 	float dx = 1.0f;
 	float dy = 1.0f;
 
+	QList<QPointF> points;
+	QList<QPointF> defaultPoints;
+	QList<QPointF> factoryPoints;
+
 	MainWindow *mainWindow;
+	Ui::Chart *ui;
 	ChartControl *chartControl;
 	ChartControl2 *chartControl2;
 	QString getCmd;
@@ -60,8 +72,6 @@ private:
 	QString node;
 	bool readonly;
 
-	Ui::Chart *ui;
-	QList<QPointF> points;
 	void executeChangedEvent();
 	bool showMousePosition = false;
 	QPointF mousePosition;

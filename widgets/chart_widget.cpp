@@ -1,6 +1,7 @@
 #include "chart_widget.h"
 #include "ui_chart_widget.h"
 
+#include <QMenu>
 #include <QMouseEvent>
 #include <QPainter>
 
@@ -21,6 +22,9 @@ ChartWidget::ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartCon
 	ui->setupUi(this);
 	this->setMouseTracking(true);
 	this->setAttribute(Qt::WA_Hover);
+
+	this->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(this, &ChartWidget::customContextMenuRequested, this, &ChartWidget::slotCustomMenuRequested);
 
 	this->mainWindow = mainWindow;
 	this->chartControl = (ChartControl*)chartControl;
@@ -44,6 +48,9 @@ ChartWidget::ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartCon
 	this->setMouseTracking(true);
 	this->setAttribute(Qt::WA_Hover);
 
+	this->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(this, &ChartWidget::customContextMenuRequested, this, &ChartWidget::slotCustomMenuRequested);
+
 	this->mainWindow = mainWindow;
 	this->chartControl2 = (ChartControl2*)chartControl2;
 	this->node = chartControl2->node;
@@ -60,7 +67,8 @@ ChartWidget::~ChartWidget()
 	delete ui;
 }
 
-void ChartWidget::initialize(float x1, float x2, float y1, float y2, float gridX, float gridY, QList<QPointF> points)
+void ChartWidget::initialize(float x1, float x2, float y1, float y2, float gridX, float gridY,
+		QList<QPointF> points)
 {
 	this->x1 = x1;
 	this->x2 = x2;
@@ -71,6 +79,36 @@ void ChartWidget::initialize(float x1, float x2, float y1, float y2, float gridX
 	this->points = points;
 
 	this->recalculateSize();
+	this->repaint();
+}
+
+void ChartWidget::initializeDefaultAndFactoryPoints(QList<QPointF> defaultPoints, QList<QPointF> factoryPoints)
+{
+	this->defaultPoints = defaultPoints;
+	this->factoryPoints = factoryPoints;
+}
+
+void ChartWidget::slotCustomMenuRequested(QPoint pos)
+{
+	QMenu *menu = new QMenu(this);
+	QAction *actionReset = new QAction("Reset to program start", this);
+	connect(actionReset, SIGNAL(triggered()), this, SLOT(actionResetDefaultSlot()));
+	menu->addAction(actionReset);
+	QAction *actionFactory = new QAction("Reset to factory default", this);
+	connect(actionFactory, SIGNAL(triggered()), this, SLOT(actionResetFactorySlot()));
+	menu->addAction(actionFactory);
+	menu->popup(this->mapToGlobal(pos));
+}
+
+void ChartWidget::actionResetDefaultSlot()
+{
+	this->points = this->defaultPoints;
+	this->repaint();
+}
+
+void ChartWidget::actionResetFactorySlot()
+{
+	this->points = this->factoryPoints;
 	this->repaint();
 }
 

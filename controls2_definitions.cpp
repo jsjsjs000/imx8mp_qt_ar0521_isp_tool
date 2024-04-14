@@ -5,7 +5,8 @@ bool Controls2Definitions::readXml()
 {
 	bool ok1 = this->xml.openXmlFile(Controls2Definitions::XmlFileName);
 	bool ok2 = this->xmlDefault.openXmlFile(Controls2Definitions::XmlFileName);
-	return ok1 && ok2;
+	bool ok3 = this->xmlFactory.openXmlFile(Controls2Definitions::XmlFactoryFileName);
+	return ok1 && ok2 && ok3;
 }
 
 bool Controls2Definitions::getArrayNode(QString node, QList<float> &array)
@@ -20,11 +21,17 @@ bool Controls2Definitions::getArrayNode(QString node, QList<float> &array)
 	if (!IspXml::parseArrayFloat(n.toElement().text(), array))
 		return false;
 
-	// array.clear();
-	// for (int i = 0; i < 16; i++)
-	// 	array.push_back(1.23f);
-	// QString s = IspXml::arrayFloatToString(array);
-	// qDebug() << s;
+	return true;
+}
+
+bool Controls2Definitions::getFactoryArrayNode(QString node, QList<float> &array)
+{
+	QDomNode n = this->xmlFactory.getElementByTagPath(node);
+	if (n.isNull())
+		return false;
+
+	if (!IspXml::parseArrayFloat(n.toElement().text(), array))
+		return false;
 
 	return true;
 }

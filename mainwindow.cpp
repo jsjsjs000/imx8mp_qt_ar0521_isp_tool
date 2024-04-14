@@ -304,13 +304,22 @@ void MainWindow::updateControls2fromXml()
 			else
 			{
 				QList<float> array;
+				QList<float> array2;
+				QList<QPointF> points;
+				QList<QPointF> defaultPoints;
+				QList<QPointF> factoryPoints;
 				if (controls2Definition.getArrayNode(scontrol->node, array))
-				{
-					QList<QPointF> points;
 					for (int i = 0; i < array.size(); i++)
+					{
 						points.push_back(QPointF(i, array[i]));
-					chart->initialize(0, array.size() - 1, scontrol->y1, scontrol->y2, 1.0f, scontrol->gridY, points);
-				}
+						defaultPoints.push_back(QPointF(i, array[i]));
+					}
+				if (controls2Definition.getFactoryArrayNode(scontrol->node, array2))
+					for (int i = 0; i < array2.size(); i++)
+						factoryPoints.push_back(QPointF(i, array2[i]));
+
+				chart->initialize(0, array.size() - 1, scontrol->y1, scontrol->y2, 1.0f, scontrol->gridY, points);
+				chart->initializeDefaultAndFactoryPoints(defaultPoints, factoryPoints);
 			}
 		}
 	}
