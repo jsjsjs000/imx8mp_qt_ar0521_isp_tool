@@ -23,8 +23,11 @@ ChartWidget::ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartCon
 	this->setMouseTracking(true);
 	this->setAttribute(Qt::WA_Hover);
 
-	this->setContextMenuPolicy(Qt::CustomContextMenu);
-	connect(this, &ChartWidget::customContextMenuRequested, this, &ChartWidget::slotCustomMenuRequested);
+	if (!this->readonly)
+	{
+		this->setContextMenuPolicy(Qt::CustomContextMenu);
+		connect(this, &ChartWidget::customContextMenuRequested, this, &ChartWidget::slotCustomMenuRequested);
+	}
 
 	this->mainWindow = mainWindow;
 	this->chartControl = (ChartControl*)chartControl;
@@ -48,8 +51,11 @@ ChartWidget::ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartCon
 	this->setMouseTracking(true);
 	this->setAttribute(Qt::WA_Hover);
 
-	this->setContextMenuPolicy(Qt::CustomContextMenu);
-	connect(this, &ChartWidget::customContextMenuRequested, this, &ChartWidget::slotCustomMenuRequested);
+	if (!this->readonly)
+	{
+		this->setContextMenuPolicy(Qt::CustomContextMenu);
+		connect(this, &ChartWidget::customContextMenuRequested, this, &ChartWidget::slotCustomMenuRequested);
+	}
 
 	this->mainWindow = mainWindow;
 	this->chartControl2 = (ChartControl2*)chartControl2;
@@ -90,6 +96,9 @@ void ChartWidget::initializeDefaultAndFactoryPoints(QList<QPointF> defaultPoints
 
 void ChartWidget::slotCustomMenuRequested(QPoint pos)
 {
+	if (this->readonly)
+		return;
+
 	QMenu *menu = new QMenu(this);
 	QAction *actionReset = new QAction("Reset to program start", this);
 	connect(actionReset, SIGNAL(triggered()), this, SLOT(actionResetDefaultSlot()));
