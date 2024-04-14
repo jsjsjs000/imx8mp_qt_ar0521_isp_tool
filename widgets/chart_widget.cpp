@@ -111,13 +111,17 @@ void ChartWidget::slotCustomMenuRequested(QPoint pos)
 
 void ChartWidget::actionResetDefaultSlot()
 {
-	this->points = this->defaultPoints;
+	for (int i = 0; i < this->defaultPoints.count() - 1; i++)
+		this->points[i] = this->defaultPoints[i];
+	this->executeChangedEvent();
 	this->repaint();
 }
 
 void ChartWidget::actionResetFactorySlot()
 {
-	this->points = this->factoryPoints;
+	for (int i = 0; i < this->factoryPoints.count() - 1; i++)
+		this->points[i] = this->factoryPoints[i];
+	this->executeChangedEvent();
 	this->repaint();
 }
 
@@ -199,14 +203,7 @@ void ChartWidget::drawChartArea(QPainter &painter, int x, int y, int w, int h)
 	const QPoint xAxisLabelsPad = QPoint(0, -1);
 	const QPoint yAxisLabelsPad = QPoint(3, 0);
 
-	painter.setPen(Qt::blue);
-	if (this->showMousePosition)
-	{
-		QString s;
-		s = s.asprintf("(%d, %0.2f)", (int)round(this->mousePosition.x()), this->mousePosition.y());
-		// s = QString::number(this->points[0].y(), 'f', 3)
-		painter.drawText(x, y + 0, w, 20, Qt::AlignRight, s);
-	}
+	QFont font = painter.font();
 
 		/* Draw grid */
 	painter.setPen(QColor(220, 220, 220));
@@ -229,9 +226,9 @@ void ChartWidget::drawChartArea(QPainter &painter, int x, int y, int w, int h)
 
 		/* Draw axis labels */
 	painter.setPen(Qt::black);
-	QFont font = painter.font();
-	font.setPointSizeF(7.5f);
-	painter.setFont(font);
+	QFont font2 = painter.font();
+	font2.setPointSizeF(7.5f);
+	painter.setFont(font2);
 
 	xi = this->x1;
 	while (xi <= this->x2 + epsilon && this->gridX > epsilon)
@@ -256,6 +253,17 @@ void ChartWidget::drawChartArea(QPainter &painter, int x, int y, int w, int h)
 		QRect rect = painter.boundingRect(0, 0, 100, 100, 0, text);
 		painter.drawText(this->x1 + yAxisLabelsPad.x(), fyi + rect.height() / 2 + yAxisLabelsPad.y(), text);
 		yi += this->gridY;
+	}
+
+		/* Draw mouse position */
+	painter.setFont(font);
+	painter.setPen(Qt::blue);
+	if (this->showMousePosition)
+	{
+		QString s;
+		s = s.asprintf("(%d, %0.2f)", (int)round(this->mousePosition.x()), this->mousePosition.y());
+		// s = QString::number(this->points[0].y(), 'f', 3)
+		painter.drawText(x, y + 0, w, 20, Qt::AlignRight, s);
 	}
 }
 
