@@ -372,11 +372,16 @@ bool MainWindow::event(QEvent *e)
 
 void MainWindow::on_saveButton_clicked()
 {
+	this->thread->Stop = true;
+	QThread::msleep(100);
+
 	controls2Definition.saveXml();
 
 	this->killGStreamerProcess();
 	this->reloadDriver();
 	this->createGStreamerProcess();
+
+	this->runProcFsThread();
 }
 
 void MainWindow::reloadDriver()
