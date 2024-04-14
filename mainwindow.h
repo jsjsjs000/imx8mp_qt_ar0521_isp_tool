@@ -51,6 +51,7 @@ private:
 	QElapsedTimer elapsedTimer;
 
 	void runProcFsThread();
+	void stopProcFsThread();
 	void createControls();
 	void createControls2();
 	void readParameters();

@@ -92,6 +92,12 @@ void MainWindow::runProcFsThread()
 	thread->start();
 }
 
+void MainWindow::stopProcFsThread()
+{
+	this->thread->Stop = true;
+	QThread::msleep(100);
+}
+
 void MainWindow::killGStreamerProcess()
 {
 	QProcess *process = new QProcess(this);
@@ -355,8 +361,7 @@ void MainWindow::onActivated()
 
 void MainWindow::onClose()
 {
-	this->thread->Stop = true;
-	QThread::msleep(100);
+	this->stopProcFsThread();
 
 	this->killGStreamerProcess();
 }
@@ -372,8 +377,7 @@ bool MainWindow::event(QEvent *e)
 
 void MainWindow::on_saveButton_clicked()
 {
-	this->thread->Stop = true;
-	QThread::msleep(100);
+	this->stopProcFsThread();
 
 	controls2Definition.saveXml();
 
