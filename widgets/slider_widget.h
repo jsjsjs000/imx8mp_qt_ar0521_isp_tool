@@ -24,10 +24,14 @@ public:
 	void setRange();
 	void setValue(int value);
 	void setValueFloat(float value);
+	void setDefaultAndFactoryValue(int defaultValue, int factoryValue);
+	void setDefaultAndFactoryValueFloat(float defaultValue, float factoryValue);
 	~SliderWidget();
 
 private slots:
 	void on_horizontalSlider_valueChanged(int value);
+	void actionResetDefaultSlot();
+	void actionResetFactorySlot();
 
 private:
 	Ui::SliderWidget *ui;
@@ -40,8 +44,12 @@ private:
 	int max;
 	int precision;
 	int multiple;
+	bool isSetDefaultAndFactoryValue = false;
+	int defaultValue;
+	int factoryValue;
 	void (*onSliderValueChange)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int value, int divide) = nullptr;
 	void (*onSlider2ValueChange)(MainWindow *mainWindow, QString node, int value, int divide) = nullptr;
+	void slotCustomMenuRequested(QPoint pos);
 };
 
 #endif // SLIDER_WIDGET_H

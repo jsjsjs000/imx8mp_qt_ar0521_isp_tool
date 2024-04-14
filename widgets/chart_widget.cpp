@@ -23,7 +23,7 @@ ChartWidget::ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartCon
 	this->setMouseTracking(true);
 	this->setAttribute(Qt::WA_Hover);
 
-	if (!this->readonly)
+	if (!chartControl->readonly)
 	{
 		this->setContextMenuPolicy(Qt::CustomContextMenu);
 		connect(this, &ChartWidget::customContextMenuRequested, this, &ChartWidget::slotCustomMenuRequested);
@@ -51,7 +51,7 @@ ChartWidget::ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartCon
 	this->setMouseTracking(true);
 	this->setAttribute(Qt::WA_Hover);
 
-	if (!this->readonly)
+	if (!chartControl2->readonly)
 	{
 		this->setContextMenuPolicy(Qt::CustomContextMenu);
 		connect(this, &ChartWidget::customContextMenuRequested, this, &ChartWidget::slotCustomMenuRequested);

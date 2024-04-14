@@ -299,6 +299,10 @@ void MainWindow::updateControls2fromXml()
 					if (controls2Definition.getArrayNode(scontrol->node, array))
 						if (array.count() == 1)
 							slider->setValueFloat(array[0]);
+					QList<float> array2;
+					if (controls2Definition.getFactoryArrayNode(scontrol->node, array2))
+						if (array.count() == 1 && array2.count() == 1)
+							slider->setDefaultAndFactoryValueFloat(array[0], array2[0]);
 				// }
 			}
 		}
