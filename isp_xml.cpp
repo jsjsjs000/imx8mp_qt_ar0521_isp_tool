@@ -52,7 +52,10 @@ QDomNode IspXml::getElementByTagPath(QString tagPath)
 QDomNode IspXml::getElementByTagPath_(QDomNode root, QString tagPath)
 {
 	int slashIndex = tagPath.indexOf('/');
+	int bracketIndex = tagPath.indexOf('[');
 	QString tag;
+	QString param;
+	QString value;
 	if (slashIndex < 0)
 	{
 		tag = QString(tagPath);
@@ -64,10 +67,33 @@ QDomNode IspXml::getElementByTagPath_(QDomNode root, QString tagPath)
 		tagPath = tagPath.mid(slashIndex + 1, tagPath.length() - slashIndex - 1);
 	}
 
+	if (bracketIndex >= 0)
+	{
+		int equalIndex = tag.indexOf('=');
+		if (equalIndex >= 0)
+		{
+			param = tag.mid(bracketIndex + 1, equalIndex - bracketIndex - 1);
+			value = tag.mid(equalIndex + 1, tag.length() - equalIndex - 2);
+		}
+		tag = tag.left(bracketIndex);
+	}
+
 	QDomNode n = root.firstChild();
 	while (!n.isNull())
 	{
+		bool ok = false;
 		if (n.nodeName() == tag)
+		{
+			if (param.length() > 0 && value.length() > 0)
+			{
+				if (n.toElement().attribute(param) == value)
+					ok = true;
+			}
+			else
+				ok = true;
+		}
+
+		if (ok)
 		{
 			if (tagPath == "")
 				return n;

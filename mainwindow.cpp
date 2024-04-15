@@ -328,7 +328,10 @@ void MainWindow::updateControls2fromXml()
 					for (int i = 0; i < array2.size(); i++)
 						factoryPoints.push_back(QPointF(i, array2[i]));
 
-				chart->initialize(0, array.size() - 1, scontrol->y1, scontrol->y2, 1.0f, scontrol->gridY, points);
+				float gridX = 1.0f;
+				if (array.size() >= 100)
+					gridX = 20;
+				chart->initialize(0, array.size() - 1, scontrol->y1, scontrol->y2, gridX, scontrol->gridY, points);
 				chart->initializeDefaultAndFactoryPoints(defaultPoints, factoryPoints);
 			}
 		}
@@ -447,9 +450,9 @@ void MainWindow::signal_update_chart(ChartWidget *chart, float x1, float x2, flo
 	to do:
 + thread
 + reset to initial/default
+- AE parameters
 - rest control
 - FPS
 - presets
-- AE parameters
 
 */

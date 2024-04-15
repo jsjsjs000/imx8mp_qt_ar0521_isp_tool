@@ -64,8 +64,8 @@ private:
 
 	MainWindow *mainWindow;
 	Ui::Chart *ui;
-	ChartControl *chartControl;
-	ChartControl2 *chartControl2;
+	ChartControl *chartControl = nullptr;
+	ChartControl2 *chartControl2 = nullptr;
 	QString getCmd;
 	QString setCmd;
 	QString parameter;
