@@ -164,7 +164,7 @@ void ChartWidget::paintEvent(QPaintEvent* /* event */)
 		painter.drawText(0, 3, this->width(), this->padTop - 3, Qt::AlignHCenter, this->chartControl2->name);
 
 		/* Outline rect */
-	painter.setPen(QColor(200, 200, 200));
+	painter.setPen(QColor(210, 210, 210));
 	painter.drawRect(0, 0, this->width() - 1, this->height() - 1);
 
 	this->drawChartArea(painter, this->padLeft, this->padTop, this->w, this->h);
@@ -206,7 +206,7 @@ void ChartWidget::drawChartArea(QPainter &painter, int x, int y, int w, int h)
 	QFont font = painter.font();
 
 		/* Draw grid */
-	painter.setPen(QColor(220, 220, 220));
+	painter.setPen(QColor(210, 210, 210));
 
 	float xi = this->x1;
 	while (xi <= this->x2 + epsilon && this->gridX > epsilon)

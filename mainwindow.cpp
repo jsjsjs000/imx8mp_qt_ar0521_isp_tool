@@ -450,7 +450,7 @@ void MainWindow::signal_update_chart(ChartWidget *chart, float x1, float x2, flo
 	to do:
 + thread
 + reset to initial/default
-- AE parameters
++ AE parameters
 - rest control
 - FPS
 - presets
