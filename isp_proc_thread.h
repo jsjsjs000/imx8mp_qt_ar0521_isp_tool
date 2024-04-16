@@ -30,8 +30,9 @@ private:
 	void updateControlsFromJson(Json::Value json, QString cmd);
 
 public:
-	explicit IspProcThread(QObject *parent, IspControl &ispControl, ControlsDefinitions &controlsDefinition, QMap<QString, QWidget*> &widgets);
 	bool Stop = false;
+	int readFps = 0;
+	explicit IspProcThread(QObject *parent, IspControl &ispControl, ControlsDefinitions &controlsDefinition, QMap<QString, QWidget*> &widgets);
 
 signals:
 	void signal_update_slider_control_int(SliderWidget *slider, int value);

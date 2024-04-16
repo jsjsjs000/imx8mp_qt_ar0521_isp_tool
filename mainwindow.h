@@ -36,6 +36,8 @@ private slots:
 	void signal_update_chart(ChartWidget *chart, float x1, float x2, float y1, float y2, float gridX, float gridY, QListQPointF points);
 
 private:
+	const int InitialFps = 30;
+
 	Ui::MainWindow *ui;
 	IspProcThread *thread;
 	QMediaPlayer *player;
@@ -46,7 +48,6 @@ private:
 	bool canUpdateControls = false;
 	int timerId;
 	clock_t lastTime = 0;
-	bool readyForReadJson = false;
 	bool isActivated = false;
 	QElapsedTimer elapsedTimer;
 

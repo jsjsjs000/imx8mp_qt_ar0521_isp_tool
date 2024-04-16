@@ -113,15 +113,26 @@ end:
 	return false;
 }
 
-bool IspControl::getFps()
-{
-	viv_caps_mode_info_s info;
-	if (::ioctl(this->fd, VIV_VIDIOC_S_MODEINFO, &info) != 0)
-		return false;
+// bool IspControl::getFps()
+// {
+// 	viv_caps_mode_info_s info;
+// 	if (::ioctl(this->fd, VIV_VIDIOC_S_MODEINFO, &info) != 0)
+// 		return false;
+// 	qDebug("fps %d", info.fps);
 
-	qDebug("fps %d", info.fps);
-	return true;
-}
+// 	vvcam_mode_info_t
+// 	uint32_t pfps;
+// 	uint32_t ret = ::ioctl(this->fd, VVSENSORIOC_G_FPS, &pfps);
+// 	if (ret != 0)
+// 		qDebug() << pfps;
+
+// 	IsiSensorAeInfo_t  AeInfo;
+// 	IsiGetAeInfoIsfs(&AeInfo);
+
+// 	SensorOps fo;
+
+// 	return true;
+// }
 
 void IspControl::fixGetParam(Json::Value *jRequest, const char *getCmd)
 {
@@ -131,19 +142,6 @@ void IspControl::fixGetParam(Json::Value *jRequest, const char *getCmd)
 			strncmp(getCmd, IF_WDR_G_TBL, strlen(IF_WDR_G_TBL)) == 0)
 		(*jRequest)[WDR_GENERATION_PARAMS] = 2;           // 2: WDR3
 }
-
-// void IspControl::postFixGetParam(Json::Value &jRequest, const char *getCmd)
-// {
-// 	if (strncmp(getCmd, IF_EC_G_CFG, strlen(IF_EC_G_CFG)) == 0)     // read FPS
-// 	{
-// 		float exp = jRequest[EC_TIME_PARAMS].asFloat();
-// 		qDebug("%f", exp);
-// 		if (exp != 0.0f)
-// 			this->fps = 1.0f / exp;
-// 		else
-// 			this->fps = 0.0f;
-// 	}
-// }
 
 void IspControl::fixSetParam(Json::Value *jRequest, const char *setCmd)
 {
@@ -221,8 +219,6 @@ Json::Value IspControl::getParam(const char *getCmd)
 	this->fixGetParam(&jRequest, getCmd);
 	if (!vivIoctl(getCmd, jRequest, jResponse))
 		return nullptr;
-
-	// this->postFixGetParam(jRequest, getCmd);
 
 	return jResponse;
 }

@@ -10,7 +10,6 @@ class IspControl
 	int streamid = 0;
 
 	void fixGetParam(Json::Value *jRequest, const char *getCmd);
-	// void postFixGetParam(Json::Value &jRequest, const char *getCmd);
 	void fixSetParam(Json::Value *jRequest, const char *setCmd);
 public:
 	float fps;
@@ -22,7 +21,7 @@ public:
 	bool setParam(const char *getCmd, const char *setType, const char *parameter, int value, int divide);
 	bool setParamString(const char *getCmd, const char *setCmd, const char *parameter, const char *value);
 	bool setParamBool(const char *getCmd, const char *setCmd, const char *parameter, bool value);
-	bool getFps();
+	// bool getFps();
 };
 
 #endif // ISPCONTROL_H

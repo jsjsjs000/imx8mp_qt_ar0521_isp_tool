@@ -34,6 +34,15 @@ MainWindow::MainWindow(QWidget *parent)
 	this->createControls();
 	this->createControls2();
 
+		/* Set initial FPS */
+	for (const auto *control : qAsConst(controlsDefinition.controls))
+		if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
+		{
+			SliderWidget *slider = (SliderWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+			if (slider != nullptr && scontrol->setCmd == IF_S_FPS)
+				slider->setValue(this->InitialFps);
+		}
+
 /*
 	Chart *chart = new Chart();
 	QList<QPointF> points = QList<QPointF>();
@@ -104,9 +113,10 @@ void MainWindow::createGStreamerProcess()
 {
 	QProcess *process = new QProcess(this);
 	QString program = "gst-launch-1.0";
+	QString caps = "video/x-raw,format=YUY2,width=1920,height=1080,framerate=" + QString::number(this->InitialFps) + "/1";
 	process->start(program, QStringList({
 			"v4l2src", "device=/dev/video0", "!",
-			"video/x-raw,format=YUY2,width=1920,height=1080,framerate=7/1", "!",
+			caps, "!",
 			"waylandsink", "window-width=1560", "window-height=878"}));
 	process->waitForFinished(1000);
 }
@@ -334,19 +344,9 @@ void MainWindow::updateControls2fromXml()
 
 void MainWindow::timerEvent(QTimerEvent* /* event */)
 {
-	int diff = this->elapsedTimer.elapsed() - this->lastTime;
-	if (!this->readyForReadJson && diff < 1000)
-		return;
+	// int diff = this->elapsedTimer.elapsed() - this->lastTime;
 
-	if (!this->readyForReadJson)
-		this->readyForReadJson = true;
-
-	if (diff >= 300)
-	{
-		// ui->fpsLabel->setText(QString::number(ispControl.fps));
-	}
-
-	// ispControl.getFps();
+	this->ui->fpsLabel->setText("FPS: " + QString::number(this->thread->readFps));
 }
 
 void MainWindow::onActivated()
@@ -442,8 +442,8 @@ void MainWindow::signal_update_chart(ChartWidget *chart, float x1, float x2, flo
 + thread
 + reset to initial/default
 + AE parameters
++ FPS
 - rest controls
-- FPS
 - presets
 
 */

@@ -65,8 +65,14 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 					emit signal_update_slider_control_float(slider, value);
 					// qDebug() << scontrol->parameter << value;
 
-					// if (strncmp(scontrol->parameter.toStdString().c_str(), EC_TIME_PARAMS, strlen(EC_TIME_PARAMS)) == 0)
-					// 	qDebug("%f", 1.0 / value);
+					if (strncmp(scontrol->parameter.toStdString().c_str(), EC_TIME_PARAMS, strlen(EC_TIME_PARAMS)) == 0)
+					{
+						if (value != 0)
+							this->readFps = 1.0f / value;
+						else
+							this->readFps = 0;
+						// qDebug("%f", 1.0 / value);
+					}
 				}
 			}
 		}
