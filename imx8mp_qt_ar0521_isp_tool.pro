@@ -20,7 +20,6 @@ SOURCES += \
 	lib/jsoncpp/src/lib_json/json_reader.cpp \
 	lib/jsoncpp/src/lib_json/json_value.cpp \
 	lib/jsoncpp/src/lib_json/json_writer.cpp \
-  preview_window.cpp \
 	widgets/button_widget.cpp \
   widgets/chart_widget.cpp \
 	widgets/checkbox_widget.cpp \
@@ -39,7 +38,6 @@ HEADERS += \
 	isp_xml.h \
 	mainwindow.h \
 	lib/json_helper/json_helper.h \
-  preview_window.h \
 	widgets/button_widget.h \
   widgets/chart_widget.h \
 	widgets/checkbox_widget.h \
@@ -50,7 +48,6 @@ HEADERS += \
 
 FORMS += \
 	mainwindow.ui \
-	preview_window.ui \
 	widgets/button_widget.ui \
 	widgets/chart_widget.ui \
 	widgets/checkbox_widget.ui \

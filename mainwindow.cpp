@@ -34,12 +34,6 @@ MainWindow::MainWindow(QWidget *parent)
 	this->createControls();
 	this->createControls2();
 
-	// for (const QString &paramName : qAsConst(controlsDefinition.initializeNotReadableControls))
-		// this->initializeControlsNotReadable(paramName);
-
-	// PreviewWindow::setupCamera(ui->verticalLayout_2);
-	// PreviewWindow::setupCamera2(ui->verticalLayout_2);
-
 /*
 	Chart *chart = new Chart();
 	QList<QPointF> points = QList<QPointF>();
@@ -349,9 +343,6 @@ void MainWindow::timerEvent(QTimerEvent* /* event */)
 
 	if (diff >= 300)
 	{
-		// if (this->ui->tabWidget->currentIndex() == 0)
-		// 	this->readParameters();
-
 		// ui->fpsLabel->setText(QString::number(ispControl.fps));
 	}
 
@@ -451,7 +442,7 @@ void MainWindow::signal_update_chart(ChartWidget *chart, float x1, float x2, flo
 + thread
 + reset to initial/default
 + AE parameters
-- rest control
+- rest controls
 - FPS
 - presets
 

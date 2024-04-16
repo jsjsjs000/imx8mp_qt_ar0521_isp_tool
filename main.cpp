@@ -6,10 +6,8 @@
 #include <QDesktopWidget>
 #include <QScreen>
 
-int main(int argc, char *argv[])
+void playVideo()
 {
-	QApplication application(argc, argv);
-
 	/* QMediaPlayer *player;
 	QMediaPlaylist *playlist;
 	QVideoWidget *videoWidget;
@@ -38,30 +36,21 @@ int main(int argc, char *argv[])
 	QLabel myLabel;
 	myLabel.setPixmap(QPixmap::fromImage(myImage));
 	myLabel.show(); */
+}
+
+int main(int argc, char *argv[])
+{
+	QApplication application(argc, argv);
 
 	const int DesktopTaskBarHeight = 32;
 	const int MainWindowWidth = 360;
 	const int WindowBorder = 5;
 	const QSize desktopSize = QGuiApplication::primaryScreen()->size();
 
-/*
-	PreviewWindow previewWindow;
-	previewWindow.show();
-	previewWindow.setGeometry(MainWindowWidth + 2 * WindowBorder, DesktopTaskBarHeight,
-			desktopSize.width() - MainWindowWidth - 4 * WindowBorder,
-			desktopSize.height() - 2 * DesktopTaskBarHeight);
-	// previewWindow.resize(40, 40);
-	// previewWindow.setGeometry(MainWindowWidth + 2 * WindowBorder, DesktopTaskBarHeight,200,200);
-														// desktopSize.width() - MainWindowWidth - 4 * WindowBorder, //previewWindow.geometry().height());
-														// desktopSize.height() - 2 * DesktopTaskBarHeight);
-*/
-
 	MainWindow mainWindow;
 	mainWindow.setGeometry(0, DesktopTaskBarHeight,
 			MainWindowWidth + 2 * WindowBorder, desktopSize.height() - 2 * DesktopTaskBarHeight);
 	mainWindow.show();
-
-	// mainWindow.showMaximized();
 
 	return application.exec();
 }
