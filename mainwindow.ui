@@ -69,7 +69,7 @@
                <x>0</x>
                <y>0</y>
                <width>554</width>
-               <height>626</height>
+               <height>670</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_3">
@@ -132,7 +132,7 @@
                <x>0</x>
                <y>0</y>
                <width>554</width>
-               <height>626</height>
+               <height>670</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_5">
@@ -177,17 +177,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>562</width>
-     <height>22</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>
