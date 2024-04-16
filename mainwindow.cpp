@@ -34,14 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
 	this->createControls();
 	this->createControls2();
 
-		/* Set initial FPS */
-	for (const auto *control : qAsConst(controlsDefinition.controls))
-		if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
-		{
-			SliderWidget *slider = (SliderWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
-			if (slider != nullptr && scontrol->setCmd == IF_S_FPS)
-				slider->setValue(this->InitialFps);
-		}
+	this->setFps(this->InitialFps);
 
 /*
 	Chart *chart = new Chart();
@@ -77,21 +70,45 @@ MainWindow::~MainWindow()
 	delete ui;
 }
 
+int MainWindow::getFps()
+{
+	for (const auto *control : qAsConst(controlsDefinition.controls))
+		if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
+		{
+			SliderWidget *slider = (SliderWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+			if (slider != nullptr && scontrol->setCmd == IF_S_FPS)
+				return slider->getValue();
+		}
+
+	return -1;
+}
+
+void MainWindow::setFps(int fps)
+{
+	for (const auto *control : qAsConst(controlsDefinition.controls))
+		if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
+		{
+			SliderWidget *slider = (SliderWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+			if (slider != nullptr && scontrol->setCmd == IF_S_FPS)
+				slider->setValue(fps);
+		}
+}
+
 void MainWindow::runProcFsThread()
 {
 	thread = new IspProcThread(this, ispControl, controlsDefinition, this->widgets);
 	connect(thread, &IspProcThread::signal_update_slider_control_int,
 			this, &MainWindow::signal_update_slider_control_int);
 	connect(thread, &IspProcThread::signal_update_slider_control_float,
-					this, &MainWindow::signal_update_slider_control_float);
+			this, &MainWindow::signal_update_slider_control_float);
 	connect(thread, &IspProcThread::signal_update_comboBox_item_index,
-					this, &MainWindow::signal_update_comboBox_item_index);
+			this, &MainWindow::signal_update_comboBox_item_index);
 	connect(thread, &IspProcThread::signal_update_checkBox_set_state,
-					this, &MainWindow::signal_update_checkBox_set_state);
+			this, &MainWindow::signal_update_checkBox_set_state);
 	connect(thread, &IspProcThread::signal_update_label_set_text,
-					this, &MainWindow::signal_update_label_set_text);
+			this, &MainWindow::signal_update_label_set_text);
 	connect(thread, &IspProcThread::signal_update_chart,
-					this, &MainWindow::signal_update_chart);
+			this, &MainWindow::signal_update_chart);
 	thread->start();
 }
 
@@ -188,6 +205,9 @@ void MainWindow::onSliderValueChange(MainWindow *mainWindow, QString getCmd, QSt
 
 	qDebug() << setCmd << parameter << ((float)value / divide);
 	ispControl.setParam(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), value, divide);
+
+	if (setCmd == IF_S_FPS && parameter == "fps")
+		mainWindow->lastSetFps = value;
 
 	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
@@ -347,6 +367,15 @@ void MainWindow::timerEvent(QTimerEvent* /* event */)
 	// int diff = this->elapsedTimer.elapsed() - this->lastTime;
 
 	this->ui->fpsLabel->setText("FPS: " + QString::number(this->thread->readFps));
+
+	if (this->setFpsTime > 0 && this->elapsedTimer.elapsed() - this->setFpsTime >= 1000)
+	{
+		this->setFpsTime = 0;
+		// this->setFps(this->lastSetFps);
+		ispControl.setParam("", IF_S_FPS, "fps", this->lastSetFps, 1);
+
+		this->lastTime = this->elapsedTimer.elapsed();
+	}
 }
 
 void MainWindow::onActivated()
@@ -392,6 +421,8 @@ void MainWindow::reloadDriver()
 	QString program = "systemctl";
 	process->start(program, QStringList({"restart", "imx8-phycam-isp.service"}));
 	process->waitForFinished(1000);
+
+	this->setFpsTime = this->elapsedTimer.elapsed();
 }
 
 void MainWindow::signal_update_slider_control_int(SliderWidget *slider, int value)

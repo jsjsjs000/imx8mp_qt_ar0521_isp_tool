@@ -131,6 +131,11 @@ void SliderWidget::setValueFloat(float value)
 	ui->horizontalSlider->setValue((int)value);
 }
 
+int SliderWidget::getValue()
+{
+	return ui->horizontalSlider->value();
+}
+
 void SliderWidget::on_horizontalSlider_valueChanged(int value)
 {
 	if (this->precision == 0)

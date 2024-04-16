@@ -22,6 +22,7 @@ public:
 	SliderWidget(QWidget *parent, MainWindow *mainWindow, const SliderControl2 *control,
 			void (*onSlider2ValueChange)(MainWindow *mainWindow, QString node, int value, int divide));
 	void setRange();
+	int getValue();
 	void setValue(int value);
 	void setValueFloat(float value);
 	void setDefaultAndFactoryValue(int defaultValue, int factoryValue);

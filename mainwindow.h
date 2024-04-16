@@ -50,7 +50,11 @@ private:
 	clock_t lastTime = 0;
 	bool isActivated = false;
 	QElapsedTimer elapsedTimer;
+	int lastSetFps = this->InitialFps;
+	clock_t setFpsTime = 0;
 
+	int getFps();
+	void setFps(int fps);
 	void runProcFsThread();
 	void stopProcFsThread();
 	void createControls();
