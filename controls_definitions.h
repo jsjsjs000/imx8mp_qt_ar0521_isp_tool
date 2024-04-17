@@ -53,10 +53,10 @@ public:
 			awbprofileMap->insert({{0, "A"}, {1, "D50"}, {2, "D65"}, {3, "F2 (CWF)"}, {4, "F11 (TL84)"}});
 		controls.append(new ComboBoxControl(IF_AWB_G_CFG, IF_AWB_S_CFG,     AWB_INDEX_PARAMS,   "Index of illumination profile", awbprofileMap, "The index of the illumination profile; it will affect the AWB adjustment effect"));
 		controls.append(new CheckBoxControl(IF_AWB_G_CFG, IF_AWB_S_CFG,     AWB_DAMPING_PARAMS, "Damping", false, "Changes white balance smoothly through temporal damping"));
-		controls.append(new SliderControl(  NULL,         IF_AWB_S_MEASWIN, RECT_LEFT,          "Measuring window left start position",  0, 3840,    0, ""));
-		controls.append(new SliderControl(  NULL,         IF_AWB_S_MEASWIN, RECT_TOP,           "Measuring window top start position",   0, 2160,    0, ""));
-		controls.append(new SliderControl(  NULL,         IF_AWB_S_MEASWIN, RECT_WIDTH,         "Measuring window width",               10, 3840, 1920, ""));
-		controls.append(new SliderControl(  NULL,         IF_AWB_S_MEASWIN, RECT_HEIGHT,        "Measuring window height",              10, 2160, 1080, ""));
+		controls.append(new SliderControl(  NULL,         IF_AWB_S_MEASWIN, RECT_LEFT,          "Measuring window left start position",  0, 3840,    0, "Write only"));
+		controls.append(new SliderControl(  NULL,         IF_AWB_S_MEASWIN, RECT_TOP,           "Measuring window top start position",   0, 2160,    0, "Write only"));
+		controls.append(new SliderControl(  NULL,         IF_AWB_S_MEASWIN, RECT_WIDTH,         "Measuring window width",               10, 3840, 1920, "Write only"));
+		controls.append(new SliderControl(  NULL,         IF_AWB_S_MEASWIN, RECT_HEIGHT,        "Measuring window height",              10, 2160, 1080, "Write only"));
 		controls.append(new ButtonControl(  NULL,         IF_AWB_RESET,     NULL, "",           "Resets the Auto White Balance control",                ""));
 
 		controls.append(new GroupControl("BLS - Black Level Subtraction"));
@@ -89,7 +89,7 @@ public:
 		controls.append(new ComboBoxControl(IF_CPROC_G_CFG, IF_CPROC_S_CFG,   CPROC_LUMA_OUT_PARAMS,   "Luminance output", lumaoutMap, "CPROC luminance output clipping range"));
 		controls.append(new SliderControl(  IF_CPROC_G_CFG, IF_CPROC_S_CFG,   CPROC_SATURATION_PARAMS, "Saturation",              0.0f, 1.99f, 1.0f, 3, "Saturation value"));
 			QMap<int, QString> *coeffMap = new QMap<int, QString>;
-			coeffMap->insert({{1, "index 1"}, {2, "index 2"}});
+			coeffMap->insert({{0, "index 1"}, {1, "index 2"}});
 		controls.append(new ComboBoxControl(NULL,           IF_CPROC_S_COEFF, CPROC_INDEX_PARAMS,      "Input coefficient index",    coeffMap,    "index 1: 0.257812, 0.5,      0.101562, -0.148438, -0.289062, 0.4375, 0.4375, -0.367188, -0.070312\nindex 2: 0.296875, 0.585938, 0.117188, -0.171875, -0.328125, 0.5,    0.5,    -0.421875, -0.078125"));
 
 		controls.append(new GroupControl("DEMOSAIC"));
@@ -133,19 +133,19 @@ public:
 		controls.append(new SliderControl(  IF_FILTER_G_CFG, IF_FILTER_S_CFG,  FILTER_SHARPEN_PARAMS,  "Sharpen level",                  0, 10, 0, ""));
 		controls.append(new SliderControl(  IF_FILTER_G_CFG, IF_FILTER_S_CFG,  FILTER_CHRHMODE_PARAMS, "Chroma filter horizontal mode",  0,  3, 0, ""));
 		controls.append(new SliderControl(  IF_FILTER_G_CFG, IF_FILTER_S_CFG,  FILTER_CHRVMODE_PARAMS, "Chroma filter vertical mode",    0,  3, 0, ""));
-//	controls.append(new LabelControl(   IF_FILTER_G_TBL,                   FILTER_TABLE_PARAMS,    "Filter auto table",                        "", &typeid(std::string)));  // unknown
-//	controls.append(new LabelControl(   IF_FILTER_G_TBL,                   "columns",              "Table's column property",                  "", &typeid(std::string)));
-//	controls.append(new LabelControl(   IF_FILTER_G_TBL,                   "rows",                 "Values of properties in the table",        "", &typeid(std::string)));
+//	controls.append(new LabelControl(   IF_FILTER_G_TBL,                   FILTER_TABLE_PARAMS,    "Filter auto table",                        "", &typeid(std::string)));  // $$ subnode i włączyć IF_FILTER_G_TBL na dole
+//	controls.append(new LabelControl(   IF_FILTER_G_TBL, IF_FILTER_S_TBL,  "columns",              "Table's column property",                  "", &typeid(std::string)));
+//	controls.append(new LabelControl(   IF_FILTER_G_TBL, IF_FILTER_S_TBL,  "rows",                 "Values of properties in the table",        "", &typeid(std::string)));
 		controls.append(new LabelControl(   IF_FILTER_G_STATUS,                FILTER_GAIN_PARAMS,             "Sensor gain",                      "", &typeid(float)));
 		controls.append(new LabelControl(   IF_FILTER_G_STATUS,                FILTER_INTEGRATION_TIME_PARAMS, "Sensor integration time",          "", &typeid(float)));
 
 		controls.append(new GroupControl("GC - Gamma control"));
-		controls.append(new CheckBoxControl(IF_GC_G_EN,  IF_GC_S_EN,   GC_ENABLE_PARAMS,   "Enabled",                   true,     "The state of the Gamma Control"));
+		controls.append(new CheckBoxControl(IF_GC_G_EN,  IF_GC_S_EN,       GC_ENABLE_PARAMS,        "Enabled",                   true,     "The state of the Gamma Control"));
 		// IF_GC_G_CURVE - the same as IF_GC_G_CFG
-		controls.append(new LabelControl(   IF_GC_G_CURVE,      GC_CURVE_PARAMS,        "Gamma curve",                  "", &typeid(int[]))); // 0...1023
+		controls.append(new LabelControl(   IF_GC_G_CFG,                   GC_CURVE_PARAMS,         "Gamma curve",                          "", &typeid(int[]))); // 0...1023      $$ ChartWidget
 			QMap<int, QString> *gcmodeMap = new QMap<int, QString>;
 			gcmodeMap->insert({{1, "Logarithmic mode"}, {2, "Equidistant mode"}});
-		controls.append(new ComboBoxControl(IF_GC_G_CFG, IF_GC_S_CFG,      GC_MODE_PARAMS,         "Gamma segmentation mode", gcmodeMap, "Selects the gamma segmentation mode. Logarithmic: logarithmic segmentation from 0 to 4095, (64,64,64,64,128,128,128,128,256,256,256,512,512,512,512,512)\nEquidistant: equidistant segmentation from 0 to 4095, (256, 256, ... ); all 16 segments are 256."));
+		controls.append(new ComboBoxControl(IF_GC_G_CFG, IF_GC_S_CFG,      GC_MODE_PARAMS,          "Gamma segmentation mode", gcmodeMap, "Selects the gamma segmentation mode. Logarithmic: logarithmic segmentation from 0 to 4095, (64,64,64,64,128,128,128,128,256,256,256,512,512,512,512,512)\nEquidistant: equidistant segmentation from 0 to 4095, (256, 256, ... ); all 16 segments are 256."));
 
 		controls.append(new GroupControl("HDR - High Dynamic Range"));
 		controls.append(new CheckBoxControl(IF_HDR_G_EN,  IF_HDR_S_EN,   HDR_ENABLE_PARAMS,         "Enabled",         true,     "The state of High Dynamic Range"));
@@ -163,7 +163,7 @@ public:
 
 		controls.append(new GroupControl("WDR - Wide Dynamic Range"));
 		controls.append(new CheckBoxControl(IF_WDR_G_EN,  IF_WDR_S_EN,  WDR_ENABLE_PARAMS,          "Enables or disables WDR", false,         "The state of WDR"));
-//	controls.append(new LabelControl(   IF_WDR_G_CFG,               WDR_Y_M_PARAMS,             "WDR1 curve Ym value",                    "", &typeid(float[])));
+//	controls.append(new LabelControl(   IF_WDR_G_CFG,               WDR_Y_M_PARAMS,             "WDR1 curve Ym value",                    "", &typeid(float[]))); // $$ zakomentowane? - koniec sprawdzania
 //	controls.append(new LabelControl(   IF_WDR_G_CFG,               WDR_D_Y_PARAMS,             "WDR1 curve dY value",                    "", &typeid(float[])));
 //	controls.append(new CheckBoxControl(IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_AUTO_PARAMS,            "WDR3 running mode", false,               ""));
 		controls.append(new SliderControl(  IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_AUTO_LEVEL_PARAMS,      "WDR3 auto level",                             0, 100, 0, ""));
