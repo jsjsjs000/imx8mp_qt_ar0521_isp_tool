@@ -28,6 +28,7 @@ private:
 	QString name;
 	QString value;
 	QString label;
+	QString description;
 };
 
 #endif // LABEL_WIDGET_H

@@ -42,13 +42,15 @@ public:
 		controls.append(new ComboBoxControl(IF_AE_G_ECM, IF_AE_S_ECM, AE_FLICKER_PERIOD_PARAMS, "The flag of Auto Exposure flicker period", expMap, ""));
 		controls.append(new CheckBoxControl(IF_AE_G_ECM, IF_AE_S_ECM, AE_AFPS_PARAMS,           "Auto FPS control value", false,             "Set manual FPS to disable it (Sensor > FPS)"));
 
-		controls.append(new GroupControl("AF - Auto Focus (not implemented)"));
+		controls.append(new GroupControl("AF - Auto Focus (configuration not implemented)"));
+		controls.append(new CheckBoxControl(IF_AF_G_EN,   IF_AF_S_EN,      AF_ENABLE_PARAMS,    "Enabled",                true,              ""));
+		controls.append(new CheckBoxControl(IF_AF_G_AVI,  NULL,            AF_AVAILABEL_PARAMS, "Available",              true,              ""));
 
 		controls.append(new GroupControl("AWB - Auto White Balance"));
-		controls.append(new CheckBoxControl(IF_AWB_G_EN, IF_AWB_S_EN, AWB_ENABLE_PARAMS,        "Enabled",                true,              "The state of the AWB control"));
+		controls.append(new CheckBoxControl(IF_AWB_G_EN,  IF_AWB_S_EN,      AWB_ENABLE_PARAMS,  "Enabled",                true,              "The state of the AWB control"));
 			QMap<int, QString> *awbmodeMap = new QMap<int, QString>;
 			awbmodeMap->insert({{1, "Manual"}, {2, "Auto"}});
-		controls.append(new ComboBoxControl(IF_AWB_G_CFG, IF_AWB_S_CFG, AWB_MODE_PARAMS, "AWB mode", awbmodeMap, "Auto mode automatically calculates the appropriate illumination profile."));
+		controls.append(new ComboBoxControl(IF_AWB_G_CFG, IF_AWB_S_CFG,     AWB_MODE_PARAMS,    "AWB mode", awbmodeMap, "Auto mode automatically calculates the appropriate illumination profile."));
 			QMap<int, QString> *awbprofileMap = new QMap<int, QString>;
 			awbprofileMap->insert({{0, "A"}, {1, "D50"}, {2, "D65"}, {3, "F2 (CWF)"}, {4, "F11 (TL84)"}});
 		controls.append(new ComboBoxControl(IF_AWB_G_CFG, IF_AWB_S_CFG,     AWB_INDEX_PARAMS,   "Index of illumination profile", awbprofileMap, "The index of the illumination profile; it will affect the AWB adjustment effect"));

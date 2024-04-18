@@ -12,6 +12,8 @@ class Controls2Definitions
 {
 	const QString XmlFileName =        "/opt/imx8-isp/bin/xml/VM-017-COL_AO062-C_1920x1080.xml";
 	const QString XmlFactoryFileName = "/opt/imx8-isp/bin/xml/VM-017-COL_AO062-C_1920x1080_factory.xml";
+	// const QString XmlFileName =        "/opt/imx8-isp/bin/xml/VM-017-COL_AO062-C_2592x1944.xml";
+	// const QString XmlFactoryFileName = "/opt/imx8-isp/bin/xml/VM-017-COL_AO062-C_2592x1944_factory.xml";
 
 	IspXml xml;
 	IspXml xmlDefault;

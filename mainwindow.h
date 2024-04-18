@@ -37,6 +37,10 @@ private slots:
 
 private:
 	const int InitialFps = 30;
+	const int Width = 1920;  // 1.777
+	const int Height = 1080;
+	// const int Width = 2592;  // 1.333
+	// const int Height = 1944;
 
 	Ui::MainWindow *ui;
 	IspProcThread *thread;
