@@ -131,6 +131,9 @@ public:
 		controls.append(new SliderControl2("sensor/AEC/ECM/cell[index=3]/PrioritySchemes/cell[index=3]/OffsetT0Fac",      "OffsetT0Fac",    0.0f,   5, 0, ""));
 		controls.append(new SliderControl2("sensor/AEC/ECM/cell[index=3]/PrioritySchemes/cell[index=3]/SlopeA0",          "SlopeA0",        0.0f,   5, 0, ""));
 
+		// $$ aFpsMaxGain
+
+
 		controls.append(new GroupControl2( "Degamma"));
 		controls.append(new ChartControl2( "sensor/DEGAMMA/cell/degamma_dx",     "degamma_dx",   0.0f, 5000, 500, false, "Brightness value before linearity correction."));
 		controls.append(new ChartControl2( "sensor/DEGAMMA/cell/degamma_y",      "degamma_y",    0.0f, 5000, 500, false, "Brightness value after linearity correction."));
