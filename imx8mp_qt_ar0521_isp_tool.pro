@@ -11,6 +11,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+	combobox_widget2.cpp \
   controls2_definitions.cpp \
 	isp_control.cpp \
 	isp_proc_thread.cpp \
@@ -24,11 +25,14 @@ SOURCES += \
   widgets/chart_widget.cpp \
 	widgets/checkbox_widget.cpp \
   widgets/combobox_widget.cpp \
+	widgets/combobox_widget2.cpp \
 	widgets/group_widget.cpp \
 	widgets/label_widget.cpp \
+	widgets/matrix_view_widget.cpp \
 	widgets/slider_widget.cpp
 
 HEADERS += \
+	combobox_widget2.h \
 	controls.h \
   controls2.h \
   controls2_definitions.h \
@@ -42,18 +46,23 @@ HEADERS += \
   widgets/chart_widget.h \
 	widgets/checkbox_widget.h \
   widgets/combobox_widget.h \
+	widgets/combobox_widget2.h \
 	widgets/group_widget.h \
 	widgets/label_widget.h \
+	widgets/matrix_view_widget.h \
 	widgets/slider_widget.h
 
 FORMS += \
+	combobox_widget2.ui \
 	mainwindow.ui \
 	widgets/button_widget.ui \
 	widgets/chart_widget.ui \
 	widgets/checkbox_widget.ui \
 	widgets/combobox_widget.ui \
+	widgets/combobox_widget2.ui \
 	widgets/group_widget.ui \
 	widgets/label_widget.ui \
+	widgets/matrix_view_widget.ui \
 	widgets/slider_widget.ui
 
 INCLUDEPATH += \

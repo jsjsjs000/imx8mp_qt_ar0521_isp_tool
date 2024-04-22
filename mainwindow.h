@@ -35,6 +35,8 @@ private slots:
 	void signal_update_label_set_text(LabelWidget *label, QString text);
 	void signal_update_chart(ChartWidget *chart, float x1, float x2, float y1, float y2, float gridX, float gridY, QListQPointF points);
 
+	void on_tabWidget_currentChanged(int index);
+
 private:
 	const int InitialFps = 30;
 	const int Width = 1920;  // 1.777

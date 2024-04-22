@@ -6,7 +6,7 @@
 #include "isp_control.h"
 #include "cam_device_module_ids.h"
 
-// #define DEBUG
+#define DEBUG
 
 IspControl::IspControl() {}
 

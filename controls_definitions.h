@@ -27,8 +27,8 @@ public:
 		controls.append(new SliderControl(  IF_AE_G_CFG,    IF_AE_S_CFG, AE_CLM_TOLERANCE_PARAMS, "Calculation accuracy",    0,  100,    0,    "Calculation accuracy; AE will make adjustments when the difference ratio between set.point and actual point over the clm.tolerance"));
 		controls.append(new LabelControl(   IF_AE_G_CFG,                 AE_WEIGHT_PARAMS,        "Weights of 5x5 blocks",                     "", &typeid(int[])));
 		controls.append(new ButtonControl(  NULL,           IF_AE_RESET, NULL, "",                "Resets the Auto Exposure control",          ""));
-		controls.append(new ChartControl(   IF_AE_G_STATUS, AE_HIST_PARAMS_BASE64,                "Current histogram of image",                "", 0, 30000, 5000, true));
-		controls.append(new ChartControl(   IF_AE_G_STATUS, AE_LUMA_PARAMS_BASE64,                "Mean luminance measured",                   "", 0,   255,   50, true));
+		controls.append(new ChartControl(   IF_AE_G_STATUS, NULL,        AE_HIST_PARAMS_BASE64,   "Current histogram of image",                "", 0, 30000, 5000, true));
+		controls.append(new ChartControl(   IF_AE_G_STATUS, NULL,        AE_LUMA_PARAMS_BASE64,   "Mean luminance measured",                   "", 0,   255,   50, true));
 		controls.append(new LabelControl(   IF_AE_G_STATUS, AE_OBJECT_REGION_PARAMS_BASE64,       "Measurement windows block",                 "", &typeid(int[])));
 			QMap<int, QString> *isoMap = new QMap<int, QString>;
 			isoMap->insert({{100, "100"}, {200, "200"}, {400, "400"}, {800, "800"}, {1600, "1600"}});
@@ -135,16 +135,16 @@ public:
 		controls.append(new SliderControl(  IF_FILTER_G_CFG, IF_FILTER_S_CFG,  FILTER_SHARPEN_PARAMS,  "Sharpen level",                  0, 10, 0, ""));
 		controls.append(new SliderControl(  IF_FILTER_G_CFG, IF_FILTER_S_CFG,  FILTER_CHRHMODE_PARAMS, "Chroma filter horizontal mode",  0,  3, 0, ""));
 		controls.append(new SliderControl(  IF_FILTER_G_CFG, IF_FILTER_S_CFG,  FILTER_CHRVMODE_PARAMS, "Chroma filter vertical mode",    0,  3, 0, ""));
-//	controls.append(new LabelControl(   IF_FILTER_G_TBL,                   FILTER_TABLE_PARAMS,    "Filter auto table",                        "", &typeid(std::string)));  // $$ subnode i włączyć IF_FILTER_G_TBL na dole
-//	controls.append(new LabelControl(   IF_FILTER_G_TBL, IF_FILTER_S_TBL,  "columns",              "Table's column property",                  "", &typeid(std::string)));
-//	controls.append(new LabelControl(   IF_FILTER_G_TBL, IF_FILTER_S_TBL,  "rows",                 "Values of properties in the table",        "", &typeid(std::string)));
+//	controls.append(new LabelControl(   IF_FILTER_G_TBL,                   FILTER_TABLE_PARAMS,    "Filter auto table",                        "", &typeid(std::string)));  // empty response
+//	controls.append(new LabelControl(   IF_FILTER_G_TBL, IF_FILTER_S_TBL,  "columns",              "Table's column property",                  "", &typeid(std::string)));  // empty response
+//	controls.append(new LabelControl(   IF_FILTER_G_TBL, IF_FILTER_S_TBL,  "rows",                 "Values of properties in the table",        "", &typeid(std::string)));  // empty response
 		controls.append(new LabelControl(   IF_FILTER_G_STATUS,                FILTER_GAIN_PARAMS,             "Sensor gain",                      "", &typeid(float)));
 		controls.append(new LabelControl(   IF_FILTER_G_STATUS,                FILTER_INTEGRATION_TIME_PARAMS, "Sensor integration time",          "", &typeid(float)));
 
 		controls.append(new GroupControl("GC - Gamma control"));
 		controls.append(new CheckBoxControl(IF_GC_G_EN,  IF_GC_S_EN,       GC_ENABLE_PARAMS,        "Enabled",                   true,     "The state of the Gamma Control"));
 		// IF_GC_G_CURVE - the same as IF_GC_G_CFG
-		controls.append(new LabelControl(   IF_GC_G_CFG,                   GC_CURVE_PARAMS,         "Gamma curve",                          "", &typeid(int[]))); // 0...1023      $$ ChartWidget
+		controls.append(new ChartControl(   IF_GC_G_CFG, IF_GC_S_CFG,      GC_CURVE_PARAMS,         "Gamma curve",               "Gamma curve; data array length is 17", 0, 1024, 100, false));
 			QMap<int, QString> *gcmodeMap = new QMap<int, QString>;
 			gcmodeMap->insert({{1, "Logarithmic mode"}, {2, "Equidistant mode"}});
 		controls.append(new ComboBoxControl(IF_GC_G_CFG, IF_GC_S_CFG,      GC_MODE_PARAMS,          "Gamma segmentation mode", gcmodeMap, "Selects the gamma segmentation mode. Logarithmic: logarithmic segmentation from 0 to 4095, (64,64,64,64,128,128,128,128,256,256,256,512,512,512,512,512)\nEquidistant: equidistant segmentation from 0 to 4095, (256, 256, ... ); all 16 segments are 256."));
@@ -156,35 +156,38 @@ public:
 
 		controls.append(new GroupControl("LSC - Lens Shade Correction"));
 		controls.append(new CheckBoxControl(IF_LSC_G_EN,  IF_LSC_S_EN,   LSC_ENABLE_PARAMS,  "Enabled",                true,      "The state of Lens Shade Correction"));
-		controls.append(new LabelControl(   IF_LSC_G_STATUS,             LSC_RED_PARAMS,     "LSC gains red",                     "", &typeid(float[])));
-		controls.append(new LabelControl(   IF_LSC_G_STATUS,             LSC_GREEN_R_PARAMS, "LSC gains green.r",                 "", &typeid(float[])));
-		controls.append(new LabelControl(   IF_LSC_G_STATUS,             LSC_GREEN_B_PARAMS, "LSC gains green.b",                 "", &typeid(float[])));
-		controls.append(new LabelControl(   IF_LSC_G_STATUS,             LSC_BLUE_PARAMS,    "LSC gains blue",                    "", &typeid(float[])));
-		controls.append(new LabelControl(   IF_LSC_G_STATUS,             LSC_XSIZE_PARAMS,   "Horizontal orientation block size", "", &typeid(int[])));
-		controls.append(new LabelControl(   IF_LSC_G_STATUS,             LSC_YSIZE_PARAMS,   "Vertical orientation block size",   "", &typeid(int[])));
+//	controls.append(new ChartControl(   IF_LSC_G_STATUS, NULL,       LSC_RED_PARAMS,     "LSC gains red",                     "",  0, 3999, 500, true));  // too much useless data
+//	controls.append(new ChartControl(   IF_LSC_G_STATUS, NULL,       LSC_GREEN_R_PARAMS, "LSC gains green.r",                 "",  0, 3999, 500, true));
+//	controls.append(new ChartControl(   IF_LSC_G_STATUS, NULL,       LSC_GREEN_B_PARAMS, "LSC gains green.b",                 "",  0, 3999, 500, true));
+//	controls.append(new ChartControl(   IF_LSC_G_STATUS, NULL,       LSC_BLUE_PARAMS,    "LSC gains blue",                    "",  0, 3999, 500, true));
+//	controls.append(new ChartControl(   IF_LSC_G_STATUS, NULL,       LSC_XSIZE_PARAMS,   "Horizontal orientation block size", "", 10, 1024, 100, true));
+//	controls.append(new ChartControl(   IF_LSC_G_STATUS, NULL,       LSC_YSIZE_PARAMS,   "Vertical orientation block size",   "",  8, 1024, 100, true));
 
 		controls.append(new GroupControl("WDR - Wide Dynamic Range"));
-		controls.append(new CheckBoxControl(IF_WDR_G_EN,  IF_WDR_S_EN,  WDR_ENABLE_PARAMS,          "Enables or disables WDR", false,         "The state of WDR"));
-//	controls.append(new LabelControl(   IF_WDR_G_CFG,               WDR_Y_M_PARAMS,             "WDR1 curve Ym value",                    "", &typeid(float[]))); // $$ zakomentowane? - koniec sprawdzania
-//	controls.append(new LabelControl(   IF_WDR_G_CFG,               WDR_D_Y_PARAMS,             "WDR1 curve dY value",                    "", &typeid(float[])));
-//	controls.append(new CheckBoxControl(IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_AUTO_PARAMS,            "WDR3 running mode", false,               ""));
-		controls.append(new SliderControl(  IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_AUTO_LEVEL_PARAMS,      "WDR3 auto level",                             0, 100, 0, ""));
-		controls.append(new SliderControl(  IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_STRENGTH_PARAMS,        "WDR2 or WDR3 strench",                        0, 128, 0, ""));
-		controls.append(new SliderControl(  IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_GAIN_MAX_PARAMS,        "WDR3 gain max",                               0, 128, 0, ""));
-		controls.append(new SliderControl(  IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_STRENGTH_GLOBAL_PARAMS, "WDR3 global strength, image global contrast", 0, 128, 0, ""));
-		controls.append(new ButtonControl(  NULL,         IF_WDR_RESET, WDR_GENERATION_PARAMS, "2", "Reset WDR", ""));
-		controls.append(new LabelControl(   IF_WDR_G_STATUS, WDR_GAIN_PARAMS,                       "WDR gain",                               "", &typeid(float)));
-		controls.append(new LabelControl(   IF_WDR_G_STATUS, WDR_INTEGRATION_TIME_PARAMS,           "WDR integration time",                   "", &typeid(float)));
-//	controls.append(new LabelControl(   IF_WDR_G_TBL, WDR_TABLE_PARAMS, "WDR table", "", &typeid(std::string[]))); // empty response
+		controls.append(new CheckBoxControl(IF_WDR_G_EN,  IF_WDR_S_EN,  WDR_ENABLE_PARAMS,          "Enables or disables WDR", false,              "The state of WDR"));
+//	controls.append(new LabelControl(   IF_WDR_G_CFG,               WDR_Y_M_PARAMS,             "WDR1 curve Ym value",                         "", &typeid(float[])));  // empty response
+//	controls.append(new LabelControl(   IF_WDR_G_CFG,               WDR_D_Y_PARAMS,             "WDR1 curve dY value",                         "", &typeid(float[])));  // empty response
+//	controls.append(new CheckBoxControl(IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_AUTO_PARAMS,            "WDR3 running mode", false,                    ""));                    // empty response
+			QMap<QString, QString> *wdrAutoMap = new QMap<QString, QString>;
+			wdrAutoMap->insert({{"true", "true"}, {"false", "false"}});
+		controls.append(new ComboBoxControl2(IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_AUTO_PARAMS,            "WDR3 running mode", wdrAutoMap, ""));                                 // $$ dokończyć ComboBoxControl2
+		controls.append(new SliderControl(   IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_AUTO_LEVEL_PARAMS,      "WDR3 auto level",                             0, 100, 0, ""));
+		controls.append(new SliderControl(   IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_STRENGTH_PARAMS,        "WDR2 or WDR3 strench",                        0, 128, 0, ""));
+		controls.append(new SliderControl(   IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_GAIN_MAX_PARAMS,        "WDR3 gain max",                               0, 128, 0, ""));
+		controls.append(new SliderControl(   IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_STRENGTH_GLOBAL_PARAMS, "WDR3 global strength, image global contrast", 0, 128, 0, ""));
+		controls.append(new ButtonControl(   NULL,         IF_WDR_RESET, WDR_GENERATION_PARAMS, "2", "Reset WDR", ""));
+		controls.append(new LabelControl(    IF_WDR_G_STATUS, WDR_GAIN_PARAMS,                       "WDR gain",                                    "", &typeid(float)));
+		controls.append(new LabelControl(    IF_WDR_G_STATUS, WDR_INTEGRATION_TIME_PARAMS,           "WDR integration time",                        "", &typeid(float)));
+//	controls.append(new LabelControl(    IF_WDR_G_TBL, WDR_TABLE_PARAMS, "WDR table", "", &typeid(std::string[])));      // empty response
 
 		controls.append(new GroupControl("WB - White Balance"));
-		controls.append(new LabelControl(   IF_WB_G_CFG, WB_MATRIX_PARAMS,                "Color correction Matrinx (X-Talk)", "", &typeid(float[])));    // $$ edit
+		controls.append(new LabelControl(   IF_WB_G_CFG, WB_MATRIX_PARAMS,                "Color correction Matrinx (X-Talk)", "", &typeid(float[])));    // $$ edit - koniec sprawdzenia
 		controls.append(new LabelControl(   IF_WB_G_CFG, WB_OFFSET_PARAMS,                "[red, green, blue] offset ",        "", &typeid(int[])));      // $$ edit
 		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG, WB_RED_PARAMS,      "WB gains red",             0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));
 		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG, WB_GREEN_R_PARAMS,  "WB gains green.r",         0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));
 		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG, WB_GREEN_B_PARAMS,  "WB gains green.b",         0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));
 		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG, WB_BLUE_PARAMS,     "WB gains blue",            0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));
-//	controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_RED_PARAMS,      "WB gains red",             0.0f, 3.999f, 0.0f, 3, ""));      // not works or duplicated (?)
+//	controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_RED_PARAMS,      "WB gains red",             0.0f, 3.999f, 0.0f, 3, ""));      // not works or duplicated $$
 //	controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_GREEN_R_PARAMS,  "WB gains green.r",         0.0f, 3.999f, 0.0f, 3, ""));
 //	controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_GREEN_B_PARAMS,  "WB gains green.b",         0.0f, 3.999f, 0.0f, 3, ""));
 //	controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_BLUE_PARAMS,     "WB gains blue",            0.0f, 3.999f, 0.0f, 3, ""));
@@ -225,47 +228,50 @@ public:
 		// IF_PIPELINE_G_3A_LOCK / IF_PIPELINE_S_3A_LOCK  AF/AE/AWB lock
 
 		readParams.append({
-				IF_AE_G_EN,
-				IF_AE_G_CFG,
-				IF_AE_G_ECM,
-				IF_AE_G_STATUS,
-				IF_AE_G_ISO,
-				IF_AWB_G_CFG,
-				IF_AWB_G_EN,
-				IF_BLS_G_CFG,
-				IF_CAC_G_EN,
-				IF_CNR_G_EN,
-				IF_CNR_G_CFG,
-				IF_CPROC_G_EN,
-				IF_CPROC_G_CFG,
-				IF_DEMOSAIC_G_EN,
-				IF_DEMOSAIC_G_CFG,
-				IF_DPCC_G_EN,
-				IF_DPF_G_EN,
-				IF_DPF_G_CFG,
-				IF_EC_G_CFG,
-				//- IF_EC_G_STATUS,   // duplicate
-				IF_FILTER_G_EN,
-				IF_FILTER_G_CFG,
-				//- IF_FILTER_G_TBL,  // unknown
-				IF_FILTER_G_STATUS,
 				IF_GC_G_CFG,
-				IF_GC_G_EN,
-				IF_HDR_G_CFG,
-				IF_HDR_G_EN,
-				IF_LSC_G_EN,
-				IF_LSC_G_STATUS,
-				IF_WDR_G_EN,
-				IF_WDR_G_CFG,
-				IF_WDR_G_STATUS,
-				IF_WDR_G_TBL,
-				IF_WB_G_CFG,
-				IF_DWE_G_PARAMS,
-				IF_SENSOR_QUERY,
-				IF_SENSOR_G_MODE,
-				IF_SENSOR_G_RESW,
-				IF_SENSOR_G_RESH,
-				IF_SENSOR_G_SEC,
+				IF_GC_G_CFG,
+
+				// IF_AE_G_EN,
+				// IF_AE_G_CFG,
+				// IF_AE_G_ECM,
+				// IF_AE_G_STATUS,
+				// IF_AE_G_ISO,
+				// IF_AWB_G_CFG,
+				// IF_AWB_G_EN,
+				// IF_BLS_G_CFG,
+				// IF_CAC_G_EN,
+				// IF_CNR_G_EN,
+				// IF_CNR_G_CFG,
+				// IF_CPROC_G_EN,
+				// IF_CPROC_G_CFG,
+				// IF_DEMOSAIC_G_EN,
+				// IF_DEMOSAIC_G_CFG,
+				// IF_DPCC_G_EN,
+				// IF_DPF_G_EN,
+				// IF_DPF_G_CFG,
+				// IF_EC_G_CFG,
+				// //- IF_EC_G_STATUS,   // duplicate
+				// IF_FILTER_G_EN,
+				// IF_FILTER_G_CFG,
+				// // - IF_FILTER_G_TBL,  // empty response
+				// IF_FILTER_G_STATUS,
+				// IF_GC_G_CFG,
+				// IF_GC_G_EN,
+				// IF_HDR_G_CFG,
+				// IF_HDR_G_EN,
+				// IF_LSC_G_EN,
+				// // - IF_LSC_G_STATUS,   // too much useless data
+				// IF_WDR_G_EN,
+				// IF_WDR_G_CFG,
+				// IF_WDR_G_STATUS,
+				// // - IF_WDR_G_TBL,     // empty response
+				// IF_WB_G_CFG,
+				// IF_DWE_G_PARAMS,
+				// IF_SENSOR_QUERY,
+				// IF_SENSOR_G_MODE,
+				// IF_SENSOR_G_RESW,
+				// IF_SENSOR_G_RESH,
+				// IF_SENSOR_G_SEC,
 		});
 	}
 };

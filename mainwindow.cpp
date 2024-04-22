@@ -29,6 +29,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
 	ui->setupUi(this);
 
+	this->ui->saveButton->setVisible(false);
+
 	controlsDefinition.init();
 	controls2Definition.init();
 	this->createControls();
@@ -184,6 +186,12 @@ void MainWindow::createControls()
 			ui->verticalLayout_1->addWidget(label);
 		}
 		else if (const ComboBoxControl *scontrol = dynamic_cast<const ComboBoxControl*>(control))
+		{
+			ComboBoxWidget *comboBox = new ComboBoxWidget(this, this, scontrol, &MainWindow::onComboBoxIndexChanged);
+			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), comboBox);
+			ui->verticalLayout_1->addWidget(comboBox);
+		}
+		else if (const ComboBoxControl2 *scontrol = dynamic_cast<const ComboBoxControl2*>(control))
 		{
 			ComboBoxWidget *comboBox = new ComboBoxWidget(this, this, scontrol, &MainWindow::onComboBoxIndexChanged);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), comboBox);
@@ -489,3 +497,9 @@ void MainWindow::signal_update_chart(ChartWidget *chart, float x1, float x2, flo
 - presets
 
 */
+
+void MainWindow::on_tabWidget_currentChanged(int index)
+{
+	this->ui->saveButton->setVisible(index == 1);
+}
+
