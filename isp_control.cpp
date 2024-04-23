@@ -153,6 +153,23 @@ void IspControl::fixSetParam(Json::Value *jRequest, const char *setCmd)
 		(*jRequest)[WDR_GENERATION_PARAMS] = 2;           // 2: WDR3
 }
 
+void IspControl::setParam_(Json::Value &jRequest, const char *parameter, const char *value)
+{
+	QString parameter_ = QString(parameter);
+	int slashIndex = parameter_.indexOf('/');
+	if (slashIndex < 0)
+	{
+		jRequest[parameter] = value;
+		return;
+	}
+
+	// qDebug() << parameter1 << parameter2;
+
+	QString parameter1 = parameter_.left(slashIndex);
+	QString parameter2 = parameter_.mid(slashIndex + 1, parameter_.length() - slashIndex - 1);
+	jRequest[parameter1.toStdString()][parameter2.toStdString()] = value;
+}
+
 bool IspControl::setParam(const char *getCmd, const char *setCmd, const char *parameter, int value, int divide)
 {
 	Json::Value jRequest, jResponse;
@@ -205,6 +222,8 @@ bool IspControl::setParamArray(const char *getCmd, const char *setCmd, const cha
 
 bool IspControl::setParamString(const char *getCmd, const char *setCmd, const char *parameter, const char *value)
 {
+qDebug() << "=============  parameter" << parameter << value;
+
 	Json::Value jRequest, jResponse;
 	if (strlen(getCmd) > 0)
 	{
@@ -215,7 +234,8 @@ bool IspControl::setParamString(const char *getCmd, const char *setCmd, const ch
 
 	jRequest = jResponse;
 	if (strlen(parameter) > 0)
-		jRequest[parameter] = value;
+		this->setParam_(jRequest, parameter, value);
+		// jRequest[parameter] = value;
 
 	this->fixSetParam(&jRequest, setCmd);
 

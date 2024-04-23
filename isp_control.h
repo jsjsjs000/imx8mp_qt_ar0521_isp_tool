@@ -11,6 +11,8 @@ class IspControl
 
 	void fixGetParam(Json::Value *jRequest, const char *getCmd);
 	void fixSetParam(Json::Value *jRequest, const char *setCmd);
+	void setParam_(Json::Value &jRequest, const char *parameter, const char *value);
+
 public:
 	float fps;
 
