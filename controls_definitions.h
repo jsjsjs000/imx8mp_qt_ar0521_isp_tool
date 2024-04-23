@@ -16,6 +16,7 @@ public:
 
 	void init(void)
 	{
+/*
 		controls.append(new GroupControl("AE - Auto Exposure"));
 		controls.append(new CheckBoxControl(IF_AE_G_EN, IF_AE_S_EN, AE_ENABLE_PARAMS,        "Enabled",                    true,          ""));
 			QMap<int, QString> *aemodeMap = new QMap<int, QString>;
@@ -27,8 +28,8 @@ public:
 		controls.append(new SliderControl(  IF_AE_G_CFG,    IF_AE_S_CFG, AE_CLM_TOLERANCE_PARAMS, "Calculation accuracy",    0,  100,    0,    "Calculation accuracy; AE will make adjustments when the difference ratio between set.point and actual point over the clm.tolerance"));
 		controls.append(new LabelControl(   IF_AE_G_CFG,                 AE_WEIGHT_PARAMS,        "Weights of 5x5 blocks",                     "", &typeid(int[])));
 		controls.append(new ButtonControl(  NULL,           IF_AE_RESET, NULL, "",                "Resets the Auto Exposure control",          ""));
-		controls.append(new ChartControl(   IF_AE_G_STATUS, NULL,        AE_HIST_PARAMS_BASE64,   "Current histogram of image",                "", 0, 30000, 5000, true));
-		controls.append(new ChartControl(   IF_AE_G_STATUS, NULL,        AE_LUMA_PARAMS_BASE64,   "Mean luminance measured",                   "", 0,   255,   50, true));
+		controls.append(new ChartControl(   IF_AE_G_STATUS, NULL,        AE_HIST_PARAMS_BASE64,   "Current histogram of image",                "", 0, 30000, 5000, &typeid(int), true));
+		controls.append(new ChartControl(   IF_AE_G_STATUS, NULL,        AE_LUMA_PARAMS_BASE64,   "Mean luminance measured",                   "", 0,   255,   50, &typeid(int), true));
 		controls.append(new LabelControl(   IF_AE_G_STATUS, AE_OBJECT_REGION_PARAMS_BASE64,       "Measurement windows block",                 "", &typeid(int[])));
 			QMap<int, QString> *isoMap = new QMap<int, QString>;
 			isoMap->insert({{100, "100"}, {200, "200"}, {400, "400"}, {800, "800"}, {1600, "1600"}});
@@ -144,7 +145,7 @@ public:
 		controls.append(new GroupControl("GC - Gamma control"));
 		controls.append(new CheckBoxControl(IF_GC_G_EN,  IF_GC_S_EN,       GC_ENABLE_PARAMS,        "Enabled",                   true,     "The state of the Gamma Control"));
 		// IF_GC_G_CURVE - the same as IF_GC_G_CFG
-		controls.append(new ChartControl(   IF_GC_G_CFG, IF_GC_S_CFG,      GC_CURVE_PARAMS,         "Gamma curve",               "Gamma curve; data array length is 17", 0, 1024, 100, false));
+		controls.append(new ChartControl(   IF_GC_G_CFG, IF_GC_S_CFG,      GC_CURVE_PARAMS,         "Gamma curve",               "Gamma curve; data array length is 17", 0, 1024, 100, &typeid(int), false));
 			QMap<int, QString> *gcmodeMap = new QMap<int, QString>;
 			gcmodeMap->insert({{1, "Logarithmic mode"}, {2, "Equidistant mode"}});
 		controls.append(new ComboBoxControl(IF_GC_G_CFG, IF_GC_S_CFG,      GC_MODE_PARAMS,          "Gamma segmentation mode", gcmodeMap, "Selects the gamma segmentation mode. Logarithmic: logarithmic segmentation from 0 to 4095, (64,64,64,64,128,128,128,128,256,256,256,512,512,512,512,512)\nEquidistant: equidistant segmentation from 0 to 4095, (256, 256, ... ); all 16 segments are 256."));
@@ -168,9 +169,9 @@ public:
 //	controls.append(new LabelControl(   IF_WDR_G_CFG,               WDR_Y_M_PARAMS,             "WDR1 curve Ym value",                         "", &typeid(float[])));  // empty response
 //	controls.append(new LabelControl(   IF_WDR_G_CFG,               WDR_D_Y_PARAMS,             "WDR1 curve dY value",                         "", &typeid(float[])));  // empty response
 //	controls.append(new CheckBoxControl(IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_AUTO_PARAMS,            "WDR3 running mode", false,                    ""));                    // empty response
-			QMap<QString, QString> *wdrAutoMap = new QMap<QString, QString>;
-			wdrAutoMap->insert({{"true", "true"}, {"false", "false"}});
-		controls.append(new ComboBoxControl2(IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_AUTO_PARAMS,            "WDR3 running mode", wdrAutoMap, ""));                                 // $$ dokończyć ComboBoxControl2
+//		QMap<QString, QString> *wdrAutoMap = new QMap<QString, QString>;
+//		wdrAutoMap->insert({{"true", "true"}, {"false", "false"}});
+//	controls.append(new ComboBoxControl2(IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_AUTO_PARAMS,            "WDR3 running mode", wdrAutoMap, ""));                                 // hang up driver
 		controls.append(new SliderControl(   IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_AUTO_LEVEL_PARAMS,      "WDR3 auto level",                             0, 100, 0, ""));
 		controls.append(new SliderControl(   IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_STRENGTH_PARAMS,        "WDR2 or WDR3 strench",                        0, 128, 0, ""));
 		controls.append(new SliderControl(   IF_WDR_G_CFG, IF_WDR_S_CFG, WDR_GAIN_MAX_PARAMS,        "WDR3 gain max",                               0, 128, 0, ""));
@@ -181,25 +182,34 @@ public:
 //	controls.append(new LabelControl(    IF_WDR_G_TBL, WDR_TABLE_PARAMS, "WDR table", "", &typeid(std::string[])));      // empty response
 
 		controls.append(new GroupControl("WB - White Balance"));
-		controls.append(new LabelControl(   IF_WB_G_CFG, WB_MATRIX_PARAMS,                "Color correction Matrinx (X-Talk)", "", &typeid(float[])));    // $$ edit - koniec sprawdzenia
-		controls.append(new LabelControl(   IF_WB_G_CFG, WB_OFFSET_PARAMS,                "[red, green, blue] offset ",        "", &typeid(int[])));      // $$ edit
-		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG, WB_RED_PARAMS,      "WB gains red",             0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));
-		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG, WB_GREEN_R_PARAMS,  "WB gains green.r",         0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));
-		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG, WB_GREEN_B_PARAMS,  "WB gains green.b",         0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));
-		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG, WB_BLUE_PARAMS,     "WB gains blue",            0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));
-//	controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_RED_PARAMS,      "WB gains red",             0.0f, 3.999f, 0.0f, 3, ""));      // not works or duplicated $$
+		controls.append(new ChartControl(   IF_WB_G_CFG, IF_WB_S_CCM,    WB_MATRIX_PARAMS,   "Color correction Matrinx (X-Talk)",               "",    -8, 7.992,   2, &typeid(float), false));    // niepewne czy dobrze zapisuje bo getCmd != setCmd
+		controls.append(new ChartControl(   IF_WB_G_CFG, IF_WB_S_OFFSET, WB_OFFSET_PARAMS,   "[red, green, blue] offset",                       "", -2048,  2047, 512, &typeid(int),   false));    // niepewne czy dobrze zapisuje bo getCmd != setCmd
+		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG,    WB_RED_PARAMS,      "WB gains red",             0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));
+		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG,    WB_GREEN_R_PARAMS,  "WB gains green.r",         0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));
+		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG,    WB_GREEN_B_PARAMS,  "WB gains green.b",         0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));
+		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG,    WB_BLUE_PARAMS,     "WB gains blue",            0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));
+//	controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_RED_PARAMS,      "WB gains red",             0.0f, 3.999f, 0.0f, 3, ""));      // duplicated
 //	controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_GREEN_R_PARAMS,  "WB gains green.r",         0.0f, 3.999f, 0.0f, 3, ""));
 //	controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_GREEN_B_PARAMS,  "WB gains green.b",         0.0f, 3.999f, 0.0f, 3, ""));
 //	controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_BLUE_PARAMS,     "WB gains blue",            0.0f, 3.999f, 0.0f, 3, ""));
-//	controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_BLUE_PARAMS,     "[red, green, blue] offset",  -2048, 2047, ""));              // $$ edit array/matrix
-		// "Color correction Matrix (X-Talk)" IF_WB_S_CCM     $$ edit array/matrix
-
+*/
 		controls.append(new GroupControl("DWE - Dewarp"));
-//	controls.append(new LabelControl(                    IF_DWE_G_PARAMS, "dwe",   "Get the dewarp node", "", &typeid(std::string[])));       // $$ edit subnode
-//	controls.append(new CheckBoxControl(IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "hflip", "", false,             ""));
-		// $$ rest submodes: hflip, vflip, mode, bypass, mat...
-		// jRequest["dwe"]["mode"] = dweParams.mode;
-		// dweParams.vflip = jResponse["dwe"]["vflip"].asBool();
+			QMap<int, QString> *dweModeMap = new QMap<int, QString>;
+			dweModeMap->insert({{1, "lens distortion"}, {2, "fisheye expand"}, {3, "split screen (not supported)"}, {4, "fisheye dewarp"}});
+		controls.append(new ComboBoxControl(IF_DWE_G_PARAMS, IF_DWE_S_PARAMS,  "dwe/mode",           "Dewarp type",     dweModeMap, ""));
+			QMap<QString, QString> *dwehflipMap = new QMap<QString, QString>;
+			dwehflipMap->insert({{"true", "true"}, {"false", "false"}});
+		controls.append(new ComboBoxControl2(IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/hflip",          "Horizontal flip", dwehflipMap, ""));
+			QMap<QString, QString> *dwevflipMap = new QMap<QString, QString>;
+			dwevflipMap->insert({{"true", "true"}, {"false", "false"}});
+		controls.append(new ComboBoxControl2(IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/vflip",          "Vertical flip",   dwevflipMap, ""));
+			QMap<QString, QString> *dwebypassMap = new QMap<QString, QString>;
+			dwebypassMap->insert({{"true", "true"}, {"false", "false"}});
+		controls.append(new ComboBoxControl2(IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/bypass",         "Bypass dewarp",   dwebypassMap, ""));
+		// controls.append(new ChartControl(    IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/mat",            "Camera matrix [0~8], Distortion coefficient [9~16]",  "",    -8, 8,   2, &typeid(float), false));    // niepewne czy dobrze zapisuje bo getCmd != setCmd
+/*
+
+
 
 		controls.append(new GroupControl("Crops the image"));
 		// $$ subnodes - nudbox
@@ -226,10 +236,11 @@ public:
 		// IF_PIPELINE_S_DWE_ONOFF
 		// IF_PIPELINE_S_TESTPAT
 		// IF_PIPELINE_G_3A_LOCK / IF_PIPELINE_S_3A_LOCK  AF/AE/AWB lock
+*/
 
-		readParams.append({
-				IF_GC_G_CFG,
-				IF_GC_G_CFG,
+		// readParams.append({
+// IF_DWE_G_PARAMS, IF_DWE_G_PARAMS,
+
 
 				// IF_AE_G_EN,
 				// IF_AE_G_CFG,
@@ -272,7 +283,7 @@ public:
 				// IF_SENSOR_G_RESW,
 				// IF_SENSOR_G_RESH,
 				// IF_SENSOR_G_SEC,
-		});
+		// });
 	}
 };
 

@@ -15,8 +15,8 @@ class ComboBoxWidget2 : public QWidget
 
 public:
 	explicit ComboBoxWidget2(QWidget *parent = nullptr);
-	ComboBoxWidget2(QWidget *parent, MainWindow *mainWindow, const ComboBoxControl *control,
-			void (*onComboBoxIndexChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int key, QString value));
+	ComboBoxWidget2(QWidget *parent, MainWindow *mainWindow, const ComboBoxControl2 *control,
+			void (*onComboBoxIndexChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QString key, QString value));
 	~ComboBoxWidget2();
 	void setItemIndex(int index);
 
@@ -29,11 +29,11 @@ private:
 	QString getCmd;
 	QString setCmd;
 	QString parameter;
-	QMap<int, QString> *map;
-	QList<int> mapKeys;								// keys list
-	QMap<int, int> mapKeysIndexes;		// keys index
+	QMap<QString, QString> *map;
+	QList<QString> mapKeys;								// keys list
+	QMap<QString, int> mapKeysIndexes;		// keys index
 	bool initialized = false;
-	void (*onComboBoxIndexChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int key, QString value) = nullptr;
+	void (*onComboBoxIndexChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QString key, QString value) = nullptr;
 };
 
 #endif // COMBOBOX_WIDGET2_H

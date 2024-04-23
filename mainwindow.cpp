@@ -9,6 +9,7 @@
 #include <widgets/chart_widget.h>
 #include <widgets/checkbox_widget.h>
 #include <widgets/combobox_widget.h>
+#include <widgets/combobox_widget2.h>
 #include <widgets/label_widget.h>
 #include <widgets/slider_widget.h>
 #include "controls2_definitions.h"
@@ -193,7 +194,7 @@ void MainWindow::createControls()
 		}
 		else if (const ComboBoxControl2 *scontrol = dynamic_cast<const ComboBoxControl2*>(control))
 		{
-			ComboBoxWidget *comboBox = new ComboBoxWidget(this, this, scontrol, &MainWindow::onComboBoxIndexChanged);
+			ComboBoxWidget2 *comboBox = new ComboBoxWidget2(this, this, scontrol, &MainWindow::onComboBox2IndexChanged);
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), comboBox);
 			ui->verticalLayout_1->addWidget(comboBox);
 		}
@@ -242,6 +243,17 @@ void MainWindow::onComboBoxIndexChanged(MainWindow *mainWindow, QString getCmd, 
 	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
 
+void MainWindow::onComboBox2IndexChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QString key, QString value)
+{
+	if (!mainWindow->canUpdateControls)
+		return;
+
+	qDebug() << setCmd << parameter << key << "(" + value + ")";
+	ispControl.setParamString(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), key.toStdString().c_str());
+
+	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
+}
+
 void MainWindow::onButtonClicked(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QString value)
 {
 	if (!mainWindow->canUpdateControls)
@@ -258,14 +270,19 @@ void MainWindow::onButtonClicked(MainWindow *mainWindow, QString getCmd, QString
 	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
 
-void MainWindow::onChartControlPointsChanged(MainWindow *mainWindow, QString /* getCmd */, QString /* setCmd */, QString /* parameter */, QList<QPointF> /* points */)
+void MainWindow::onChartControlPointsChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QList<QPointF> points)
 {
 	if (!mainWindow->canUpdateControls)
 		return;
 
+	QList<float> array;
+	for (int i = 0; i < points.count(); i++)
+		array.push_back(points[i].y());
+	qDebug() << setCmd << array;
+	ispControl.setParamArray(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), array);
+
 	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
-
 
 void MainWindow::createControls2()
 {

@@ -1,7 +1,9 @@
 #include <sys/ioctl.h>
+#include <QList>
 #include <fcntl.h>
 
 #include "ioctl_cmds.h"
+#include "qdebug.h"
 #include "viv_video_kevent.h"
 #include "isp_control.h"
 #include "cam_device_module_ids.h"
@@ -169,6 +171,32 @@ bool IspControl::setParam(const char *getCmd, const char *setCmd, const char *pa
 		else
 			jRequest[parameter] = (float)value / divide;
 	}
+
+	this->fixSetParam(&jRequest, setCmd);
+
+	return vivIoctl(setCmd, jRequest, jResponse);
+}
+
+bool IspControl::setParamArray(const char *getCmd, const char *setCmd, const char *parameter, const QList<float> array)
+{
+	Json::Value jRequest, jResponse;
+	if (strlen(getCmd) > 0)
+	{
+		this->fixGetParam(&jRequest, getCmd);
+		if (!vivIoctl(getCmd, jRequest, jResponse))
+			return false;
+	}
+
+	QString value = "[ ";
+	for	(int i = 0; i < array.count(); i++)
+		value += QString::number(array[i], 'f') + " ";
+	value += "]";
+
+	// qDebug() << value;
+
+	jRequest = jResponse;
+	if (strlen(parameter) > 0)
+		jRequest[parameter] = value.toStdString();
 
 	this->fixSetParam(&jRequest, setCmd);
 

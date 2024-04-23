@@ -29,9 +29,9 @@ private:
 	QString getCmd;
 	QString setCmd;
 	QString parameter;
-	QMap<QString, QString> *map;
-	// QList<int> mapKeys;								// keys list
-	// QMap<int, int> mapKeysIndexes;		// keys index
+	QMap<int, QString> *map;
+	QList<int> mapKeys;								// keys list
+	QMap<int, int> mapKeysIndexes;		// keys index
 	bool initialized = false;
 	void (*onComboBoxIndexChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int key, QString value) = nullptr;
 };
