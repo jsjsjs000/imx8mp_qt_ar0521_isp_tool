@@ -8,7 +8,7 @@
 #include "isp_control.h"
 #include "cam_device_module_ids.h"
 
-#define DEBUG
+// #define DEBUG
 
 IspControl::IspControl() {}
 
@@ -128,7 +128,7 @@ end:
 // 	if (ret != 0)
 // 		qDebug() << pfps;
 
-// 	IsiSensorAeInfo_t  AeInfo;
+// 	IsiSensorAeInfo_t AeInfo;
 // 	IsiGetAeInfoIsfs(&AeInfo);
 
 // 	SensorOps fo;
@@ -153,24 +153,19 @@ void IspControl::fixSetParam(Json::Value *jRequest, const char *setCmd)
 		(*jRequest)[WDR_GENERATION_PARAMS] = 2;           // 2: WDR3
 }
 
-void IspControl::setParam_(Json::Value &jRequest, const char *parameter, const char *value)
+Json::Value *IspControl::getJsonValue(Json::Value &jRequest, const char *parameter)
 {
 	QString parameter_ = QString(parameter);
 	int slashIndex = parameter_.indexOf('/');
 	if (slashIndex < 0)
-	{
-		jRequest[parameter] = value;
-		return;
-	}
-
-	// qDebug() << parameter1 << parameter2;
+		return &jRequest[parameter];
 
 	QString parameter1 = parameter_.left(slashIndex);
 	QString parameter2 = parameter_.mid(slashIndex + 1, parameter_.length() - slashIndex - 1);
-	jRequest[parameter1.toStdString()][parameter2.toStdString()] = value;
+	return &jRequest[parameter1.toStdString()][parameter2.toStdString()];
 }
 
-bool IspControl::setParam(const char *getCmd, const char *setCmd, const char *parameter, int value, int divide)
+bool IspControl::setParamNumber(const char *getCmd, const char *setCmd, const char *parameter, int value, int divide)
 {
 	Json::Value jRequest, jResponse;
 	if (strlen(getCmd) > 0)
@@ -183,10 +178,11 @@ bool IspControl::setParam(const char *getCmd, const char *setCmd, const char *pa
 	jRequest = jResponse;
 	if (strlen(parameter) > 0)
 	{
+		Json::Value *jRequest2 = this->getJsonValue(jRequest, parameter);
 		if (divide == 1)
-			jRequest[parameter] = value;
+			*jRequest2 = value;
 		else
-			jRequest[parameter] = (float)value / divide;
+			*jRequest2 = (float)value / divide;
 	}
 
 	this->fixSetParam(&jRequest, setCmd);
@@ -204,16 +200,13 @@ bool IspControl::setParamArray(const char *getCmd, const char *setCmd, const cha
 			return false;
 	}
 
-	QString value = "[ ";
-	for	(int i = 0; i < array.count(); i++)
-		value += QString::number(array[i], 'f') + " ";
-	value += "]";
-
-	// qDebug() << value;
-
 	jRequest = jResponse;
 	if (strlen(parameter) > 0)
-		jRequest[parameter] = value.toStdString();
+	{
+		Json::Value *jRequest2 = this->getJsonValue(jRequest, parameter);
+		for	(int i = 0; i < array.count(); i++)
+			(*jRequest2)[i] = array[i];
+	}
 
 	this->fixSetParam(&jRequest, setCmd);
 
@@ -222,8 +215,6 @@ bool IspControl::setParamArray(const char *getCmd, const char *setCmd, const cha
 
 bool IspControl::setParamString(const char *getCmd, const char *setCmd, const char *parameter, const char *value)
 {
-qDebug() << "=============  parameter" << parameter << value;
-
 	Json::Value jRequest, jResponse;
 	if (strlen(getCmd) > 0)
 	{
@@ -234,8 +225,10 @@ qDebug() << "=============  parameter" << parameter << value;
 
 	jRequest = jResponse;
 	if (strlen(parameter) > 0)
-		this->setParam_(jRequest, parameter, value);
-		// jRequest[parameter] = value;
+	{
+		Json::Value *jRequest2 = this->getJsonValue(jRequest, parameter);
+		*jRequest2 = value;
+	}
 
 	this->fixSetParam(&jRequest, setCmd);
 
@@ -254,7 +247,10 @@ bool IspControl::setParamBool(const char *getCmd, const char *setCmd, const char
 
 	jRequest = jResponse;
 	if (strlen(parameter) > 0)
-		jRequest[parameter] = value;
+	{
+		Json::Value *jRequest2 = this->getJsonValue(jRequest, parameter);
+		*jRequest2 = value;
+	}
 
 	this->fixSetParam(&jRequest, setCmd);
 

@@ -11,7 +11,6 @@ class IspControl
 
 	void fixGetParam(Json::Value *jRequest, const char *getCmd);
 	void fixSetParam(Json::Value *jRequest, const char *setCmd);
-	void setParam_(Json::Value &jRequest, const char *parameter, const char *value);
 
 public:
 	float fps;
@@ -20,10 +19,11 @@ public:
 	int openVideo(void);
 	bool vivIoctl(const char *cmd, Json::Value& jsonRequest, Json::Value& jsonResponse);
 	Json::Value getParam(const char *getCmd);
-	bool setParam(const char *getCmd, const char *setType, const char *parameter, int value, int divide);
+	bool setParamNumber(const char *getCmd, const char *setType, const char *parameter, int value, int divide);
 	bool setParamArray(const char *getCmd, const char *setCmd, const char *parameter, const QList<float> value);
 	bool setParamString(const char *getCmd, const char *setCmd, const char *parameter, const char *value);
 	bool setParamBool(const char *getCmd, const char *setCmd, const char *parameter, bool value);
+	static Json::Value *getJsonValue(Json::Value &jRequest, const char *parameter);
 	// bool getFps();
 };
 

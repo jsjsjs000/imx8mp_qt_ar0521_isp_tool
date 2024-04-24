@@ -224,7 +224,7 @@ void MainWindow::onSliderValueChange(MainWindow *mainWindow, QString getCmd, QSt
 		return;
 
 	qDebug() << setCmd << parameter << ((float)value / divide);
-	ispControl.setParam(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), value, divide);
+	ispControl.setParamNumber(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), value, divide);
 
 	if (setCmd == IF_S_FPS && parameter == "fps")
 		mainWindow->lastSetFps = value;
@@ -238,7 +238,7 @@ void MainWindow::onComboBoxIndexChanged(MainWindow *mainWindow, QString getCmd, 
 		return;
 
 	qDebug() << setCmd << parameter << key << "(" + value + ")";
-	ispControl.setParam(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), key, 1);
+	ispControl.setParamNumber(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), key, 1);
 
 	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
@@ -249,7 +249,12 @@ void MainWindow::onComboBox2IndexChanged(MainWindow *mainWindow, QString getCmd,
 		return;
 
 	qDebug() << setCmd << parameter << key << "(" + value + ")";
-	ispControl.setParamString(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), key.toStdString().c_str());
+	if (key == "false")
+		ispControl.setParamBool(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), false);
+	else if (key == "true")
+		ispControl.setParamBool(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), true);
+	else
+		ispControl.setParamString(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), key.toStdString().c_str());
 
 	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
@@ -408,7 +413,7 @@ void MainWindow::timerEvent(QTimerEvent* /* event */)
 	{
 		this->setFpsTime = 0;
 		// this->setFps(this->lastSetFps);
-		ispControl.setParam("", IF_S_FPS, "fps", this->lastSetFps, 1);
+		ispControl.setParamNumber("", IF_S_FPS, "fps", this->lastSetFps, 1);
 
 		this->lastTime = this->elapsedTimer.elapsed();
 	}

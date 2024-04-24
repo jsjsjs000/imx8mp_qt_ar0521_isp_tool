@@ -206,7 +206,7 @@ public:
 			QMap<QString, QString> *dwebypassMap = new QMap<QString, QString>;
 			dwebypassMap->insert({{"true", "true"}, {"false", "false"}});
 		controls.append(new ComboBoxControl2(IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/bypass",         "Bypass dewarp",   dwebypassMap, ""));
-		// controls.append(new ChartControl(    IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/mat",            "Camera matrix [0~8], Distortion coefficient [9~16]",  "",    -8, 8,   2, &typeid(float), false));    // niepewne czy dobrze zapisuje bo getCmd != setCmd
+		controls.append(new ChartControl(    IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/mat",            "Camera matrix [0~8], Distortion coefficient [9~16]",  "",    -10, 6000,   1000, &typeid(float), false));
 /*
 
 
@@ -238,8 +238,8 @@ public:
 		// IF_PIPELINE_G_3A_LOCK / IF_PIPELINE_S_3A_LOCK  AF/AE/AWB lock
 */
 
-		// readParams.append({
-// IF_DWE_G_PARAMS, IF_DWE_G_PARAMS,
+		readParams.append({
+IF_DWE_G_PARAMS, IF_DWE_G_PARAMS,
 
 
 				// IF_AE_G_EN,
@@ -283,7 +283,7 @@ public:
 				// IF_SENSOR_G_RESW,
 				// IF_SENSOR_G_RESH,
 				// IF_SENSOR_G_SEC,
-		// });
+		});
 	}
 };
 
