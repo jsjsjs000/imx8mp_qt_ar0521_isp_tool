@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MatrixViewWidget</class>
- <widget class="QWidget" name="MatrixViewWidget">
+ <class>MatrixView</class>
+ <widget class="QWidget" name="MatrixView">
   <property name="geometry">
    <rect>
     <x>0</x>

@@ -28,7 +28,7 @@ public:
 		controls.append(new LabelControl(   IF_AE_G_CFG,                 AE_WEIGHT_PARAMS,        "Weights of 5x5 blocks",                     "", &typeid(int[])));
 		controls.append(new ButtonControl(  NULL,           IF_AE_RESET, NULL, "",                "Resets the Auto Exposure control",          ""));
 		controls.append(new ChartControl(   IF_AE_G_STATUS, NULL,        AE_HIST_PARAMS_BASE64,   "Current histogram of image",                "", 0, 30000, 5000, &typeid(int), true));
-		controls.append(new ChartControl(   IF_AE_G_STATUS, NULL,        AE_LUMA_PARAMS_BASE64,   "Mean luminance measured",                   "", 0,   255,   50, &typeid(int), true));
+		controls.append(new MatrixViewControl(IF_AE_G_STATUS,            AE_LUMA_PARAMS_BASE64,   "Mean luminance measured",       5,    5,    ""));
 		controls.append(new LabelControl(   IF_AE_G_STATUS, AE_OBJECT_REGION_PARAMS_BASE64,       "Measurement windows block",                 "", &typeid(int[])));
 			QMap<int, QString> *isoMap = new QMap<int, QString>;
 			isoMap->insert({{100, "100"}, {200, "200"}, {400, "400"}, {800, "800"}, {1600, "1600"}});

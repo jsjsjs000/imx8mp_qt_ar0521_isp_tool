@@ -174,5 +174,22 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 				// qDebug() << scontrol->parameter << points;
 			}
 		}
+		else if (const MatrixViewControl *scontrol = dynamic_cast<const MatrixViewControl*>(control))
+		{
+			MatrixViewWidget *matrixView = (MatrixViewWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+			if (matrixView == nullptr)
+				qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
+			else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
+			{
+				// if (scontrol->type == &typeid(float[]))
+				// else if (scontrol->type == &typeid(int[]))
+				Json::Value defaultValue = -1.0;
+				QList<QPointF> points;
+				for (uint i = 0; i < value->size(); i++)
+					points.push_back(QPointF(i, value->get(i, defaultValue).asFloat()));
+				emit signal_update_matrix_view(matrixView, points);
+				// qDebug() << scontrol->parameter << points;
+			}
+		}
 	}
 }

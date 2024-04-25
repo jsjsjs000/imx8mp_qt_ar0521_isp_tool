@@ -34,6 +34,7 @@ private slots:
 	void signal_update_checkBox_set_state(CheckBoxWidget *checkBox, bool state);
 	void signal_update_label_set_text(LabelWidget *label, QString text);
 	void signal_update_chart(ChartWidget *chart, float x1, float x2, float y1, float y2, float gridX, float gridY, QListQPointF points);
+	void signal_update_matrix_view(MatrixViewWidget *matrixView, QList<QPointF> points);
 
 	void on_tabWidget_currentChanged(int index);
 
@@ -80,6 +81,7 @@ private:
 	static void onComboBox2IndexChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QString key, QString value);
 	static void onButtonClicked(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QString value);
 	static void onChartControlPointsChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QList<QPointF> points);
+// $$	static void onMatrixViewPointsChanged(MainWindow *mainWindow, QString getCmd, QString parameter, QList<QPointF> points);
 
 	static void onSlider2ValueChange(MainWindow *mainWindow, QString node, int value, int divide);
 	static void onChartControl2PointsChanged(MainWindow *mainWindow, QString node, QList<QPointF> points);

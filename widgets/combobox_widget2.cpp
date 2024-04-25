@@ -43,7 +43,7 @@ ComboBoxWidget2::~ComboBoxWidget2()
 
 void ComboBoxWidget2::setItemIndex(int key)
 {
-	// int index = this->mapKeysIndexes[key];
+	// $$ int index = this->mapKeysIndexes[key];
 
 	// if (index == -1)
 	// 	qDebug() << "Can't find key" << key << "in combobox";

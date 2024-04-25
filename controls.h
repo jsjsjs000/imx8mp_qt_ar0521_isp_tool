@@ -193,4 +193,23 @@ public:
 	}
 };
 
+class MatrixViewControl : public Control
+{
+	void v(void) override {}  // required
+
+public:
+	int columnsCount;
+	int rowsCount;
+
+	MatrixViewControl(QString getCmd, QString parameter, QString name, int columnsCount, int rowsCount, QString description)
+	{
+		this->getCmd = getCmd;
+		this->parameter = parameter;
+		this->name = name;
+		this->columnsCount = columnsCount;
+		this->rowsCount = rowsCount;
+		this->description = description;
+	}
+};
+
 #endif // CONTROLS_H

@@ -1,10 +1,12 @@
-#ifndef MATRIX_VIEW_WIDGET_H
-#define MATRIX_VIEW_WIDGET_H
+#ifndef MATRIX_VIEW_H
+#define MATRIX_VIEW_H
 
 #include <QWidget>
+#include "controls.h"
+#include "mainwindow.h"
 
 namespace Ui {
-class MatrixViewWidget;
+class MatrixView;
 }
 
 class MatrixViewWidget : public QWidget
@@ -13,10 +15,29 @@ class MatrixViewWidget : public QWidget
 
 public:
 	explicit MatrixViewWidget(QWidget *parent = nullptr);
+	MatrixViewWidget(QWidget *parent, MainWindow *mainWindow, const MatrixViewControl *matrixViewControl);
 	~MatrixViewWidget();
+	void setPoints(QList<QPointF> points);
+
+protected:
+	void paintEvent(QPaintEvent *event);
 
 private:
-	Ui::MatrixViewWidget *ui;
+	const int padLeft = 27;
+	const int padTop = 18;
+	const int padRight = 10;
+	const int padBottom = 15;
+
+	QString title;
+	QString description;
+
+	QList<QPointF> points;
+
+	MainWindow *mainWindow;
+	Ui::MatrixView *ui;
+	MatrixViewControl *matrixViewControl = nullptr;
+	QString getCmd;
+	QString parameter;
 };
 
-#endif // MATRIX_VIEW_WIDGET_H
+#endif // MATRIX_VIEW_H

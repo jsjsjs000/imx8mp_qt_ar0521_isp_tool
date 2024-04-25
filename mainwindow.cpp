@@ -12,13 +12,14 @@
 #include <widgets/combobox_widget2.h>
 #include <widgets/label_widget.h>
 #include <widgets/slider_widget.h>
+#include <widgets/button_widget.h>
+#include <widgets/group_widget.h>
+#include <widgets/matrix_view_widget.h>
 #include "controls2_definitions.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "isp_proc_thread.h"
 
-#include <widgets/button_widget.h>
-#include <widgets/group_widget.h>
 
 IspControl ispControl;
 ControlsDefinitions controlsDefinition;
@@ -100,18 +101,13 @@ void MainWindow::setFps(int fps)
 void MainWindow::runProcFsThread()
 {
 	thread = new IspProcThread(this, ispControl, controlsDefinition, this->widgets);
-	connect(thread, &IspProcThread::signal_update_slider_control_int,
-			this, &MainWindow::signal_update_slider_control_int);
-	connect(thread, &IspProcThread::signal_update_slider_control_float,
-			this, &MainWindow::signal_update_slider_control_float);
-	connect(thread, &IspProcThread::signal_update_comboBox_item_index,
-			this, &MainWindow::signal_update_comboBox_item_index);
-	connect(thread, &IspProcThread::signal_update_checkBox_set_state,
-			this, &MainWindow::signal_update_checkBox_set_state);
-	connect(thread, &IspProcThread::signal_update_label_set_text,
-			this, &MainWindow::signal_update_label_set_text);
-	connect(thread, &IspProcThread::signal_update_chart,
-			this, &MainWindow::signal_update_chart);
+	connect(thread, &IspProcThread::signal_update_slider_control_int,   this, &MainWindow::signal_update_slider_control_int);
+	connect(thread, &IspProcThread::signal_update_slider_control_float, this, &MainWindow::signal_update_slider_control_float);
+	connect(thread, &IspProcThread::signal_update_comboBox_item_index,  this, &MainWindow::signal_update_comboBox_item_index);
+	connect(thread, &IspProcThread::signal_update_checkBox_set_state,   this, &MainWindow::signal_update_checkBox_set_state);
+	connect(thread, &IspProcThread::signal_update_label_set_text,       this, &MainWindow::signal_update_label_set_text);
+	connect(thread, &IspProcThread::signal_update_chart,                this, &MainWindow::signal_update_chart);
+	connect(thread, &IspProcThread::signal_update_matrix_view,          this, &MainWindow::signal_update_matrix_view);
 	thread->start();
 }
 
@@ -204,6 +200,12 @@ void MainWindow::createControls()
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), chart);
 			ui->verticalLayout_1->addWidget(chart);
 		}
+		else if (const MatrixViewControl *scontrol = dynamic_cast<const MatrixViewControl*>(control))
+		{
+			MatrixViewWidget *matrix = new MatrixViewWidget(this, this, scontrol);
+			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), matrix);
+			ui->verticalLayout_1->addWidget(matrix);
+		}
 	}
 }
 
@@ -288,6 +290,8 @@ void MainWindow::onChartControlPointsChanged(MainWindow *mainWindow, QString get
 
 	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
+
+// $$ void MainWindow::onMatrixViewPointsChanged(MainWindow *mainWindow, QString getCmd, QString parameter, QList<QPointF> points)
 
 void MainWindow::createControls2()
 {
@@ -505,6 +509,13 @@ void MainWindow::signal_update_chart(ChartWidget *chart, float x1, float x2, flo
 {
 	this->canUpdateControls = false;
 	chart->initialize(x1, x2, y1, y2, gridX, gridY, points);
+	this->canUpdateControls = true;
+}
+
+void MainWindow::signal_update_matrix_view(MatrixViewWidget *matrixView, QList<QPointF> points)
+{
+	this->canUpdateControls = false;
+	matrixView->setPoints(points);
 	this->canUpdateControls = true;
 }
 

@@ -15,6 +15,7 @@ class CheckBoxWidget;
 class ComboBoxWidget;
 class LabelWidget;
 class SliderWidget;
+class MatrixViewWidget;
 
 class IspProcThread : public QThread
 {
@@ -41,6 +42,7 @@ signals:
 	void signal_update_checkBox_set_state(CheckBoxWidget *checkBox, bool state);
 	void signal_update_label_set_text(LabelWidget *label, QString text);
 	void signal_update_chart(ChartWidget *chart, float x1, float x2, float y1, float y2, float gridX, float gridY, QList<QPointF> points);
+	void signal_update_matrix_view(MatrixViewWidget *matrixView, QList<QPointF> points);
 };
 
 #endif // ISPPROCTHREAD_H
