@@ -81,7 +81,6 @@ private:
 	static void onComboBox2IndexChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QString key, QString value);
 	static void onButtonClicked(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QString value);
 	static void onChartControlPointsChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QList<QPointF> points);
-// $$	static void onMatrixViewPointsChanged(MainWindow *mainWindow, QString getCmd, QString parameter, QList<QPointF> points);
 
 	static void onSlider2ValueChange(MainWindow *mainWindow, QString node, int value, int divide);
 	static void onChartControl2PointsChanged(MainWindow *mainWindow, QString node, QList<QPointF> points);

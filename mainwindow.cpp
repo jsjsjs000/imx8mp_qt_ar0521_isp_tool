@@ -291,8 +291,6 @@ void MainWindow::onChartControlPointsChanged(MainWindow *mainWindow, QString get
 	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
 
-// $$ void MainWindow::onMatrixViewPointsChanged(MainWindow *mainWindow, QString getCmd, QString parameter, QList<QPointF> points)
-
 void MainWindow::createControls2()
 {
 	for (const auto *control : qAsConst(controls2Definition.controls))

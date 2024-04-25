@@ -41,7 +41,7 @@ ComboBoxWidget2::~ComboBoxWidget2()
 	delete ui;
 }
 
-void ComboBoxWidget2::setItemIndex(int key)
+void ComboBoxWidget2::setItemIndex(int /* key */)
 {
 	// $$ int index = this->mapKeysIndexes[key];
 

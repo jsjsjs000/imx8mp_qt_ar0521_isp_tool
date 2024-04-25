@@ -23,10 +23,10 @@ protected:
 	void paintEvent(QPaintEvent *event);
 
 private:
-	const int padLeft = 27;
+	const int padLeft = 10;
 	const int padTop = 18;
 	const int padRight = 10;
-	const int padBottom = 15;
+	const int padBottom = 10;
 
 	QString title;
 	QString description;
