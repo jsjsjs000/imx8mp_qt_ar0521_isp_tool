@@ -1,9 +1,9 @@
 #include <sys/ioctl.h>
 #include <QList>
+#include <QDebug>
 #include <fcntl.h>
 
 #include "ioctl_cmds.h"
-#include "qdebug.h"
 #include "viv_video_kevent.h"
 #include "isp_control.h"
 #include "cam_device_module_ids.h"

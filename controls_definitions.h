@@ -16,7 +16,6 @@ public:
 
 	void init(void)
 	{
-/*
 		controls.append(new GroupControl("AE - Auto Exposure"));
 		controls.append(new CheckBoxControl(IF_AE_G_EN, IF_AE_S_EN, AE_ENABLE_PARAMS,        "Enabled",                    true,          ""));
 			QMap<int, QString> *aemodeMap = new QMap<int, QString>;
@@ -192,7 +191,7 @@ public:
 //	controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_GREEN_R_PARAMS,  "WB gains green.r",         0.0f, 3.999f, 0.0f, 3, ""));
 //	controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_GREEN_B_PARAMS,  "WB gains green.b",         0.0f, 3.999f, 0.0f, 3, ""));
 //	controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_BLUE_PARAMS,     "WB gains blue",            0.0f, 3.999f, 0.0f, 3, ""));
-*/
+
 		controls.append(new GroupControl("DWE - Dewarp"));
 			QMap<int, QString> *dweModeMap = new QMap<int, QString>;
 			dweModeMap->insert({{1, "lens distortion"}, {2, "fisheye expand"}, {3, "split screen (not supported)"}, {4, "fisheye dewarp"}});
@@ -207,20 +206,15 @@ public:
 			dwebypassMap->insert({{"true", "true"}, {"false", "false"}});
 		controls.append(new ComboBoxControl2(IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/bypass",         "Bypass dewarp",   dwebypassMap, ""));
 		controls.append(new ChartControl(    IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/mat",            "Camera matrix [0~8], Distortion coefficient [9~16]",  "",    -10, 6000,   1000, &typeid(float), false));
-/*
 
-
-
-		controls.append(new GroupControl("Crops the image"));
-		// $$ subnodes - nudbox
-
-		controls.append(new GroupControl("Scales the image"));
-		// $$ subnodes - nudbox
+// VIV_V4L_DWE_SET_CROP  - not defined string
+// VIV_V4L_DWE_SET_SCALE - not defined string
+// IF_SENSOR_QUERY - trivial sensor data from
 
 		controls.append(new GroupControl("Sensor"));
-		// $$ subnodes - IF_SENSOR_QUERY
-
-		// $$ IF_SENSOR_G_MODE, IF_SENSOR_S_MODE - sensor get/set mode index
+//			QMap<int, QString> *sensorModeMap = new QMap<int, QString>;
+//			sensorModeMap->insert({{1, "mode 1"}, {2, "mode 2"}, {3, "mode 3"}});
+//		controls.append(new ComboBoxControl(IF_SENSOR_G_MODE, IF_SENSOR_S_MODE,  SENSOR_CURSENSORMODE_PARAMS,           "Sensor current mode",     sensorModeMap, ""));  // not works
 
 		controls.append(new LabelControl(                    IF_SENSOR_G_RESW,      "resw", "Sensor width",            "", &typeid(int)));
 		controls.append(new LabelControl(                    IF_SENSOR_G_RESH,      "resh", "Sensor height",           "", &typeid(int)));
@@ -232,57 +226,58 @@ public:
 //	controls.append(new GroupControl("Pipline"));
 //	controls.append(new ButtonControl(  NULL, IF_PIPELINE_S_WARM_UP, "enable", "true",  "Warms up pipeline", ""));    // not works
 //	controls.append(new ButtonControl(  NULL, IF_PIPELINE_S_WARM_UP, "enable", "false", "Disable pipeline",  ""));    // not works
-		// IF_PIPELINE_S_SMP_MODE (simple matrix processor)
+		// IF_PIPELINE_S_SMP_MODE (simple matrix processor)  // Reserved for later use
 		// IF_PIPELINE_S_DWE_ONOFF
-		// IF_PIPELINE_S_TESTPAT
+		// IF_PIPELINE_S_TESTPAT      // Reserved for later use
+		// IF_PIPELINE_S_RES_IS_OUT   // Reserved for later use
+		// IF_PIPELINE_S_RES_MP_OUT   // Reserved for later use
+		// IF_PIPELINE_S_MP_FMT       // Reserved for later use
+		// IF_PIPELINE_QUERY          // Reserved for later use
+		// IF_PIPELINE_CFG_STATUS     // Reserved for later use
 		// IF_PIPELINE_G_3A_LOCK / IF_PIPELINE_S_3A_LOCK  AF/AE/AWB lock
-*/
 
 		readParams.append({
-IF_DWE_G_PARAMS, IF_DWE_G_PARAMS,
-
-
-				// IF_AE_G_EN,
-				// IF_AE_G_CFG,
-				// IF_AE_G_ECM,
-				// IF_AE_G_STATUS,
-				// IF_AE_G_ISO,
-				// IF_AWB_G_CFG,
-				// IF_AWB_G_EN,
-				// IF_BLS_G_CFG,
-				// IF_CAC_G_EN,
-				// IF_CNR_G_EN,
-				// IF_CNR_G_CFG,
-				// IF_CPROC_G_EN,
-				// IF_CPROC_G_CFG,
-				// IF_DEMOSAIC_G_EN,
-				// IF_DEMOSAIC_G_CFG,
-				// IF_DPCC_G_EN,
-				// IF_DPF_G_EN,
-				// IF_DPF_G_CFG,
-				// IF_EC_G_CFG,
-				// //- IF_EC_G_STATUS,   // duplicate
-				// IF_FILTER_G_EN,
-				// IF_FILTER_G_CFG,
-				// // - IF_FILTER_G_TBL,  // empty response
-				// IF_FILTER_G_STATUS,
-				// IF_GC_G_CFG,
-				// IF_GC_G_EN,
-				// IF_HDR_G_CFG,
-				// IF_HDR_G_EN,
-				// IF_LSC_G_EN,
-				// // - IF_LSC_G_STATUS,   // too much useless data
-				// IF_WDR_G_EN,
-				// IF_WDR_G_CFG,
-				// IF_WDR_G_STATUS,
-				// // - IF_WDR_G_TBL,     // empty response
-				// IF_WB_G_CFG,
-				// IF_DWE_G_PARAMS,
-				// IF_SENSOR_QUERY,
-				// IF_SENSOR_G_MODE,
-				// IF_SENSOR_G_RESW,
-				// IF_SENSOR_G_RESH,
-				// IF_SENSOR_G_SEC,
+				IF_AE_G_EN,
+				IF_AE_G_CFG,
+				IF_AE_G_ECM,
+				IF_AE_G_STATUS,
+				IF_AE_G_ISO,
+				IF_AWB_G_CFG,
+				IF_AWB_G_EN,
+				IF_BLS_G_CFG,
+				IF_CAC_G_EN,
+				IF_CNR_G_EN,
+				IF_CNR_G_CFG,
+				IF_CPROC_G_EN,
+				IF_CPROC_G_CFG,
+				IF_DEMOSAIC_G_EN,
+				IF_DEMOSAIC_G_CFG,
+				IF_DPCC_G_EN,
+				IF_DPF_G_EN,
+				IF_DPF_G_CFG,
+				IF_EC_G_CFG,
+				//- IF_EC_G_STATUS,   // duplicate
+				IF_FILTER_G_EN,
+				IF_FILTER_G_CFG,
+				// - IF_FILTER_G_TBL,  // empty response
+				IF_FILTER_G_STATUS,
+				IF_GC_G_CFG,
+				IF_GC_G_EN,
+				IF_HDR_G_CFG,
+				IF_HDR_G_EN,
+				IF_LSC_G_EN,
+				// - IF_LSC_G_STATUS,   // too much useless data
+				IF_WDR_G_EN,
+				IF_WDR_G_CFG,
+				IF_WDR_G_STATUS,
+				// - IF_WDR_G_TBL,     // empty response
+				IF_WB_G_CFG,
+				IF_DWE_G_PARAMS,
+				IF_SENSOR_QUERY,
+				IF_SENSOR_G_MODE,
+				IF_SENSOR_G_RESW,
+				IF_SENSOR_G_RESH,
+				IF_SENSOR_G_SEC,
 		});
 	}
 };
