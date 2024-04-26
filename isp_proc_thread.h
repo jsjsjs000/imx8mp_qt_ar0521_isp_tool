@@ -13,6 +13,7 @@ class ButtonWidget;    // forward declaration - fix "main file cannot be include
 class ChartWidget;
 class CheckBoxWidget;
 class ComboBoxWidget;
+class ComboBoxWidget2;
 class LabelWidget;
 class SliderWidget;
 class MatrixViewWidget;
@@ -39,6 +40,7 @@ signals:
 	void signal_update_slider_control_int(SliderWidget *slider, int value);
 	void signal_update_slider_control_float(SliderWidget *slider, float value);
 	void signal_update_comboBox_item_index(ComboBoxWidget *comboBox, int index);
+	void signal_update_comboBox2_item_index(ComboBoxWidget2 *comboBox, QString index);
 	void signal_update_checkBox_set_state(CheckBoxWidget *checkBox, bool state);
 	void signal_update_label_set_text(LabelWidget *label, QString text);
 	void signal_update_chart(ChartWidget *chart, float x1, float x2, float y1, float y2, float gridX, float gridY, QList<QPointF> points);

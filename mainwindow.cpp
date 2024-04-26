@@ -104,6 +104,7 @@ void MainWindow::runProcFsThread()
 	connect(thread, &IspProcThread::signal_update_slider_control_int,   this, &MainWindow::signal_update_slider_control_int);
 	connect(thread, &IspProcThread::signal_update_slider_control_float, this, &MainWindow::signal_update_slider_control_float);
 	connect(thread, &IspProcThread::signal_update_comboBox_item_index,  this, &MainWindow::signal_update_comboBox_item_index);
+	connect(thread, &IspProcThread::signal_update_comboBox2_item_index, this, &MainWindow::signal_update_comboBox2_item_index);
 	connect(thread, &IspProcThread::signal_update_checkBox_set_state,   this, &MainWindow::signal_update_checkBox_set_state);
 	connect(thread, &IspProcThread::signal_update_label_set_text,       this, &MainWindow::signal_update_label_set_text);
 	connect(thread, &IspProcThread::signal_update_chart,                this, &MainWindow::signal_update_chart);
@@ -483,6 +484,13 @@ void MainWindow::signal_update_slider_control_float(SliderWidget *slider, float 
 }
 
 void MainWindow::signal_update_comboBox_item_index(ComboBoxWidget *comboBox, int index)
+{
+	this->canUpdateControls = false;
+	comboBox->setItemIndex(index);
+	this->canUpdateControls = true;
+}
+
+void MainWindow::signal_update_comboBox2_item_index(ComboBoxWidget2 *comboBox, QString index)
 {
 	this->canUpdateControls = false;
 	comboBox->setItemIndex(index);

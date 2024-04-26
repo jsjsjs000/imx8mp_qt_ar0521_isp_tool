@@ -93,6 +93,21 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 				emit signal_update_comboBox_item_index(comboBox, index);
 			}
 		}
+		else if (const ComboBoxControl2 *scontrol = dynamic_cast<const ComboBoxControl2*>(control))
+		{
+			ComboBoxWidget2 *comboBox = (ComboBoxWidget2*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+			if (comboBox == nullptr)
+				qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
+			else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
+			{
+				QString index;
+				if (value->isBool())
+					index = value->asBool() ? "true" : "false";
+				else
+					index = QString(value->asCString());
+				emit signal_update_comboBox2_item_index(comboBox, index);
+			}
+		}
 		else if (const CheckBoxControl *scontrol = dynamic_cast<const CheckBoxControl*>(control))
 		{
 			CheckBoxWidget *checkBox = (CheckBoxWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];

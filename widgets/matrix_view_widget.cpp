@@ -78,7 +78,6 @@ void MatrixViewWidget::paintEvent(QPaintEvent* /* event */)
 			if (i < this->points.count())
 			{
 				int color = this->points[i++].y();
-				int invColor = 255 - color;
 				int binInvColor = (color >= 255 / 2) ? 24 : 255 - 24;
 				int x_ = this->padLeft + x * rectWidth;
 				int y_ = this->padTop + y * rectHeight;

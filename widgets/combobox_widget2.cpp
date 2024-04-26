@@ -41,20 +41,20 @@ ComboBoxWidget2::~ComboBoxWidget2()
 	delete ui;
 }
 
-void ComboBoxWidget2::setItemIndex(int /* key */)
+void ComboBoxWidget2::setItemIndex(QString key)
 {
-	// $$ int index = this->mapKeysIndexes[key];
+	int index = this->mapKeysIndexes[key];
 
-	// if (index == -1)
-	// 	qDebug() << "Can't find key" << key << "in combobox";
-	// else
-	// {
-	// 	// qDebug() << "map" << this->map->keys() << this->map->values();
-	// 	// qDebug() << "key" << key;
-	// 	// qDebug() << "new index" << this->parameter << index;
-	// 	if (this->ui->comboBox->currentIndex() != index)
-	// 		this->ui->comboBox->setCurrentIndex(index);
-	// }
+	if (index == -1)
+		qDebug() << "Can't find key" << key << "in combobox";
+	else
+	{
+		// qDebug() << "map" << this->map->keys() << this->map->values();
+		// qDebug() << "key" << key;
+		// qDebug() << "new index" << this->parameter << index;
+		if (this->ui->comboBox->currentIndex() != index)
+			this->ui->comboBox->setCurrentIndex(index);
+	}
 }
 
 void ComboBoxWidget2::on_comboBox_currentIndexChanged(int index)

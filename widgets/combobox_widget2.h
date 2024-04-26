@@ -18,7 +18,7 @@ public:
 	ComboBoxWidget2(QWidget *parent, MainWindow *mainWindow, const ComboBoxControl2 *control,
 			void (*onComboBoxIndexChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QString key, QString value));
 	~ComboBoxWidget2();
-	void setItemIndex(int index);
+	void setItemIndex(QString index);
 
 private slots:
 	void on_comboBox_currentIndexChanged(int index);

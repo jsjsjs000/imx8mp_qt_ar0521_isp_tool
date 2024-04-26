@@ -16,6 +16,7 @@ public:
 
 	void init(void)
 	{
+/*
 		controls.append(new GroupControl("AE - Auto Exposure"));
 		controls.append(new CheckBoxControl(IF_AE_G_EN, IF_AE_S_EN, AE_ENABLE_PARAMS,        "Enabled",                    true,          ""));
 			QMap<int, QString> *aemodeMap = new QMap<int, QString>;
@@ -191,19 +192,19 @@ public:
 //	controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_GREEN_R_PARAMS,  "WB gains green.r",         0.0f, 3.999f, 0.0f, 3, ""));
 //	controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_GREEN_B_PARAMS,  "WB gains green.b",         0.0f, 3.999f, 0.0f, 3, ""));
 //	controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_BLUE_PARAMS,     "WB gains blue",            0.0f, 3.999f, 0.0f, 3, ""));
-
+*/
 		controls.append(new GroupControl("DWE - Dewarp"));
 			QMap<int, QString> *dweModeMap = new QMap<int, QString>;
 			dweModeMap->insert({{1, "lens distortion"}, {2, "fisheye expand"}, {3, "split screen (not supported)"}, {4, "fisheye dewarp"}});
 		controls.append(new ComboBoxControl(IF_DWE_G_PARAMS, IF_DWE_S_PARAMS,  "dwe/mode",           "Dewarp type",     dweModeMap, ""));
 			QMap<QString, QString> *dwehflipMap = new QMap<QString, QString>;
-			dwehflipMap->insert({{"true", "true"}, {"false", "false"}});
+			dwehflipMap->insert({{"false", "false"}, {"true", "true"}});
 		controls.append(new ComboBoxControl2(IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/hflip",          "Horizontal flip", dwehflipMap, ""));
 			QMap<QString, QString> *dwevflipMap = new QMap<QString, QString>;
-			dwevflipMap->insert({{"true", "true"}, {"false", "false"}});
+			dwevflipMap->insert({{"false", "false"}, {"true", "true"}});
 		controls.append(new ComboBoxControl2(IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/vflip",          "Vertical flip",   dwevflipMap, ""));
 			QMap<QString, QString> *dwebypassMap = new QMap<QString, QString>;
-			dwebypassMap->insert({{"true", "true"}, {"false", "false"}});
+			dwebypassMap->insert({{"false", "false"}, {"true", "true"}});
 		controls.append(new ComboBoxControl2(IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/bypass",         "Bypass dewarp",   dwebypassMap, ""));
 		controls.append(new ChartControl(    IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/mat",            "Camera matrix [0~8], Distortion coefficient [9~16]",  "",    -10, 6000,   1000, &typeid(float), false));
 
