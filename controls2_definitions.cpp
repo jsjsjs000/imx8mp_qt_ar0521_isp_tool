@@ -1,8 +1,14 @@
 #include <QDebug>
+#include <QFile>
 #include "controls2_definitions.h"
 
 bool Controls2Definitions::readXml()
 {
+		/* create copy factory file */
+	QFile file;
+	if (!file.exists(Controls2Definitions::XmlFactoryFileName))
+		file.copy(Controls2Definitions::XmlFileName, Controls2Definitions::XmlFactoryFileName);
+
 	bool ok1 = this->xml.openXmlFile(Controls2Definitions::XmlFileName);
 	bool ok2 = this->xmlDefault.openXmlFile(Controls2Definitions::XmlFileName);
 	bool ok3 = this->xmlFactory.openXmlFile(Controls2Definitions::XmlFactoryFileName);

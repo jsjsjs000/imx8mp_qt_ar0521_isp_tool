@@ -1,6 +1,5 @@
 #include <QVideoWidget>
 #include <QMediaPlayer>
-#include <QMediaPlaylist>
 #include <QSpacerItem>
 #include <QProcess>
 #include <QThread>

@@ -3,7 +3,7 @@
 
 #include <QApplication>
 #include <QGuiApplication>
-#include <QDesktopWidget>
+//#include <QDesktopWidget>
 #include <QScreen>
 
 void playVideo()
@@ -32,6 +32,8 @@ void playVideo()
 	player->play(); */
 
 	/* QImage myImage;
+￼
+
 	myImage.load("/opt/qt12/bin/test.jpeg");
 	QLabel myLabel;
 	myLabel.setPixmap(QPixmap::fromImage(myImage));

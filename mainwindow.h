@@ -8,7 +8,6 @@
 #include <QMainWindow>
 #include <QVideoWidget>
 #include <QMediaPlayer>
-#include <QMediaPlaylist>
 #include <QElapsedTimer>
 
 QT_BEGIN_NAMESPACE
@@ -48,8 +47,8 @@ private:
 
 	Ui::MainWindow *ui;
 	IspProcThread *thread;
-	QMediaPlayer *player;
-	QMediaPlaylist *playlist;
+	//QMediaPlayer *player;
+	//QMediaPlaylist *playlist;
 	QVideoWidget *videoWidget;
 	QMap<QString, QWidget*> widgets;
 	QMap<QString, QWidget*> widgets2;
