@@ -286,7 +286,7 @@ void ChartWidget::mousePressEvent(QMouseEvent *event)
 {
 	// qDebug() << "press" << event->localPos().x() << event->localPos().y() << event->button();
 
-	QPointF p = this->localPosTo(event->localPos());
+	QPointF p = this->localPosTo(event->position());
 
 	this->mousePosition = QPointF(p.x(), p.y());
 	this->showMousePosition = true;
@@ -308,7 +308,7 @@ void ChartWidget::mouseMoveEvent(QMouseEvent *event)
 {
 	// qDebug() << "move" << event->localPos().x() << event->localPos().y() << event->buttons();
 
-	QPointF p = this->localPosTo(event->localPos());
+	QPointF p = this->localPosTo(event->position());
 	int x = round(p.x());
 
 	if (this->points.count() > 0 && event->buttons() == Qt::LeftButton)

@@ -5,7 +5,9 @@
 #include <widgets/chart_widget.h>
 #include <widgets/checkbox_widget.h>
 #include <widgets/combobox_widget.h>
+#include <widgets/combobox_widget2.h>
 #include <widgets/label_widget.h>
+#include <widgets/matrix_view_widget.h>
 #include <widgets/slider_widget.h>
 
 IspProcThread::IspProcThread(QObject *parent, IspControl &ispControl, ControlsDefinitions &controlsDefinition,
@@ -13,6 +15,13 @@ IspProcThread::IspProcThread(QObject *parent, IspControl &ispControl, ControlsDe
 		controlsDefinition(controlsDefinition), widgets(widgets)
 {
 	qRegisterMetaType<QListQPointF>("QListQPointF");   // need for emit signal_update_chart( QList<QPointF> )
+	qRegisterMetaType<CheckBoxWidget*>("CheckBoxWidget*");
+	qRegisterMetaType<ComboBoxWidget*>("ComboBoxWidget*");
+	qRegisterMetaType<ComboBoxWidget2*>("ComboBoxWidget2*");
+	qRegisterMetaType<SliderWidget*>("SliderWidget*");
+	qRegisterMetaType<LabelWidget*>("LabelWidget*");
+	qRegisterMetaType<ChartWidget*>("ChartWidget*");
+	qRegisterMetaType<MatrixViewWidget*>("MatrixViewWidget*");
 }
 
 void IspProcThread::run()

@@ -219,7 +219,7 @@ public:
 
 		controls.append(new LabelControl(                    IF_SENSOR_G_RESW,      "resw", "Sensor width",            "", &typeid(int)));
 		controls.append(new LabelControl(                    IF_SENSOR_G_RESH,      "resh", "Sensor height",           "", &typeid(int)));
-		controls.append(new SliderControl(  NULL,            IF_S_FPS,              "fps",  "FPS",           1, 50, 1, ""));
+		controls.append(new SliderControl(  NULL,            IF_S_FPS,              "fps",  "FPS",           1, 60, 1, ""));
 //	controls.append(new ButtonControl(  NULL,            IF_SENSOR_LIB_PRELOAD, "",     "",       "Reload sensor calibration file (hang up stream)", ""));     // not works
 		controls.append(new SliderControl(  IF_SENSOR_G_SEC, IF_SENSOR_S_SEC,       "exposure",       "AE start exposure = IntegrationTime x Gain",         0.0f, 4.0f, 0.0f, 3, "Disable AE (Auto Exposure) first"));
 //	controls.append(new SliderControl(  NULL,            IF_SENSOR_S_TESTPAT,   "test.pattern ",  "Sensor test pattern mode",         0, 10, 0, ""));  // not works
@@ -257,7 +257,7 @@ public:
 				IF_DPF_G_EN,
 				IF_DPF_G_CFG,
 				IF_EC_G_CFG,
-				//- IF_EC_G_STATUS,   // duplicate
+				// - IF_EC_G_STATUS,   // duplicate
 				IF_FILTER_G_EN,
 				IF_FILTER_G_CFG,
 				// - IF_FILTER_G_TBL,  // empty response
