@@ -29,6 +29,8 @@ private slots:
 	bool event(QEvent *e);
 	void signal_update_slider_control_int(SliderWidget *slider, int value);
 	void signal_update_slider_control_float(SliderWidget *slider, float value);
+	void signal_update_slider_array_control_int(SliderArrayWidget *slider, int value);
+	void signal_update_slider_array_control_float(SliderArrayWidget *slider, float value);
 	void signal_update_comboBox_item_index(ComboBoxWidget *comboBox, int index);
 	void signal_update_comboBox2_item_index(ComboBoxWidget2 *comboBox, QString index);
 	void signal_update_checkBox_set_state(CheckBoxWidget *checkBox, bool state);
@@ -77,6 +79,7 @@ private:
 
 	static void onCheckBoxChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, bool value);
 	static void onSliderValueChange(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int value, int divide);
+	static void onSliderArrayValueChange(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int value, int divide);
 	static void onComboBoxIndexChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int key, QString value);
 	static void onComboBox2IndexChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QString key, QString value);
 	static void onButtonClicked(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QString value);

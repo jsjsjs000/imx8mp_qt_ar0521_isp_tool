@@ -16,6 +16,7 @@ class ComboBoxWidget;
 class ComboBoxWidget2;
 class LabelWidget;
 class SliderWidget;
+class SliderArrayWidget;
 class MatrixViewWidget;
 
 class IspProcThread : public QThread

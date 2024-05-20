@@ -11,6 +11,7 @@
 #include <widgets/combobox_widget2.h>
 #include <widgets/label_widget.h>
 #include <widgets/slider_widget.h>
+#include <widgets/slider_array_widget.h>
 #include <widgets/button_widget.h>
 #include <widgets/group_widget.h>
 #include <widgets/matrix_view_widget.h>
@@ -18,7 +19,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "isp_proc_thread.h"
-
 
 IspControl ispControl;
 ControlsDefinitions controlsDefinition;
@@ -170,6 +170,12 @@ void MainWindow::createControls()
 			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), slider);
 			ui->verticalLayout_1->addWidget(slider);
 		}
+		else if (const SliderArrayControl *scontrol = dynamic_cast<const SliderArrayControl*>(control))
+		{
+			SliderArrayWidget *slider = new SliderArrayWidget(this, this, scontrol, &MainWindow::onSliderArrayValueChange);
+			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), slider);
+			ui->verticalLayout_1->addWidget(slider);
+		}
 		else if (const ButtonControl *scontrol = dynamic_cast<const ButtonControl*>(control))
 		{
 			ButtonWidget *button = new ButtonWidget(this, this, scontrol, &MainWindow::onButtonClicked);
@@ -221,6 +227,20 @@ void MainWindow::onCheckBoxChanged(MainWindow *mainWindow, QString getCmd, QStri
 }
 
 void MainWindow::onSliderValueChange(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int value, int divide)
+{
+	if (!mainWindow->canUpdateControls)
+		return;
+
+	qDebug() << setCmd << parameter << ((float)value / divide);
+	ispControl.setParamNumber(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), value, divide);
+
+	if (setCmd == IF_S_FPS && parameter == "fps")
+		mainWindow->lastSetFps = value;
+
+	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
+}
+
+void MainWindow::onSliderArrayValueChange(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int value, int divide)
 {
 	if (!mainWindow->canUpdateControls)
 		return;
@@ -479,6 +499,20 @@ void MainWindow::signal_update_slider_control_float(SliderWidget *slider, float 
 {
 	this->canUpdateControls = false;
 	slider->setValueFloat(value);
+	this->canUpdateControls = true;
+}
+
+void MainWindow::signal_update_slider_array_control_int(SliderArrayWidget *slider, int value)
+{
+	this->canUpdateControls = false;
+	slider->setValue(value);
+	this->canUpdateControls = true;
+}
+
+void MainWindow::signal_update_slider_array_control_float(SliderArrayWidget *slider, float value)
+{
+	this->canUpdateControls = false;
+	slider->setValue(value);
 	this->canUpdateControls = true;
 }
 

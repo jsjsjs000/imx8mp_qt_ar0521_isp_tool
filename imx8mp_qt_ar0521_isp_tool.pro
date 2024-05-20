@@ -28,6 +28,7 @@ SOURCES += \
 	widgets/group_widget.cpp \
 	widgets/label_widget.cpp \
 	widgets/matrix_view_widget.cpp \
+  widgets/slider_array_widget.cpp \
 	widgets/slider_widget.cpp
 
 HEADERS += \
@@ -48,6 +49,7 @@ HEADERS += \
 	widgets/group_widget.h \
 	widgets/label_widget.h \
 	widgets/matrix_view_widget.h \
+  widgets/slider_array_widget.h \
 	widgets/slider_widget.h
 
 FORMS += \
@@ -60,6 +62,7 @@ FORMS += \
 	widgets/group_widget.ui \
 	widgets/label_widget.ui \
 	widgets/matrix_view_widget.ui \
+	widgets/slider_array_widget.ui \
 	widgets/slider_widget.ui
 
 INCLUDEPATH += \

@@ -206,7 +206,26 @@ public:
 			QMap<QString, QString> *dwebypassMap = new QMap<QString, QString>;
 			dwebypassMap->insert({{"false", "false"}, {"true", "true"}});
 		controls.append(new ComboBoxControl2(IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/bypass",         "Bypass dewarp",   dwebypassMap, ""));
-		controls.append(new ChartControl(    IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/mat",            "Camera matrix [0~8], Distortion coefficient [9~16]",  "",    -10, 6000,   1000, &typeid(float), false));
+		// controls.append(new ChartControl(    IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/mat",            "Camera matrix [0~8], Distortion coefficient [9~16]",  "",    -10, 6000,   1000, &typeid(float), false));
+			QList<QList<float>> *min_max_value_digits = new QList<QList<float>>;
+			min_max_value_digits->push_back({{-100, 6000, 0, 0}});
+			min_max_value_digits->push_back({{-100, 6000, 0, 0}});
+			min_max_value_digits->push_back({{-100, 6000, 0, 0}});
+			min_max_value_digits->push_back({{-100, 6000, 0, 0}});
+			min_max_value_digits->push_back({{-100, 6000, 0, 0}});
+			min_max_value_digits->push_back({{-100, 6000, 0, 0}});
+			min_max_value_digits->push_back({{-100, 6000, 0, 0}});
+			min_max_value_digits->push_back({{-100, 6000, 0, 0}});
+			min_max_value_digits->push_back({{-100, 6000, 0, 0}});
+			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
+			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
+			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
+			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
+			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
+			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
+			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
+			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
+		controls.append(new SliderArrayControl(IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/mat",          "Camera matrix [0~8], Distortion coefficient [9~16]",  min_max_value_digits, /*&typeid(float),*/ "", false));
 
 // VIV_V4L_DWE_SET_CROP  - not defined string
 // VIV_V4L_DWE_SET_SCALE - not defined string
