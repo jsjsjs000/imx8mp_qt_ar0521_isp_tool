@@ -36,10 +36,27 @@ SliderArrayWidget::SliderArrayWidget(QWidget *parent, MainWindow *mainWindow, co
 	ui->name->setText(control->name);
 	ui->name->setToolTip(control->description);
 	//$$ui->value->setText(QString::number(control->value));
-	for (int i = 0; i < control->min.count(); i++)
+	for (int i = 0; i < control->min.count()                                 && i < 4; i++)
 	{
+		QVBoxLayout *vBoxLayout1 = new QVBoxLayout(this);
+		ui->horizontalLayout2->addLayout(vBoxLayout1);
+
+		QHBoxLayout *hBoxLayout = new QHBoxLayout(this);
+		vBoxLayout1->addLayout(hBoxLayout);
+
+		QLabel *label1 = new QLabel();
+		label1->setText("[" + QString::number(i) + "]");
+		hBoxLayout->addWidget(label1);
+
+		QLabel *label2 = new QLabel();
+		label2->setText(QString::number(this->defaultValue[i]));
+		hBoxLayout->addWidget(label2);
+
+		QVBoxLayout *vBoxLayout2 = new QVBoxLayout(this);
+		ui->horizontalLayout2->addLayout(vBoxLayout2);
+
 		QSlider *slider = new QSlider(Qt::Orientation::Horizontal, this);
-		ui->horizontalLayout2->addWidget(slider);
+		vBoxLayout2->addWidget(slider);
 		slider->setEnabled(!control->readonly);
 	}
 	this->setRange();
