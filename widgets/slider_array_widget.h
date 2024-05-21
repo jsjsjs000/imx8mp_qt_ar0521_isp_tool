@@ -19,25 +19,25 @@ class SliderArrayWidget : public QWidget
 public:
 	explicit SliderArrayWidget(QWidget *parent = nullptr);
 	SliderArrayWidget(QWidget *parent, MainWindow *mainWindow, const SliderArrayControl *control,
-			void (*onSliderArrayValueChange)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int value, int divide));
+			void (*onSliderArrayValueChange)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QList<float> values));
 	SliderArrayWidget(QWidget *parent, MainWindow *mainWindow, const SliderArrayControl2 *control,
-			void (*onSliderArray2ValueChange)(MainWindow *mainWindow, QString node, int value, int divide));
+			void (*onSliderArray2ValueChange)(MainWindow *mainWindow, QString node, QList<float> values));
 	void setRange();
-	int getValue();
-	void setValue(int value);
-	void setValueFloat(float value);
-	void setDefaultAndFactoryValue(int defaultValue, int factoryValue);
-	void setDefaultAndFactoryValueFloat(float defaultValue, float factoryValue);
+	// QList<float>* getValues();
+	void setValues(QList<int> values);
+	void setValuesFloats(QList<float> values);
+	void setDefaultAndFactoryValue(QList<float> defaultValue, QList<float> factoryValue);
 	~SliderArrayWidget();
 
 private slots:
-	void on_horizontalSlider_valueChanged(int value);
+	void onHorizontalSliderValueChanged(int value);
 	void actionResetDefaultSlot();
 	void actionResetFactorySlot();
 
 private:
 	Ui::SliderArrayWidget *ui;
-	QList<QSlider> horizontalSlider;
+	QList<QSlider*> horizontalSlider;
+	QList<QLabel*> labels;
 	MainWindow *mainWindow;
 	QString getCmd;
 	QString setCmd;
@@ -48,10 +48,10 @@ private:
 	QList<int> precision;
 	QList<int> multiple;
 	bool isSetDefaultAndFactoryValue = false;
-	QList<int> defaultValue;
-	QList<int> factoryValue;
-	void (*onSliderArrayValueChange)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int value, int divide) = nullptr;
-	void (*onSliderArray2ValueChange)(MainWindow *mainWindow, QString node, int value, int divide) = nullptr;
+	// QList<float> defaultValue;
+	// QList<float> factoryValue;
+	void (*onSliderArrayValueChange)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QList<float> values) = nullptr;
+	void (*onSliderArray2ValueChange)(MainWindow *mainWindow, QString node, QList<float> values) = nullptr;
 	void slotCustomMenuRequested(QPoint pos);
 };
 

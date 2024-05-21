@@ -40,6 +40,8 @@ public:
 signals:
 	void signal_update_slider_control_int(SliderWidget *slider, int value);
 	void signal_update_slider_control_float(SliderWidget *slider, float value);
+	void signal_update_slider_array_control_int(SliderArrayWidget *slider, QList<int> values);
+	void signal_update_slider_array_control_float(SliderArrayWidget *slider, QList<float> values);
 	void signal_update_comboBox_item_index(ComboBoxWidget *comboBox, int index);
 	void signal_update_comboBox2_item_index(ComboBoxWidget2 *comboBox, QString index);
 	void signal_update_checkBox_set_state(CheckBoxWidget *checkBox, bool state);

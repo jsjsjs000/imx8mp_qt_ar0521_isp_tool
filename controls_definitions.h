@@ -208,24 +208,25 @@ public:
 		controls.append(new ComboBoxControl2(IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/bypass",         "Bypass dewarp",   dwebypassMap, ""));
 		// controls.append(new ChartControl(    IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/mat",            "Camera matrix [0~8], Distortion coefficient [9~16]",  "",    -10, 6000,   1000, &typeid(float), false));
 			QList<QList<float>> *min_max_value_digits = new QList<QList<float>>;
-			min_max_value_digits->push_back({{-100, 6000, 0, 0}});
-			min_max_value_digits->push_back({{-100, 6000, 0, 0}});
-			min_max_value_digits->push_back({{-100, 6000, 0, 0}});
-			min_max_value_digits->push_back({{-100, 6000, 0, 0}});
-			min_max_value_digits->push_back({{-100, 6000, 0, 0}});
-			min_max_value_digits->push_back({{-100, 6000, 0, 0}});
-			min_max_value_digits->push_back({{-100, 6000, 0, 0}});
-			min_max_value_digits->push_back({{-100, 6000, 0, 0}});
-			min_max_value_digits->push_back({{-100, 6000, 0, 0}});
+			min_max_value_digits->push_back({{-100, 7000, 0, 1}});
+			min_max_value_digits->push_back({{-100, 7000, 0, 1}});
+			min_max_value_digits->push_back({{-100, 7000, 0, 1}});
+			min_max_value_digits->push_back({{-100, 7000, 0, 1}});
+			min_max_value_digits->push_back({{-100, 7000, 0, 1}});
+			min_max_value_digits->push_back({{-100, 7000, 0, 1}});
+			min_max_value_digits->push_back({{-100, 7000, 0, 1}});
+			min_max_value_digits->push_back({{-100, 7000, 0, 1}});
+			min_max_value_digits->push_back({{-100, 7000, 0, 1}});
 			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
 			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
 			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
 			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
+			min_max_value_digits->push_back({{-100,  100, 0, 3}});
 			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
 			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
 			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
-			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
-		controls.append(new SliderArrayControl(IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/mat",          "Camera matrix [0~8], Distortion coefficient [9~16]",  min_max_value_digits, /*&typeid(float),*/ "", false));
+			QList<QString> descriptions = {"Camera matrix [0]", "Camera matrix [1]", "Camera matrix [2]", "Camera matrix [3]", "Camera matrix [4]", "Camera matrix [5]", "Camera matrix [6]", "Camera matrix [7]", "Camera matrix [8]", "Distortion coefficient [0]", "Distortion coefficient [1]", "Distortion coefficient [2]", "Distortion coefficient [3]", "Distortion coefficient [4]", "Distortion coefficient [5]", "Distortion coefficient [6]", "Distortion coefficient [7]"};
+		controls.append(new SliderArrayControl(IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/mat",          "Camera matrix [0~8], Distortion coefficient [9~16]",  min_max_value_digits, /*&typeid(float),*/ "", descriptions, false));
 
 // VIV_V4L_DWE_SET_CROP  - not defined string
 // VIV_V4L_DWE_SET_SCALE - not defined string

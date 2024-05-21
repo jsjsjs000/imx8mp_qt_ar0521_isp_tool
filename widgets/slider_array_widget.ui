@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -48,16 +48,6 @@
       </property>
      </widget>
     </item>
-    <item>
-     <widget class="QLabel" name="value">
-      <property name="text">
-       <string>value</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QWidget" name="verticalLayoutWidget">
@@ -70,8 +60,14 @@
     </rect>
    </property>
    <layout class="QVBoxLayout" name="horizontalLayout2">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="sizeConstraint">
+     <enum>QLayout::SetMinimumSize</enum>
+    </property>
     <property name="leftMargin">
-     <number>10</number>
+     <number>24</number>
     </property>
    </layout>
   </widget>

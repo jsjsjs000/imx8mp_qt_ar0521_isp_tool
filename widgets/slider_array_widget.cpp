@@ -3,6 +3,7 @@
 
 #include <QMenu>
 #include <QSlider>
+#include <QDebug>
 
 SliderArrayWidget::SliderArrayWidget(QWidget *parent)
 		: QWidget(parent)
@@ -12,7 +13,7 @@ SliderArrayWidget::SliderArrayWidget(QWidget *parent)
 }
 
 SliderArrayWidget::SliderArrayWidget(QWidget *parent, MainWindow *mainWindow, const SliderArrayControl *control,
-		void (*onSliderArrayValueChange)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int value, int divide))
+		void (*onSliderArrayValueChange)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QList<float> values))
 		: QWidget(parent)
 		, ui(new Ui::SliderArrayWidget)
 {
@@ -24,6 +25,7 @@ SliderArrayWidget::SliderArrayWidget(QWidget *parent, MainWindow *mainWindow, co
 		connect(this, &SliderArrayWidget::customContextMenuRequested, this, &SliderArrayWidget::slotCustomMenuRequested);
 	}
 
+	this->setMinimumHeight(20 + control->min.count() * 29);
 	this->mainWindow = mainWindow;
 	this->getCmd = control->getCmd;
 	this->setCmd = control->setCmd;
@@ -32,40 +34,48 @@ SliderArrayWidget::SliderArrayWidget(QWidget *parent, MainWindow *mainWindow, co
 	this->max = control->max;
 	this->precision = control->precision;
 	this->multiple = control->multiple;
-	this->defaultValue = control->value;
+	// this->defaultValue = control->value;
 	ui->name->setText(control->name);
 	ui->name->setToolTip(control->description);
-	//$$ui->value->setText(QString::number(control->value));
-	for (int i = 0; i < control->min.count()                                 && i < 4; i++)
+	for (int i = 0; i < control->min.count(); i++)
 	{
-		QVBoxLayout *vBoxLayout1 = new QVBoxLayout(this);
+		QVBoxLayout *vBoxLayout1 = new QVBoxLayout();
+		vBoxLayout1->setSpacing(0);
 		ui->horizontalLayout2->addLayout(vBoxLayout1);
 
-		QHBoxLayout *hBoxLayout = new QHBoxLayout(this);
+		QHBoxLayout *hBoxLayout = new QHBoxLayout();
+		hBoxLayout->setSpacing(0);
 		vBoxLayout1->addLayout(hBoxLayout);
 
 		QLabel *label1 = new QLabel();
-		label1->setText("[" + QString::number(i) + "]");
+		label1->setText(control->descriptions[i]);
 		hBoxLayout->addWidget(label1);
 
 		QLabel *label2 = new QLabel();
-		label2->setText(QString::number(this->defaultValue[i]));
+		label2->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+		// label2->setText(QString::number(this->defaultValue[i]));
 		hBoxLayout->addWidget(label2);
+		this->labels.push_back(label2);
 
-		QVBoxLayout *vBoxLayout2 = new QVBoxLayout(this);
+		QVBoxLayout *vBoxLayout2 = new QVBoxLayout();
+		vBoxLayout2->setSpacing(0);
 		ui->horizontalLayout2->addLayout(vBoxLayout2);
 
-		QSlider *slider = new QSlider(Qt::Orientation::Horizontal, this);
+		QSlider *slider = new QSlider(Qt::Orientation::Horizontal);
 		vBoxLayout2->addWidget(slider);
 		slider->setEnabled(!control->readonly);
+		slider->setProperty("id", i);
+		this->horizontalSlider.push_back(slider);
 	}
 	this->setRange();
-	//$$this->setValue(control->value);
 	this->onSliderArrayValueChange = onSliderArrayValueChange;
+
+	for (int i = 0; i < this->horizontalSlider.count(); i++)
+		connect(this->horizontalSlider[i], SIGNAL(valueChanged(int)), this, SLOT(onHorizontalSliderValueChanged(int)));
 }
 
 SliderArrayWidget::SliderArrayWidget(QWidget *parent, MainWindow *mainWindow, const SliderArrayControl2 *control,
-		void (*onSliderArray2ValueChange)(MainWindow *mainWindow, QString node, int value, int divide))
+		void (*onSliderArray2ValueChange)(MainWindow *mainWindow, QString node, QList<float> values))
 		: QWidget(parent)
 		, ui(new Ui::SliderArrayWidget)
 {
@@ -83,10 +93,9 @@ SliderArrayWidget::SliderArrayWidget(QWidget *parent, MainWindow *mainWindow, co
 	this->max = control->max;
 	this->precision = control->precision;
 	this->multiple = control->multiple;
-	this->defaultValue = control->value;
+	// this->defaultValue = control->value;
 	ui->name->setText(control->name);
 	ui->name->setToolTip(control->description);
-	//$$ui->value->setText(QString::number(control->value));
 	for (int i = 0; i < control->min.count(); i++)
 	{
 		QSlider *slider = new QSlider(Qt::Orientation::Horizontal, this);
@@ -94,7 +103,6 @@ SliderArrayWidget::SliderArrayWidget(QWidget *parent, MainWindow *mainWindow, co
 		slider->setEnabled(!control->readonly);
 	}
 	this->setRange();
-	//$$this->setValue(control->value);
 	this->onSliderArray2ValueChange = onSliderArray2ValueChange;
 }
 
@@ -127,24 +135,26 @@ void SliderArrayWidget::actionResetFactorySlot()
 
 void SliderArrayWidget::setRange()
 {
-	//$$ this->ui->horizontalSlider->setMinimum(this->min);
-	//$$ this->ui->horizontalSlider->setMaximum(this->max);
+	for (int i = 0; i < this->min.count(); i++)
+	{
+		this->horizontalSlider[i]->setMinimum(this->min[i]);
+		this->horizontalSlider[i]->setMaximum(this->max[i]);
+	}
 }
 
-void SliderArrayWidget::setDefaultAndFactoryValue(int defaultValue, int factoryValue)
+void SliderArrayWidget::setDefaultAndFactoryValue(QList<float> defaultValue, QList<float> factoryValue)
 {
-	//$$this->defaultValue = defaultValue;
-	//$$this->factoryValue = factoryValue;
+	// this->defaultValue = defaultValue;
+	// this->factoryValue = factoryValue;
 }
 
-void SliderArrayWidget::setDefaultAndFactoryValueFloat(float defaultValue, float factoryValue)
+void SliderArrayWidget::setValues(QList<int> values)
 {
-	//$$this->defaultValue = defaultValue * this->multiple;
-	//$$this->factoryValue = factoryValue * this->multiple;
-}
-
-void SliderArrayWidget::setValue(int value)
-{
+	for (int i = 0; i < values.count(); i++)
+	{
+		this->labels[i]->setText(QString::number(values[i]));
+		this->horizontalSlider[i]->setValue(values[i]);
+	}
 	//$$ if (ui->horizontalSlider->value() != value)
 	// {
 	// 	ui->value->setText(QString::number(value));
@@ -152,27 +162,38 @@ void SliderArrayWidget::setValue(int value)
 	// }
 }
 
-void SliderArrayWidget::setValueFloat(float value)
+void SliderArrayWidget::setValuesFloats(QList<float> values)
 {
-	//$$value *= this->multiple;
-	//$$ui->value->setText(QString::number((float)value / this->multiple, 'f', this->precision));
-	//$$ ui->horizontalSlider->setValue((int)value);
+	for (int i = 0; i < values.count(); i++)
+	{
+		this->labels[i]->setText(QString::number((float)values[i], 'f', this->precision[i]));
+		this->horizontalSlider[i]->setValue((int)(values[i] * this->multiple[i]));
+	}
 }
 
-int SliderArrayWidget::getValue()
-{
-	return 1; //$$ ui->horizontalSlider->value();
-}
+// QList<float>* SliderArrayWidget::getValues()
+// {
+// 	QList<float> *values;
+// 	return values; //$$ ui->horizontalSlider->value();
+// }
 
-void SliderArrayWidget::on_horizontalSlider_valueChanged(int value)
+void SliderArrayWidget::onHorizontalSliderValueChanged(int /* value */)
 {
 	//$$if (this->precision == 0)
 		//$$ui->value->setText(QString::number(value));
 	//$$else
 		//$$ui->value->setText(QString::number((float)value / this->multiple, 'f', this->precision));
 
-	//$$if (this->onSliderArrayValueChange != nullptr)
-	// 	(*this->onSliderArrayValueChange)(this->mainWindow, this->getCmd, this->setCmd, this->parameter, value, this->multiple);
-	// if (this->onSliderArray2ValueChange != nullptr)
-	// 	(*this->onSliderArray2ValueChange)(this->mainWindow, this->node, value, this->multiple);
+	QList<float> values;
+	for (int i = 0; i < this->horizontalSlider.count(); i++)
+	{
+		float fvalue = (float)this->horizontalSlider[i]->value() / this->multiple[i];
+		this->labels[i]->setText(QString::number(fvalue, 'f', this->precision[i]));
+		values.push_back(fvalue);
+	}
+
+	if (this->onSliderArrayValueChange != nullptr)
+		(*this->onSliderArrayValueChange)(this->mainWindow, this->getCmd, this->setCmd, this->parameter, values);
+	if (this->onSliderArray2ValueChange != nullptr)
+		(*this->onSliderArray2ValueChange)(this->mainWindow, this->node, values);
 }

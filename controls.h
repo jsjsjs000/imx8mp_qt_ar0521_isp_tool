@@ -86,16 +86,18 @@ public:
 	QList<int> value;
 	QList<int> precision;
 	QList<int> multiple;
+	QList<QString> descriptions;
 
 	SliderArrayControl();
 	SliderArrayControl(QString getCmd, QString setCmd, QString parameter, QString name, QList<QList<int>> *min_max_value,
-			QString description, bool readonly = false)
+			QString description, QList<QString> descriptions, bool readonly = false)
 	{
 		this->getCmd = getCmd;
 		this->setCmd = setCmd;
 		this->parameter = parameter;
 		this->name = name;
 		this->description = description;
+		this->descriptions = descriptions;
 		this->readonly = readonly;
 		for (const QList<int> &item : *min_max_value)
 		{
@@ -113,13 +115,14 @@ public:
 		}
 	}
 	SliderArrayControl(QString getCmd, QString setCmd, QString parameter, QString name, QList<QList<float>> *min_max_value_digits,
-			QString description, bool readonly = false)
+			QString description, QList<QString> descriptions, bool readonly = false)
 	{
 		this->getCmd = getCmd;
 		this->setCmd = setCmd;
 		this->parameter = parameter;
 		this->name = name;
 		this->description = description;
+		this->descriptions = descriptions;
 		this->readonly = readonly;
 		for (const QList<float> &item : *min_max_value_digits)
 		{
@@ -133,8 +136,8 @@ public:
 			this->precision.push_back(digits);
 			int multiple = std::pow(10, digits);
 			this->multiple.push_back(multiple);
-			this->min.push_back(item[0]);
-			this->max.push_back(item[1]);
+			this->min.push_back(item[0] * multiple);
+			this->max.push_back(item[1] * multiple);
 			this->value.push_back(item[2] * multiple);
 		}
 	}

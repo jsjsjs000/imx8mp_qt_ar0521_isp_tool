@@ -100,14 +100,16 @@ void MainWindow::setFps(int fps)
 void MainWindow::runProcFsThread()
 {
 	thread = new IspProcThread(this, ispControl, controlsDefinition, this->widgets);
-	connect(thread, &IspProcThread::signal_update_slider_control_int,   this, &MainWindow::signal_update_slider_control_int);
-	connect(thread, &IspProcThread::signal_update_slider_control_float, this, &MainWindow::signal_update_slider_control_float);
-	connect(thread, &IspProcThread::signal_update_comboBox_item_index,  this, &MainWindow::signal_update_comboBox_item_index);
-	connect(thread, &IspProcThread::signal_update_comboBox2_item_index, this, &MainWindow::signal_update_comboBox2_item_index);
-	connect(thread, &IspProcThread::signal_update_checkBox_set_state,   this, &MainWindow::signal_update_checkBox_set_state);
-	connect(thread, &IspProcThread::signal_update_label_set_text,       this, &MainWindow::signal_update_label_set_text);
-	connect(thread, &IspProcThread::signal_update_chart,                this, &MainWindow::signal_update_chart);
-	connect(thread, &IspProcThread::signal_update_matrix_view,          this, &MainWindow::signal_update_matrix_view);
+	connect(thread, &IspProcThread::signal_update_slider_control_int,         this, &MainWindow::signal_update_slider_control_int);
+	connect(thread, &IspProcThread::signal_update_slider_control_float,       this, &MainWindow::signal_update_slider_control_float);
+	connect(thread, &IspProcThread::signal_update_slider_array_control_int,   this, &MainWindow::signal_update_slider_array_control_int);
+	connect(thread, &IspProcThread::signal_update_slider_array_control_float, this, &MainWindow::signal_update_slider_array_control_float);
+	connect(thread, &IspProcThread::signal_update_comboBox_item_index,        this, &MainWindow::signal_update_comboBox_item_index);
+	connect(thread, &IspProcThread::signal_update_comboBox2_item_index,       this, &MainWindow::signal_update_comboBox2_item_index);
+	connect(thread, &IspProcThread::signal_update_checkBox_set_state,         this, &MainWindow::signal_update_checkBox_set_state);
+	connect(thread, &IspProcThread::signal_update_label_set_text,             this, &MainWindow::signal_update_label_set_text);
+	connect(thread, &IspProcThread::signal_update_chart,                      this, &MainWindow::signal_update_chart);
+	connect(thread, &IspProcThread::signal_update_matrix_view,                this, &MainWindow::signal_update_matrix_view);
 	thread->start();
 }
 
@@ -240,16 +242,13 @@ void MainWindow::onSliderValueChange(MainWindow *mainWindow, QString getCmd, QSt
 	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
 
-void MainWindow::onSliderArrayValueChange(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int value, int divide)
+void MainWindow::onSliderArrayValueChange(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QList<float> values)
 {
 	if (!mainWindow->canUpdateControls)
 		return;
 
-	qDebug() << setCmd << parameter << ((float)value / divide);
-	ispControl.setParamNumber(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), value, divide);
-
-	if (setCmd == IF_S_FPS && parameter == "fps")
-		mainWindow->lastSetFps = value;
+	qDebug() << setCmd << parameter << values;
+	ispControl.setParamArray(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), values);
 
 	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
@@ -502,17 +501,17 @@ void MainWindow::signal_update_slider_control_float(SliderWidget *slider, float 
 	this->canUpdateControls = true;
 }
 
-void MainWindow::signal_update_slider_array_control_int(SliderArrayWidget *slider, int value)
+void MainWindow::signal_update_slider_array_control_int(SliderArrayWidget *slider, QList<int> values)
 {
 	this->canUpdateControls = false;
-	slider->setValue(value);
+	slider->setValues(values);
 	this->canUpdateControls = true;
 }
 
-void MainWindow::signal_update_slider_array_control_float(SliderArrayWidget *slider, float value)
+void MainWindow::signal_update_slider_array_control_float(SliderArrayWidget *slider, QList<float> values)
 {
 	this->canUpdateControls = false;
-	slider->setValue(value);
+	slider->setValuesFloats(values);
 	this->canUpdateControls = true;
 }
 

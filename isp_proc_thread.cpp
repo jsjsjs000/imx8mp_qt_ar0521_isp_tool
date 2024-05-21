@@ -9,6 +9,7 @@
 #include <widgets/label_widget.h>
 #include <widgets/matrix_view_widget.h>
 #include <widgets/slider_widget.h>
+#include <widgets/slider_array_widget.h>
 
 IspProcThread::IspProcThread(QObject *parent, IspControl &ispControl, ControlsDefinitions &controlsDefinition,
 		QMap<QString, QWidget*> &widgets) : QThread(parent), ispControl(ispControl),
@@ -19,6 +20,7 @@ IspProcThread::IspProcThread(QObject *parent, IspControl &ispControl, ControlsDe
 	qRegisterMetaType<ComboBoxWidget*>("ComboBoxWidget*");
 	qRegisterMetaType<ComboBoxWidget2*>("ComboBoxWidget2*");
 	qRegisterMetaType<SliderWidget*>("SliderWidget*");
+	qRegisterMetaType<SliderArrayWidget*>("SliderArrayWidget*");
 	qRegisterMetaType<LabelWidget*>("LabelWidget*");
 	qRegisterMetaType<ChartWidget*>("ChartWidget*");
 	qRegisterMetaType<MatrixViewWidget*>("MatrixViewWidget*");
@@ -85,6 +87,21 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 						// qDebug("%f", 1.0 / value);
 					}
 				}
+			}
+		}
+		else if (const SliderArrayControl *scontrol = dynamic_cast<const SliderArrayControl*>(control))
+		{
+			SliderArrayWidget *slider = (SliderArrayWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+			if (slider == nullptr)
+				qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
+			else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
+			{
+				Json::Value defaultValue = -1.0;
+				QList<float> values;
+				for (uint i = 0; i < value->size(); i++)
+					values.push_back(value->get(i, defaultValue).asFloat());
+				emit signal_update_slider_array_control_float(slider, values);
+				// qDebug() << scontrol->parameter << values;
 			}
 		}
 		else if (const ComboBoxControl *scontrol = dynamic_cast<const ComboBoxControl*>(control))
