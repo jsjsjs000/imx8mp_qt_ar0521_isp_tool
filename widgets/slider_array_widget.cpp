@@ -125,12 +125,12 @@ void SliderArrayWidget::slotCustomMenuRequested(QPoint pos)
 
 void SliderArrayWidget::actionResetDefaultSlot()
 {
-	//$$this->setValue(this->defaultValue);
+	// this->setValue(this->defaultValue);
 }
 
 void SliderArrayWidget::actionResetFactorySlot()
 {
-	//$$this->setValue(this->factoryValue);
+	// this->setValue(this->factoryValue);
 }
 
 void SliderArrayWidget::setRange()
@@ -155,7 +155,7 @@ void SliderArrayWidget::setValues(QList<int> values)
 		this->labels[i]->setText(QString::number(values[i]));
 		this->horizontalSlider[i]->setValue(values[i]);
 	}
-	//$$ if (ui->horizontalSlider->value() != value)
+	// if (ui->horizontalSlider->value() != value)
 	// {
 	// 	ui->value->setText(QString::number(value));
 	// 	ui->horizontalSlider->setValue(value);
@@ -174,21 +174,19 @@ void SliderArrayWidget::setValuesFloats(QList<float> values)
 // QList<float>* SliderArrayWidget::getValues()
 // {
 // 	QList<float> *values;
-// 	return values; //$$ ui->horizontalSlider->value();
+// 	return ui->horizontalSlider->value();
 // }
 
 void SliderArrayWidget::onHorizontalSliderValueChanged(int /* value */)
 {
-	//$$if (this->precision == 0)
-		//$$ui->value->setText(QString::number(value));
-	//$$else
-		//$$ui->value->setText(QString::number((float)value / this->multiple, 'f', this->precision));
-
 	QList<float> values;
 	for (int i = 0; i < this->horizontalSlider.count(); i++)
 	{
 		float fvalue = (float)this->horizontalSlider[i]->value() / this->multiple[i];
-		this->labels[i]->setText(QString::number(fvalue, 'f', this->precision[i]));
+		if (this->precision[i] == 0)
+			this->labels[i]->setText(QString::number(this->horizontalSlider[i]->value()));
+		else
+			this->labels[i]->setText(QString::number(fvalue, 'f', this->precision[i]));
 		values.push_back(fvalue);
 	}
 

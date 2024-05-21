@@ -16,7 +16,6 @@ public:
 
 	void init(void)
 	{
-/*
 		controls.append(new GroupControl("AE - Auto Exposure"));
 		controls.append(new CheckBoxControl(IF_AE_G_EN, IF_AE_S_EN, AE_ENABLE_PARAMS,        "Enabled",                    true,          ""));
 			QMap<int, QString> *aemodeMap = new QMap<int, QString>;
@@ -182,7 +181,7 @@ public:
 //	controls.append(new LabelControl(    IF_WDR_G_TBL, WDR_TABLE_PARAMS, "WDR table", "", &typeid(std::string[])));      // empty response
 
 		controls.append(new GroupControl("WB - White Balance"));
-		controls.append(new ChartControl(   IF_WB_G_CFG, IF_WB_S_CCM,    WB_MATRIX_PARAMS,   "Color correction Matrinx (X-Talk)",               "",    -8, 7.992,   2, &typeid(float), false));    // niepewne czy dobrze zapisuje bo getCmd != setCmd
+		controls.append(new ChartControl(   IF_WB_G_CFG, IF_WB_S_CCM,    WB_MATRIX_PARAMS,   "Color correction Matrix (X-Talk)",                "",    -8, 7.992,   2, &typeid(float), false));    // niepewne czy dobrze zapisuje bo getCmd != setCmd
 		controls.append(new ChartControl(   IF_WB_G_CFG, IF_WB_S_OFFSET, WB_OFFSET_PARAMS,   "[red, green, blue] offset",                       "", -2048,  2047, 512, &typeid(int),   false));    // niepewne czy dobrze zapisuje bo getCmd != setCmd
 		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG,    WB_RED_PARAMS,      "WB gains red",             0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));
 		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG,    WB_GREEN_R_PARAMS,  "WB gains green.r",         0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));
@@ -192,7 +191,7 @@ public:
 //	controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_GREEN_R_PARAMS,  "WB gains green.r",         0.0f, 3.999f, 0.0f, 3, ""));
 //	controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_GREEN_B_PARAMS,  "WB gains green.b",         0.0f, 3.999f, 0.0f, 3, ""));
 //	controls.append(new SliderControl(  NULL, IF_WB_S_GAIN, WB_BLUE_PARAMS,     "WB gains blue",            0.0f, 3.999f, 0.0f, 3, ""));
-*/
+
 		controls.append(new GroupControl("DWE - Dewarp"));
 			QMap<int, QString> *dweModeMap = new QMap<int, QString>;
 			dweModeMap->insert({{1, "lens distortion"}, {2, "fisheye expand"}, {3, "split screen (not supported)"}, {4, "fisheye dewarp"}});
@@ -208,23 +207,23 @@ public:
 		controls.append(new ComboBoxControl2(IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/bypass",         "Bypass dewarp",   dwebypassMap, ""));
 		// controls.append(new ChartControl(    IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/mat",            "Camera matrix [0~8], Distortion coefficient [9~16]",  "",    -10, 6000,   1000, &typeid(float), false));
 			QList<QList<float>> *min_max_value_digits = new QList<QList<float>>;
-			min_max_value_digits->push_back({{-100, 7000, 0, 1}});
-			min_max_value_digits->push_back({{-100, 7000, 0, 1}});
-			min_max_value_digits->push_back({{-100, 7000, 0, 1}});
-			min_max_value_digits->push_back({{-100, 7000, 0, 1}});
-			min_max_value_digits->push_back({{-100, 7000, 0, 1}});
-			min_max_value_digits->push_back({{-100, 7000, 0, 1}});
-			min_max_value_digits->push_back({{-100, 7000, 0, 1}});
-			min_max_value_digits->push_back({{-100, 7000, 0, 1}});
-			min_max_value_digits->push_back({{-100, 7000, 0, 1}});
-			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
-			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
-			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
-			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
+			min_max_value_digits->push_back({{-100, 7000, 0, 2}});
+			min_max_value_digits->push_back({{-100, 7000, 0, 2}});
+			min_max_value_digits->push_back({{-100, 7000, 0, 2}});
+			min_max_value_digits->push_back({{-100, 7000, 0, 2}});
+			min_max_value_digits->push_back({{-100, 7000, 0, 2}});
+			min_max_value_digits->push_back({{-100, 7000, 0, 2}});
+			min_max_value_digits->push_back({{-100, 7000, 0, 2}});
+			min_max_value_digits->push_back({{-100, 7000, 0, 2}});
+			min_max_value_digits->push_back({{-100, 7000, 0, 2}});
+			min_max_value_digits->push_back({{-3.5,  3.5, 0, 3}});
+			min_max_value_digits->push_back({{-3.5,  3.5, 0, 3}});
+			min_max_value_digits->push_back({{-3.5,  3.5, 0, 3}});
+			min_max_value_digits->push_back({{-3.5,  3.5, 0, 3}});
 			min_max_value_digits->push_back({{-100,  100, 0, 3}});
-			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
-			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
-			min_max_value_digits->push_back({{  -1,    1, 0, 3}});
+			min_max_value_digits->push_back({{-3.5,  3.5, 0, 3}});
+			min_max_value_digits->push_back({{-3.5,  3.5, 0, 3}});
+			min_max_value_digits->push_back({{-3.5,  3.5, 0, 3}});
 			QList<QString> descriptions = {"Camera matrix [0]", "Camera matrix [1]", "Camera matrix [2]", "Camera matrix [3]", "Camera matrix [4]", "Camera matrix [5]", "Camera matrix [6]", "Camera matrix [7]", "Camera matrix [8]", "Distortion coefficient [0]", "Distortion coefficient [1]", "Distortion coefficient [2]", "Distortion coefficient [3]", "Distortion coefficient [4]", "Distortion coefficient [5]", "Distortion coefficient [6]", "Distortion coefficient [7]"};
 		controls.append(new SliderArrayControl(IF_DWE_G_PARAMS, IF_DWE_S_PARAMS, "dwe/mat",          "Camera matrix [0~8], Distortion coefficient [9~16]",  min_max_value_digits, /*&typeid(float),*/ "", descriptions, false));
 
