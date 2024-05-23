@@ -230,6 +230,9 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 					points.push_back(QPointF(i, value->get(i, defaultValue).asFloat()));
 				emit signal_update_matrix_view(matrixView, points);
 				// qDebug() << scontrol->parameter << points;
+
+				if (strncmp(scontrol->parameter.toStdString().c_str(), AE_LUMA_PARAMS_BASE64, strlen(AE_LUMA_PARAMS_BASE64)) == 0)
+					internalIspAfps.SetMeanLuminanceMeasured(points);
 			}
 		}
 	}

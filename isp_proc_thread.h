@@ -6,6 +6,7 @@
 #include <QPointF>
 #include <QThread>
 #include <QList>
+#include <internal_isp/internal_isp_afps.h>
 
 typedef QList<QPointF> QListQPointF;   // need for emit signal_update_chart( QList<QPointF> )
 
@@ -27,6 +28,7 @@ private:
 	IspControl &ispControl;
 	ControlsDefinitions &controlsDefinition;
 	QMap<QString, QWidget*> &widgets;
+	InternalIspAfps internalIspAfps;
 
 	void run() override;
 	void readParameters();

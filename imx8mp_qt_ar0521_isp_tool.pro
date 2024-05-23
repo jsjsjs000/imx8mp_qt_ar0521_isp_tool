@@ -12,6 +12,7 @@ CONFIG += c++17
 
 SOURCES += \
   controls2_definitions.cpp \
+  internal_isp/internal_isp_afps.cpp \
 	isp_control.cpp \
 	isp_proc_thread.cpp \
 	isp_xml.cpp \
@@ -36,6 +37,7 @@ HEADERS += \
   controls2.h \
   controls2_definitions.h \
   controls_definitions.h \
+  internal_isp/internal_isp_afps.h \
   isp_control.h \
 	isp_proc_thread.h \
 	isp_xml.h \
