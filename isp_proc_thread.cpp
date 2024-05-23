@@ -24,12 +24,15 @@ IspProcThread::IspProcThread(QObject *parent, IspControl &ispControl, ControlsDe
 	qRegisterMetaType<LabelWidget*>("LabelWidget*");
 	qRegisterMetaType<ChartWidget*>("ChartWidget*");
 	qRegisterMetaType<MatrixViewWidget*>("MatrixViewWidget*");
+
+	this->internalIspAfps.Initialize(&ispControl);
 }
 
 void IspProcThread::run()
 {
 	while (!this->Stop)
 	{
+			/* 300 ms delay */
 		for (int i = 0; i < 10 && !this->Stop; i++)
 			msleep(30);
 
