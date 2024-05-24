@@ -142,7 +142,7 @@ void SliderArrayWidget::setRange()
 	}
 }
 
-void SliderArrayWidget::setDefaultAndFactoryValue(QList<float> defaultValue, QList<float> factoryValue)
+void SliderArrayWidget::setDefaultAndFactoryValue(QList<float> /* defaultValue */, QList<float> /* factoryValue */)
 {
 	// this->defaultValue = defaultValue;
 	// this->factoryValue = factoryValue;

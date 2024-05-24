@@ -1,6 +1,8 @@
 #include "internal_isp_afps.h"
 #include <QDebug>
+#include <command_item.h>
 #include "ioctl_cmds.h"
+#include "isp_proc_thread.h"
 
 InternalIspAfps::InternalIspAfps()
 {
@@ -8,14 +10,14 @@ InternalIspAfps::InternalIspAfps()
 	this->lastTime = this->elapsedTimer.elapsed();
 }
 
-void InternalIspAfps::Initialize(IspControl *ispControl)
+void InternalIspAfps::Initialize(IspProcThread *ispProcThread)
 {
-	this->ispControl = ispControl;
+	this->ispProcThread = ispProcThread;
 }
 
 bool InternalIspAfps::isInitialized()
 {
-	return this->ispControl != nullptr;
+	return this->ispProcThread != nullptr;
 }
 
 void InternalIspAfps::SetMeanLuminanceMeasured(QList<QPointF> meanLuminanceMeasured)
@@ -44,6 +46,11 @@ void InternalIspAfps::SetMeanLuminanceMeasured(QList<QPointF> meanLuminanceMeasu
 		this->setLowerFps();
 	else if (avgMeanLuminanceMeasured >= 70)
 		this->setHigherFps();
+
+	if (this->fps == 7 && !this->grayMode)
+		this->setGrayMode(true);
+	if (this->fps != 7 && this->grayMode)
+		this->setGrayMode(false);
 }
 
 void InternalIspAfps::setLowerFps()
@@ -72,5 +79,14 @@ void InternalIspAfps::setHigherFps()
 
 void InternalIspAfps::setFps(int fps)
 {
-	ispControl->setParamNumber(NULL, IF_S_FPS, "fps", fps, 1);
+	CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Number, NULL, IF_S_FPS, "fps", fps, 1);
+	ispProcThread->AddCommandToQueue(commandItem);
+}
+
+void InternalIspAfps::setGrayMode(bool grayMode)
+{
+	this->grayMode = grayMode;
+
+	CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Bool, IF_DEMOSAIC_G_EN,  IF_DEMOSAIC_S_EN,  DEMOSAIC_ENABLE_PARAMS, !grayMode);
+	ispProcThread->AddCommandToQueue(commandItem);
 }

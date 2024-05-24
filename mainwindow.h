@@ -48,7 +48,6 @@ private:
 	// const int Height = 1944;
 
 	Ui::MainWindow *ui;
-	IspProcThread *thread;
 	//QMediaPlayer *player;
 	//QMediaPlaylist *playlist;
 	QVideoWidget *videoWidget;
@@ -89,4 +88,5 @@ private:
 	static void onChartControl2PointsChanged(MainWindow *mainWindow, QString node, QList<QPointF> points);
 	void timerEvent(QTimerEvent *event);
 };
+
 #endif // MAINWINDOW_H

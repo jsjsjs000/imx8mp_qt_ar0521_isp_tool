@@ -11,6 +11,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+  command_item.cpp \
   controls2_definitions.cpp \
   internal_isp/internal_isp_afps.cpp \
 	isp_control.cpp \
@@ -33,6 +34,7 @@ SOURCES += \
 	widgets/slider_widget.cpp
 
 HEADERS += \
+  command_item.h \
 	controls.h \
   controls2.h \
   controls2_definitions.h \

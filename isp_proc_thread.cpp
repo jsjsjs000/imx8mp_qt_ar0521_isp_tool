@@ -25,7 +25,22 @@ IspProcThread::IspProcThread(QObject *parent, IspControl &ispControl, ControlsDe
 	qRegisterMetaType<ChartWidget*>("ChartWidget*");
 	qRegisterMetaType<MatrixViewWidget*>("MatrixViewWidget*");
 
-	this->internalIspAfps.Initialize(&ispControl);
+	this->internalIspAfps.Initialize(this);
+}
+
+void IspProcThread::AddCommandToQueue(const CommandItem &commandItem)
+{
+	this->commandsQueueMutex.lock();
+	this->commandsQueue.enqueue(commandItem);
+	this->commandsQueueMutex.unlock();
+}
+
+bool IspProcThread::isCommandQueueNotEmpty()
+{
+	this->commandsQueueMutex.lock();
+	bool notEmpty = !this->commandsQueue.empty();
+	this->commandsQueueMutex.unlock();
+	return notEmpty;
 }
 
 void IspProcThread::run()
@@ -33,18 +48,47 @@ void IspProcThread::run()
 	while (!this->Stop)
 	{
 			/* 300 ms delay */
-		for (int i = 0; i < 10 && !this->Stop; i++)
+		for (int i = 0; i < 10 && !this->Stop && !this->isCommandQueueNotEmpty(); i++)
 			msleep(30);
 
-		this->readParameters();
+		if (this->isCommandQueueNotEmpty())
+			this->executeCommandsFromQueue();
+		else
+			this->readParameters();
 	}
+}
+
+void IspProcThread::executeCommandsFromQueue()
+{
+	this->commandsQueueMutex.lock();
+	if (this->commandsQueue.empty())
+	{
+		this->commandsQueueMutex.unlock();
+		return;
+	}
+
+	CommandItem commandItem = this->commandsQueue.dequeue();
+	this->commandsQueueMutex.unlock();
+
+	if (commandItem.commandItemType == CommandItem::CommandItemType::Bool)
+		ispControl.setParamBool(commandItem.getCmd.toStdString().c_str(), commandItem.setCmd.toStdString().c_str(),
+				commandItem.parameter.toStdString().c_str(), commandItem.boolValue);
+	else if (commandItem.commandItemType == CommandItem::CommandItemType::Number)
+		ispControl.setParamNumber(commandItem.getCmd.toStdString().c_str(), commandItem.setCmd.toStdString().c_str(),
+				commandItem.parameter.toStdString().c_str(), commandItem.value, commandItem.divide);
+	else if (commandItem.commandItemType == CommandItem::CommandItemType::Array)
+		ispControl.setParamArray(commandItem.getCmd.toStdString().c_str(), commandItem.setCmd.toStdString().c_str(),
+				commandItem.parameter.toStdString().c_str(), commandItem.array);
+	else if (commandItem.commandItemType == CommandItem::CommandItemType::String)
+		ispControl.setParamString(commandItem.getCmd.toStdString().c_str(), commandItem.setCmd.toStdString().c_str(),
+				commandItem.parameter.toStdString().c_str(), commandItem.string.toStdString().c_str());
 }
 
 void IspProcThread::readParameters()
 {
 	for (const QString &paramName : qAsConst(controlsDefinition.readParams))
 	{
-		if (this->Stop)
+		if (this->Stop || this->isCommandQueueNotEmpty())
 			break;
 
 		Json::Value params = ispControl.getParam(paramName.toStdString().c_str());

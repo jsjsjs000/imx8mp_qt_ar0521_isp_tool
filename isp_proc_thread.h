@@ -1,12 +1,15 @@
 #ifndef ISPPROCTHREAD_H
 #define ISPPROCTHREAD_H
 
-#include "isp_control.h"
-#include "controls_definitions.h"
 #include <QPointF>
 #include <QThread>
 #include <QList>
-#include <internal_isp/internal_isp_afps.h>
+#include <QQueue>
+#include <QMutex>
+#include "isp_control.h"
+#include "controls_definitions.h"
+#include "command_item.h"
+#include "internal_isp/internal_isp_afps.h"
 
 typedef QList<QPointF> QListQPointF;   // need for emit signal_update_chart( QList<QPointF> )
 
@@ -29,15 +32,20 @@ private:
 	ControlsDefinitions &controlsDefinition;
 	QMap<QString, QWidget*> &widgets;
 	InternalIspAfps internalIspAfps;
+	QQueue<CommandItem> commandsQueue;
+	QMutex commandsQueueMutex;
 
 	void run() override;
 	void readParameters();
 	void updateControlsFromJson(Json::Value json, QString cmd);
+	bool isCommandQueueNotEmpty();
+	void executeCommandsFromQueue();
 
 public:
 	bool Stop = false;
 	int readFps = 0;
 	explicit IspProcThread(QObject *parent, IspControl &ispControl, ControlsDefinitions &controlsDefinition, QMap<QString, QWidget*> &widgets);
+	void AddCommandToQueue(const CommandItem &commandItem);
 
 signals:
 	void signal_update_slider_control_int(SliderWidget *slider, int value);

@@ -4,6 +4,7 @@
 #include <QProcess>
 #include <QThread>
 
+#include "command_item.h"
 #include "controls_definitions.h"
 #include <widgets/chart_widget.h>
 #include <widgets/checkbox_widget.h>
@@ -21,6 +22,7 @@
 #include "isp_proc_thread.h"
 
 IspControl ispControl;
+IspProcThread *ispProcThread;
 ControlsDefinitions controlsDefinition;
 Controls2Definitions controls2Definition;
 
@@ -99,23 +101,23 @@ void MainWindow::setFps(int fps)
 
 void MainWindow::runProcFsThread()
 {
-	thread = new IspProcThread(this, ispControl, controlsDefinition, this->widgets);
-	connect(thread, &IspProcThread::signal_update_slider_control_int,         this, &MainWindow::signal_update_slider_control_int);
-	connect(thread, &IspProcThread::signal_update_slider_control_float,       this, &MainWindow::signal_update_slider_control_float);
-	connect(thread, &IspProcThread::signal_update_slider_array_control_int,   this, &MainWindow::signal_update_slider_array_control_int);
-	connect(thread, &IspProcThread::signal_update_slider_array_control_float, this, &MainWindow::signal_update_slider_array_control_float);
-	connect(thread, &IspProcThread::signal_update_comboBox_item_index,        this, &MainWindow::signal_update_comboBox_item_index);
-	connect(thread, &IspProcThread::signal_update_comboBox2_item_index,       this, &MainWindow::signal_update_comboBox2_item_index);
-	connect(thread, &IspProcThread::signal_update_checkBox_set_state,         this, &MainWindow::signal_update_checkBox_set_state);
-	connect(thread, &IspProcThread::signal_update_label_set_text,             this, &MainWindow::signal_update_label_set_text);
-	connect(thread, &IspProcThread::signal_update_chart,                      this, &MainWindow::signal_update_chart);
-	connect(thread, &IspProcThread::signal_update_matrix_view,                this, &MainWindow::signal_update_matrix_view);
-	thread->start();
+	ispProcThread = new IspProcThread(this, ispControl, controlsDefinition, this->widgets);
+	connect(ispProcThread, &IspProcThread::signal_update_slider_control_int,         this, &MainWindow::signal_update_slider_control_int);
+	connect(ispProcThread, &IspProcThread::signal_update_slider_control_float,       this, &MainWindow::signal_update_slider_control_float);
+	connect(ispProcThread, &IspProcThread::signal_update_slider_array_control_int,   this, &MainWindow::signal_update_slider_array_control_int);
+	connect(ispProcThread, &IspProcThread::signal_update_slider_array_control_float, this, &MainWindow::signal_update_slider_array_control_float);
+	connect(ispProcThread, &IspProcThread::signal_update_comboBox_item_index,        this, &MainWindow::signal_update_comboBox_item_index);
+	connect(ispProcThread, &IspProcThread::signal_update_comboBox2_item_index,       this, &MainWindow::signal_update_comboBox2_item_index);
+	connect(ispProcThread, &IspProcThread::signal_update_checkBox_set_state,         this, &MainWindow::signal_update_checkBox_set_state);
+	connect(ispProcThread, &IspProcThread::signal_update_label_set_text,             this, &MainWindow::signal_update_label_set_text);
+	connect(ispProcThread, &IspProcThread::signal_update_chart,                      this, &MainWindow::signal_update_chart);
+	connect(ispProcThread, &IspProcThread::signal_update_matrix_view,                this, &MainWindow::signal_update_matrix_view);
+	ispProcThread->start();
 }
 
 void MainWindow::stopProcFsThread()
 {
-	this->thread->Stop = true;
+	ispProcThread->Stop = true;
 	QThread::msleep(100);
 }
 
@@ -223,7 +225,8 @@ void MainWindow::onCheckBoxChanged(MainWindow *mainWindow, QString getCmd, QStri
 		return;
 
 	qDebug() << setCmd << parameter << int(checked);
-	ispControl.setParamBool(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), checked);
+	CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Bool, getCmd, setCmd, parameter, checked);
+	ispProcThread->AddCommandToQueue(commandItem);
 
 	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
@@ -234,7 +237,8 @@ void MainWindow::onSliderValueChange(MainWindow *mainWindow, QString getCmd, QSt
 		return;
 
 	qDebug() << setCmd << parameter << ((float)value / divide);
-	ispControl.setParamNumber(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), value, divide);
+	CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Number, getCmd, setCmd, parameter, value, divide);
+	ispProcThread->AddCommandToQueue(commandItem);
 
 	if (setCmd == IF_S_FPS && parameter == "fps")
 		mainWindow->lastSetFps = value;
@@ -248,7 +252,8 @@ void MainWindow::onSliderArrayValueChange(MainWindow *mainWindow, QString getCmd
 		return;
 
 	qDebug() << setCmd << parameter << values;
-	ispControl.setParamArray(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), values);
+	CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Array, getCmd, setCmd, parameter, values);
+	ispProcThread->AddCommandToQueue(commandItem);
 
 	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
@@ -259,7 +264,8 @@ void MainWindow::onComboBoxIndexChanged(MainWindow *mainWindow, QString getCmd, 
 		return;
 
 	qDebug() << setCmd << parameter << key << "(" + value + ")";
-	ispControl.setParamNumber(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), key, 1);
+	CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Number, getCmd, setCmd, parameter, key, 1);
+	ispProcThread->AddCommandToQueue(commandItem);
 
 	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
@@ -270,12 +276,14 @@ void MainWindow::onComboBox2IndexChanged(MainWindow *mainWindow, QString getCmd,
 		return;
 
 	qDebug() << setCmd << parameter << key << "(" + value + ")";
+	CommandItem commandItem;
 	if (key == "false")
-		ispControl.setParamBool(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), false);
+		commandItem = CommandItem(CommandItem::CommandItemType::Bool, getCmd, setCmd, parameter, false);
 	else if (key == "true")
-		ispControl.setParamBool(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), true);
+		commandItem = CommandItem(CommandItem::CommandItemType::Bool, getCmd, setCmd, parameter, true);
 	else
-		ispControl.setParamString(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), key.toStdString().c_str());
+		commandItem = CommandItem(CommandItem::CommandItemType::String, getCmd, setCmd, parameter, key);
+	ispProcThread->AddCommandToQueue(commandItem);
 
 	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
@@ -286,12 +294,14 @@ void MainWindow::onButtonClicked(MainWindow *mainWindow, QString getCmd, QString
 		return;
 
 	qDebug() << setCmd << parameter;
+	CommandItem commandItem;
 	if (strncmp(value.toStdString().c_str(), "true", strlen("true")) == 0)
-		ispControl.setParamBool(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), true);
+		commandItem = CommandItem(CommandItem::CommandItemType::Bool, getCmd, setCmd, parameter, true);
 	else if (strncmp(value.toStdString().c_str(), "false", strlen("false")) == 0)
-		ispControl.setParamBool(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), false);
+		commandItem = CommandItem(CommandItem::CommandItemType::Bool, getCmd, setCmd, parameter, false);
 	else
-		ispControl.setParamString(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), value.toStdString().c_str());
+		commandItem = CommandItem(CommandItem::CommandItemType::String, getCmd, setCmd, parameter, value);
+	ispProcThread->AddCommandToQueue(commandItem);
 
 	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
@@ -305,7 +315,9 @@ void MainWindow::onChartControlPointsChanged(MainWindow *mainWindow, QString get
 	for (int i = 0; i < points.count(); i++)
 		array.push_back(points[i].y());
 	qDebug() << setCmd << array;
-	ispControl.setParamArray(getCmd.toStdString().c_str(), setCmd.toStdString().c_str(), parameter.toStdString().c_str(), array);
+	CommandItem commandItem;
+	commandItem = CommandItem(CommandItem::CommandItemType::Array, getCmd, setCmd, parameter, array);
+	ispProcThread->AddCommandToQueue(commandItem);
 
 	mainWindow->lastTime = mainWindow->elapsedTimer.elapsed();
 }
@@ -428,7 +440,7 @@ void MainWindow::timerEvent(QTimerEvent* /* event */)
 {
 	// int diff = this->elapsedTimer.elapsed() - this->lastTime;
 
-	this->ui->fpsLabel->setText("FPS: " + QString::number(this->thread->readFps));
+	this->ui->fpsLabel->setText("FPS: " + QString::number(ispProcThread->readFps));
 
 	if (this->setFpsTime > 0 && this->elapsedTimer.elapsed() - this->setFpsTime >= 1000)
 	{
