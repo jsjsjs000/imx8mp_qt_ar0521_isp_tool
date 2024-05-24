@@ -169,6 +169,9 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 				else
 					index = value->asInt();
 				emit signal_update_comboBox_item_index(comboBox, index);
+
+				if (strncmp(scontrol->parameter.toStdString().c_str(), AE_SENSITIVITY_PARAMS, strlen(AE_SENSITIVITY_PARAMS)) == 0)
+					internalIspAfps.SetIso(index);
 			}
 		}
 		else if (const ComboBoxControl2 *scontrol = dynamic_cast<const ComboBoxControl2*>(control))

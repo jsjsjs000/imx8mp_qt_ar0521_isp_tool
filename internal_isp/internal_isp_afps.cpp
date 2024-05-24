@@ -23,8 +23,9 @@ bool InternalIspAfps::isInitialized()
 QString InternalIspAfps::GetStatus()
 {
 	return "mean luminance: " + QString::number(this->avgMeanLuminanceMeasured) +
-			" thresholds: " + QString::number(InternalIspAfps::ThreasholdMin) + "|" +
-			QString::number(InternalIspAfps::ThreasholdMax);
+			// " thresholds: " + QString::number(InternalIspAfps::ThreasholdMin) + "|" +
+			// QString::number(InternalIspAfps::ThreasholdMax);
+			", iso: " + QString::number(this->iso);
 }
 
 void InternalIspAfps::SetMeanLuminanceMeasured(QList<QPointF> meanLuminanceMeasured)
@@ -54,15 +55,43 @@ void InternalIspAfps::SetMeanLuminanceMeasured(QList<QPointF> meanLuminanceMeasu
 
 	// qDebug() << avgMeanLuminanceMeasured << avgMeanLuminanceMeasured * 100.0 / 255.0 << "%" << diff << "ms";
 
-	if (avgMeanLuminanceMeasured < InternalIspAfps::ThreasholdMin)
-		this->setLowerFps();
-	else if (avgMeanLuminanceMeasured >= InternalIspAfps::ThreasholdMax)
-		this->setHigherFps();
+	// if (avgMeanLuminanceMeasured < InternalIspAfps::ThreasholdMin)
+	// 	this->setLowerFps();
+	// else if (avgMeanLuminanceMeasured >= InternalIspAfps::ThreasholdMax)
+	// 	this->setHigherFps();
 
 	if (this->fps == 7 && !this->grayMode)
 		this->setGrayMode(true);
 	else if (this->fps != 7 && this->grayMode)
 		this->setGrayMode(false);
+}
+
+void InternalIspAfps::SetIso(int iso)
+{
+	if (!this->isInitialized())
+		return;
+
+	if (iso < 100 || iso > 1600)
+	{
+		qDebug() << "SetIso: Invalid ISO" << iso;
+		return;
+	}
+
+	this->iso = iso;
+
+		/* change only one time per 700 ms */
+	int diff = this->elapsedTimer.elapsed() - this->lastTime2;
+	if (diff < InternalIspAfps::MinChangeInterval)
+		return;
+
+	this->lastTime2 = this->elapsedTimer.elapsed();
+
+	// qDebug() << "iso:" << iso;
+
+	if (iso > 800)
+		this->setLowerFps();
+	else if (iso < 800)
+		this->setHigherFps();
 }
 
 void InternalIspAfps::setLowerFps()

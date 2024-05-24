@@ -3,6 +3,7 @@
 
 #include <QElapsedTimer>
 #include <QList>
+#include <QMap>
 #include <QPointF>
 
 class IspProcThread;    // forward declaration - fix "main file cannot be included recursively"
@@ -14,12 +15,15 @@ public:
 	void Initialize(IspProcThread *ispProcThread);
 	QString GetStatus();
 	void SetMeanLuminanceMeasured(QList<QPointF> meanLuminance);
+	void SetIso(int iso);
 
 private:
 	QElapsedTimer elapsedTimer;
 	clock_t lastTime = 0;
+	clock_t lastTime2 = 0;
 	IspProcThread *ispProcThread = nullptr;
-	int avgMeanLuminanceMeasured;
+	int avgMeanLuminanceMeasured = 0;
+	int iso = 0;
 
 	const int ThreasholdMin = 80;
 	const int ThreasholdMax = 100;
