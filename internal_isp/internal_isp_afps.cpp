@@ -20,6 +20,13 @@ bool InternalIspAfps::isInitialized()
 	return this->ispProcThread != nullptr;
 }
 
+QString InternalIspAfps::GetStatus()
+{
+	return "mean luminance: " + QString::number(this->avgMeanLuminanceMeasured) +
+			" thresholds: " + QString::number(InternalIspAfps::ThreasholdMin) + "|" +
+			QString::number(InternalIspAfps::ThreasholdMax);
+}
+
 void InternalIspAfps::SetMeanLuminanceMeasured(QList<QPointF> meanLuminanceMeasured)
 {
 	if (!this->isInitialized())
@@ -31,25 +38,30 @@ void InternalIspAfps::SetMeanLuminanceMeasured(QList<QPointF> meanLuminanceMeasu
 	std::sort(sortedList.begin(), sortedList.end());
 
 		/* Calculate average mean luminance measured without few brightest items */
-	const int SkipItemsCount = 7;
+	const int SkipItemsCount = 10;
 	int avgMeanLuminanceMeasured = 0;
 	for (int i = 0; i < sortedList.count() - SkipItemsCount; i++)
 		avgMeanLuminanceMeasured += sortedList[i];
 	avgMeanLuminanceMeasured /= meanLuminanceMeasured.count() - SkipItemsCount;
+	this->avgMeanLuminanceMeasured = avgMeanLuminanceMeasured;
 
+		/* change only one time per 700 ms */
 	int diff = this->elapsedTimer.elapsed() - this->lastTime;
+	if (diff < InternalIspAfps::MinChangeInterval)
+		return;
+
 	this->lastTime = this->elapsedTimer.elapsed();
 
 	qDebug() << avgMeanLuminanceMeasured << avgMeanLuminanceMeasured * 100.0 / 255.0 << "%" << diff << "ms";
 
-	if (avgMeanLuminanceMeasured < 50)
+	if (avgMeanLuminanceMeasured < InternalIspAfps::ThreasholdMin)
 		this->setLowerFps();
-	else if (avgMeanLuminanceMeasured >= 70)
+	else if (avgMeanLuminanceMeasured >= InternalIspAfps::ThreasholdMax)
 		this->setHigherFps();
 
 	if (this->fps == 7 && !this->grayMode)
 		this->setGrayMode(true);
-	if (this->fps != 7 && this->grayMode)
+	else if (this->fps != 7 && this->grayMode)
 		this->setGrayMode(false);
 }
 

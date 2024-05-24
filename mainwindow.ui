@@ -170,6 +170,12 @@
     </item>
     <item row="1" column="0">
      <widget class="QPushButton" name="saveButton">
+      <property name="maximumSize">
+       <size>
+        <width>200</width>
+        <height>16777215</height>
+       </size>
+      </property>
       <property name="text">
        <string>Save XML and reload driver</string>
       </property>

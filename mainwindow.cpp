@@ -438,14 +438,12 @@ void MainWindow::updateControls2fromXml()
 
 void MainWindow::timerEvent(QTimerEvent* /* event */)
 {
-	// int diff = this->elapsedTimer.elapsed() - this->lastTime;
+	this->ui->fpsLabel->setText("FPS: " + QString::number(ispProcThread->readFps) + ", " + ispProcThread->GetStatus());
 
-	this->ui->fpsLabel->setText("FPS: " + QString::number(ispProcThread->readFps));
-
+		/* set initial FPS at startup */
 	if (this->setFpsTime > 0 && this->elapsedTimer.elapsed() - this->setFpsTime >= 1000)
 	{
 		this->setFpsTime = 0;
-		// this->setFps(this->lastSetFps);
 		ispControl.setParamNumber("", IF_S_FPS, "fps", this->lastSetFps, 1);
 
 		this->lastTime = this->elapsedTimer.elapsed();
@@ -569,6 +567,11 @@ void MainWindow::signal_update_matrix_view(MatrixViewWidget *matrixView, QList<Q
 	this->canUpdateControls = true;
 }
 
+void MainWindow::on_tabWidget_currentChanged(int index)
+{
+	this->ui->saveButton->setVisible(index == 1);
+}
+
 /*
 
 	to do:
@@ -576,13 +579,7 @@ void MainWindow::signal_update_matrix_view(MatrixViewWidget *matrixView, QList<Q
 + reset to initial/default
 + AE parameters
 + FPS
-- rest controls
++ rest controls
 - presets
 
 */
-
-void MainWindow::on_tabWidget_currentChanged(int index)
-{
-	this->ui->saveButton->setVisible(index == 1);
-}
-

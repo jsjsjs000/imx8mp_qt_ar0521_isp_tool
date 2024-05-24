@@ -46,6 +46,7 @@ public:
 	int readFps = 0;
 	explicit IspProcThread(QObject *parent, IspControl &ispControl, ControlsDefinitions &controlsDefinition, QMap<QString, QWidget*> &widgets);
 	void AddCommandToQueue(const CommandItem &commandItem);
+	QString GetStatus();
 
 signals:
 	void signal_update_slider_control_int(SliderWidget *slider, int value);

@@ -35,6 +35,11 @@ void IspProcThread::AddCommandToQueue(const CommandItem &commandItem)
 	this->commandsQueueMutex.unlock();
 }
 
+QString IspProcThread::GetStatus()
+{
+	return this->internalIspAfps.GetStatus();
+}
+
 bool IspProcThread::isCommandQueueNotEmpty()
 {
 	this->commandsQueueMutex.lock();
