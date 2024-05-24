@@ -38,7 +38,7 @@ void InternalIspAfps::SetMeanLuminanceMeasured(QList<QPointF> meanLuminanceMeasu
 	std::sort(sortedList.begin(), sortedList.end());
 
 		/* Calculate average mean luminance measured without few brightest items */
-	const int SkipItemsCount = 10;
+	const int SkipItemsCount = 0;
 	int avgMeanLuminanceMeasured = 0;
 	for (int i = 0; i < sortedList.count() - SkipItemsCount; i++)
 		avgMeanLuminanceMeasured += sortedList[i];
@@ -52,7 +52,7 @@ void InternalIspAfps::SetMeanLuminanceMeasured(QList<QPointF> meanLuminanceMeasu
 
 	this->lastTime = this->elapsedTimer.elapsed();
 
-	qDebug() << avgMeanLuminanceMeasured << avgMeanLuminanceMeasured * 100.0 / 255.0 << "%" << diff << "ms";
+	// qDebug() << avgMeanLuminanceMeasured << avgMeanLuminanceMeasured * 100.0 / 255.0 << "%" << diff << "ms";
 
 	if (avgMeanLuminanceMeasured < InternalIspAfps::ThreasholdMin)
 		this->setLowerFps();

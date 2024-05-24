@@ -21,12 +21,12 @@ private:
 	IspProcThread *ispProcThread = nullptr;
 	int avgMeanLuminanceMeasured;
 
-	const int ThreasholdMin = 60;
-	const int ThreasholdMax = 70;
+	const int ThreasholdMin = 80;
+	const int ThreasholdMax = 100;
 	const int MinChangeInterval = 700;
 		/* allowed FPS list for AR0521 1920x1080 */
 	const QList<uint8_t> AllowedFPS = { 7, 8, 9, 11, 12, 14, 16, 20, 25, 33, 50, 100 };
-	int fpsIndex = 9;  // 33 fps
+	int fpsIndex = 9;  // initial 33 fps
 	int fps = 33;
 	bool grayMode = false;
 
