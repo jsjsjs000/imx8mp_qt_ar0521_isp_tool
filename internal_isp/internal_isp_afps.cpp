@@ -60,10 +60,10 @@ void InternalIspAfps::SetMeanLuminanceMeasured(QList<QPointF> meanLuminanceMeasu
 	// else if (avgMeanLuminanceMeasured >= InternalIspAfps::ThreasholdMax)
 	// 	this->setHigherFps();
 
-	if (this->fps == 7 && !this->grayMode)
-		this->setGrayMode(true);
-	else if (this->fps != 7 && this->grayMode)
-		this->setGrayMode(false);
+	// if (this->fps == 7 && !this->grayMode)
+	// 	this->setGrayMode(true);
+	// else if (this->fps != 7 && this->grayMode)
+	// 	this->setGrayMode(false);
 }
 
 void InternalIspAfps::SetIso(int iso)
@@ -88,9 +88,9 @@ void InternalIspAfps::SetIso(int iso)
 
 	// qDebug() << "iso:" << iso;
 
-	if (iso > 800)
+	if (iso > 400)
 		this->setLowerFps();
-	else if (iso < 800)
+	else if (iso < 400)
 		this->setHigherFps();
 }
 
@@ -131,3 +131,12 @@ void InternalIspAfps::setGrayMode(bool grayMode)
 	CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Bool, IF_DEMOSAIC_G_EN,  IF_DEMOSAIC_S_EN,  DEMOSAIC_ENABLE_PARAMS, !grayMode);
 	ispProcThread->AddCommandToQueue(commandItem);
 }
+
+// gamma correction equation: y = 1024 * (x / 17) ^ 0.7
+//	https://desmos.com/calculator y=1024\cdot\left(\frac{x}{17}\right)^{0.7}
+
+// nano /opt/imx8-isp/bin/xml/VM-017-COL_AO062-C_1920x1080.xml
+// sensor/CC/cell[index=2]/ccMatrix
+//	[2.47656 -0.90625 0.0546875 -0.492188 2.125 -0.609375 -0.03125 -0.671875 1.95146]
+// sensor/CC/cell[index=2]/ccOffsets
+//	[-59 -256 -59]

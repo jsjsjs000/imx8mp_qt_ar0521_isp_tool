@@ -98,7 +98,7 @@ public:
 		controls.append(new GroupControl2( "CC - Color Correction - D50_100"));
 		controls.append(new ChartControl2( "sensor/CC/cell[index=2]/saturation",                "saturation",                             0.0f, 200,   20, false, "Saturation value."));
 		controls.append(new ChartControl2( "sensor/CC/cell[index=2]/ccMatrix",                  "ccMatrix",                              -3.0f,   3, 0.5f, false, "CC matrices of the light source."));
-		controls.append(new ChartControl2( "sensor/CC/cell[index=2]/ccOffsets",                 "ccOffsets",                           -100.0f, 100,   20, false, "CC offset matrices of the light source."));
+		controls.append(new ChartControl2( "sensor/CC/cell[index=2]/ccOffsets",                 "ccOffsets",                           -512.0f,  50,   50, false, "CC offset matrices of the light source."));
 		controls.append(new ChartControl2( "sensor/CC/cell[index=2]/wb",                        "wb",                                     0.0f,   3, 0.2f, false, "Wb gains of the light source."));
 
 		controls.append(new GroupControl2( "AEC - Auto Exposure Control - ECM 15 FPS - fast"));

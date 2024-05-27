@@ -131,14 +131,14 @@ void MainWindow::killGStreamerProcess()
 
 void MainWindow::createGStreamerProcess()
 {
-	int PreviewWidth = 1540;
-	int PreviewHeight = 1050;
-	// qDebug() << this->Width / (float)this->Height << PreviewWidth / (float)PreviewHeight;
-	if (this->Width / (float)this->Height > PreviewWidth / (float)PreviewHeight)
-		PreviewHeight = PreviewWidth * this->Height / this->Width;
+	int previewWidth = this->PreviewWidth;
+	int previewHeight = this->PreviewHeight;
+	// qDebug() << this->Width / (float)this->Height << previewWidth / (float)previewHeight;
+	if (this->Width / (float)this->Height > this->PreviewWidth / (float)this->PreviewHeight)
+		previewHeight = PreviewWidth * this->Height / this->Width;
 	else
-		PreviewWidth = PreviewHeight * this->Width / this->Height;
-	// qDebug() << PreviewWidth << PreviewHeight;
+		previewWidth = PreviewHeight * this->Width / this->Height;
+	// qDebug() << previewWidth << previewHeight;
 
 	QProcess *process = new QProcess(this);
 	QString program = "gst-launch-1.0";
@@ -148,7 +148,7 @@ void MainWindow::createGStreamerProcess()
 	process->start(program, QStringList({
 			"v4l2src", "device=/dev/video0", "!",
 			caps, "!", "queue", "!",
-			"waylandsink", "window-width=" + QString::number(PreviewWidth), "window-height=" + QString::number(PreviewHeight)}));
+			"waylandsink", "window-width=" + QString::number(previewWidth), "window-height=" + QString::number(previewHeight)}));
 	process->waitForFinished(1000);
 }
 

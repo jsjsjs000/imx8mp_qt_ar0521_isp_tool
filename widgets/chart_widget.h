@@ -46,6 +46,7 @@ private:
 	const int padRight = 10;
 	const int padBottom = 15;
 
+	int controlType = 0;
 	QString title;
 	QString description;
 	float x1 = 0.0f;

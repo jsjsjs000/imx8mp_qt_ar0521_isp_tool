@@ -46,6 +46,10 @@ private:
 	const int Height = 1080;
 	// const int Width = 2592;  // 1.333
 	// const int Height = 1944;
+	// const int PreviewWidth = 1540;
+	// const int PreviewHeight = 1050;
+	const int PreviewWidth = 1920;
+	const int PreviewHeight = 1080;
 
 	Ui::MainWindow *ui;
 	//QMediaPlayer *player;

@@ -20,6 +20,7 @@ ChartWidget::ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartCon
 		, ui(new Ui::Chart)
 {
 	ui->setupUi(this);
+	this->controlType = 1;
 	this->setMouseTracking(true);
 	this->setAttribute(Qt::WA_Hover);
 
@@ -48,6 +49,7 @@ ChartWidget::ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartCon
 		, ui(new Ui::Chart)
 {
 	ui->setupUi(this);
+	this->controlType = 2;
 	this->setMouseTracking(true);
 	this->setAttribute(Qt::WA_Hover);
 
@@ -86,6 +88,10 @@ void ChartWidget::initialize(float x1, float x2, float y1, float y2, float gridX
 
 	this->recalculateSize();
 	this->repaint();
+
+	if (this->controlType == 1 && this->defaultPoints.empty())
+		for (int i = 0; i < this->points.count(); i++)
+			this->defaultPoints.push_back(this->points[i]);
 }
 
 void ChartWidget::initializeDefaultAndFactoryPoints(QList<QPointF> defaultPoints, QList<QPointF> factoryPoints)
@@ -103,15 +109,18 @@ void ChartWidget::slotCustomMenuRequested(QPoint pos)
 	QAction *actionReset = new QAction("Reset to program start", this);
 	connect(actionReset, SIGNAL(triggered()), this, SLOT(actionResetDefaultSlot()));
 	menu->addAction(actionReset);
-	QAction *actionFactory = new QAction("Reset to factory default", this);
-	connect(actionFactory, SIGNAL(triggered()), this, SLOT(actionResetFactorySlot()));
-	menu->addAction(actionFactory);
+	if (this->controlType == 2)
+	{
+		QAction *actionFactory = new QAction("Reset to factory default", this);
+		connect(actionFactory, SIGNAL(triggered()), this, SLOT(actionResetFactorySlot()));
+		menu->addAction(actionFactory);
+	}
 	menu->popup(this->mapToGlobal(pos));
 }
 
 void ChartWidget::actionResetDefaultSlot()
 {
-	for (int i = 0; i < this->defaultPoints.count() - 1; i++)
+	for (int i = 0; i < this->defaultPoints.count(); i++)
 		this->points[i] = this->defaultPoints[i];
 	this->executeChangedEvent();
 	this->repaint();
@@ -119,7 +128,7 @@ void ChartWidget::actionResetDefaultSlot()
 
 void ChartWidget::actionResetFactorySlot()
 {
-	for (int i = 0; i < this->factoryPoints.count() - 1; i++)
+	for (int i = 0; i < this->factoryPoints.count(); i++)
 		this->points[i] = this->factoryPoints[i];
 	this->executeChangedEvent();
 	this->repaint();
@@ -296,7 +305,9 @@ void ChartWidget::mousePressEvent(QMouseEvent *event)
 		int x = round(p.x());
 		if (x >= 0 && x < this->points.count())
 		{
-			this->points[x].setY(p.y());
+			float y = fmax(p.y(), this->y1);
+			y = fmin(y, this->y2);
+			this->points[x].setY(y);
 			this->repaint();
 
 			this->executeChangedEvent();
@@ -328,7 +339,9 @@ void ChartWidget::mouseMoveEvent(QMouseEvent *event)
 	{
 		if (x >= 0 && x < this->points.count())
 		{
-			this->points[x].setY(p.y());
+			float y = fmax(p.y(), this->y1);
+			y = fmin(y, this->y2);
+			this->points[x].setY(y);
 			this->executeChangedEvent();
 		}
 	}
