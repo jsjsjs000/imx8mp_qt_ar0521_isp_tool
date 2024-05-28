@@ -133,10 +133,9 @@ public:
 
 		// $$ aFpsMaxGain
 
-
 		controls.append(new GroupControl2( "Degamma"));
-		controls.append(new ChartControl2( "sensor/DEGAMMA/cell/degamma_dx",     "degamma_dx",   0.0f, 5000, 500, false, "Brightness value before linearity correction."));
-		controls.append(new ChartControl2( "sensor/DEGAMMA/cell/degamma_y",      "degamma_y",    0.0f, 5000, 500, false, "Brightness value after linearity correction."));
+		controls.append(new ChartControl2( "sensor/DEGAMMA/cell/degamma_dx",     "degamma_dx",   0.0f, 4095, 500, false, "Brightness value before linearity correction.", true));
+		controls.append(new ChartControl2( "sensor/DEGAMMA/cell/degamma_y",      "degamma_y",    0.0f, 4095, 500, false, "Brightness value after linearity correction.", true));
 	}
 };
 

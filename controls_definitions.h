@@ -144,10 +144,10 @@ public:
 		controls.append(new GroupControl("GC - Gamma control"));
 		controls.append(new CheckBoxControl(IF_GC_G_EN,  IF_GC_S_EN,       GC_ENABLE_PARAMS,        "Enabled",                   true,     "The state of the Gamma Control"));
 		// IF_GC_G_CURVE - the same as IF_GC_G_CFG
-		controls.append(new ChartControl(   IF_GC_G_CFG, IF_GC_S_CFG,      GC_CURVE_PARAMS,         "Gamma curve",               "Gamma curve; data array length is 17", 0, 1024, 100, &typeid(int), false));
+		controls.append(new ChartControl(   IF_GC_G_CFG, IF_GC_S_CFG,      GC_CURVE_PARAMS,         "Gamma curve",               "Gamma curve; data array length is 17", 0, 1023, 100, &typeid(int), false, true));
 			QMap<int, QString> *gcmodeMap = new QMap<int, QString>;
 			gcmodeMap->insert({{1, "Logarithmic mode"}, {2, "Equidistant mode"}});
-		controls.append(new ComboBoxControl(IF_GC_G_CFG, IF_GC_S_CFG,      GC_MODE_PARAMS,          "Gamma segmentation mode", gcmodeMap, "Selects the gamma segmentation mode. Logarithmic: logarithmic segmentation from 0 to 4095, (64,64,64,64,128,128,128,128,256,256,256,512,512,512,512,512)\nEquidistant: equidistant segmentation from 0 to 4095, (256, 256, ... ); all 16 segments are 256."));
+		controls.append(new ComboBoxControl(IF_GC_G_CFG, IF_GC_S_CFG,      GC_MODE_PARAMS,          "Gamma segmentation mode",   gcmodeMap, "Selects the gamma segmentation mode. Logarithmic: logarithmic segmentation from 0 to 4095, (64,64,64,64,128,128,128,128,256,256,256,512,512,512,512,512)\nEquidistant: equidistant segmentation from 0 to 4095, (256, 256, ... ); all 16 segments are 256.", false));
 
 		controls.append(new GroupControl("HDR - High Dynamic Range"));
 		controls.append(new CheckBoxControl(IF_HDR_G_EN,  IF_HDR_S_EN,   HDR_ENABLE_PARAMS,         "Enabled",         true,     "The state of High Dynamic Range"));

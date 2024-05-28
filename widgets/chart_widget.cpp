@@ -41,6 +41,10 @@ ChartWidget::ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartCon
 	this->recalculateSize();
 
 	this->setToolTip(chartControl->description);
+
+	this->ui->labelGamma->setVisible(this->chartControl->gammaCurve);
+	this->ui->pushButtonPlus->setVisible(this->chartControl->gammaCurve);
+	this->ui->pushButtonMinus->setVisible(this->chartControl->gammaCurve);
 }
 
 ChartWidget::ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartControl2 *chartControl2,
@@ -68,6 +72,10 @@ ChartWidget::ChartWidget(QWidget *parent, MainWindow *mainWindow, const ChartCon
 	this->recalculateSize();
 
 	this->setToolTip(chartControl2->description);
+
+	this->ui->labelGamma->setVisible(this->chartControl2->gammaCurve);
+	this->ui->pushButtonPlus->setVisible(this->chartControl2->gammaCurve);
+	this->ui->pushButtonMinus->setVisible(this->chartControl2->gammaCurve);
 }
 
 ChartWidget::~ChartWidget()
@@ -376,4 +384,29 @@ void ChartWidget::recalculateSize()
 	this->h = this->height() - 1 - this->padTop - this->padBottom;
 	this->dx = this->w / (this->x2 - this->x1);
 	this->dy = this->h / (this->y2 - this->y1);
+}
+
+void ChartWidget::on_pushButtonPlus_clicked()
+{
+	this->gamma += 0.05f;
+	this->updateGammaCurve();
+}
+
+void ChartWidget::on_pushButtonMinus_clicked()
+{
+	this->gamma -= 0.05f;
+	this->updateGammaCurve();
+}
+
+void ChartWidget::updateGammaCurve()
+{
+	this->ui->labelGamma->setText(QString::number(this->gamma, 'f', 2));
+
+	float dy = this->y2 - this->y1;
+	int count = this->points.count() - 1;
+	for (int i = 0; i < this->points.count(); i++)
+		this->points[i].setY(dy * pow((float)i / count, gamma));
+
+	this->repaint();
+	this->executeChangedEvent();
 }

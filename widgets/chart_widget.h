@@ -29,6 +29,10 @@ private slots:
 	void actionResetDefaultSlot();
 	void actionResetFactorySlot();
 
+	void on_pushButtonPlus_clicked();
+
+	void on_pushButtonMinus_clicked();
+
 protected:
 	void slotCustomMenuRequested(QPoint pos);
 	bool event(QEvent *event);
@@ -58,6 +62,7 @@ private:
 	int h = 1;
 	float dx = 1.0f;
 	float dy = 1.0f;
+	float gamma = 1.0f;
 
 	QList<QPointF> points;
 	QList<QPointF> defaultPoints;
@@ -81,6 +86,7 @@ private:
 	void recalculateSize();
 	void (*onChartPointsChanged)(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, QList<QPointF> points) = nullptr;
 	void (*onChartPointsChanged2)(MainWindow *mainWindow, QString node, QList<QPointF> points) = nullptr;
+	void updateGammaCurve();
 };
 
 #endif // CHART_H

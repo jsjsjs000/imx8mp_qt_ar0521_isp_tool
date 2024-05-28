@@ -245,8 +245,9 @@ public:
 	float y1, y2, gridY;
 	const std::type_info *type;
 	bool readonly;
+	bool gammaCurve;
 
-	ChartControl(QString getCmd, QString setCmd, QString parameter, QString name, QString description, float y1, float y2, float gridY, const std::type_info *type, bool readonly)
+	ChartControl(QString getCmd, QString setCmd, QString parameter, QString name, QString description, float y1, float y2, float gridY, const std::type_info *type, bool readonly = false, bool gammaCurve = false)
 	{
 		this->getCmd = getCmd;
 		this->setCmd = setCmd;
@@ -258,6 +259,7 @@ public:
 		this->gridY = gridY;
 		this->type = type;
 		this->readonly = readonly;
+		this->gammaCurve = gammaCurve;
 	}
 };
 

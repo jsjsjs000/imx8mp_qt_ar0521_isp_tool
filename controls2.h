@@ -134,8 +134,9 @@ class ChartControl2 : public Control2
 public:
 	float y1, y2, gridY;
 	bool readonly;
+	bool gammaCurve;
 
-	ChartControl2(QString node, QString name, float y1, float y2, float gridY, bool readonly, QString description)
+	ChartControl2(QString node, QString name, float y1, float y2, float gridY, bool readonly, QString description, bool gammaCurve = false)
 	{
 		this->node = node;
 		this->name = name;
@@ -144,6 +145,7 @@ public:
 		this->gridY = gridY;
 		this->readonly = readonly;
 		this->description = description;
+		this->gammaCurve = gammaCurve;
 	}
 };
 

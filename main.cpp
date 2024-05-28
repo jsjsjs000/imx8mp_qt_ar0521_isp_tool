@@ -106,4 +106,19 @@ https://stackoverflow.com/questions/76201961/can-not-display-gstreamer-inside-wi
 https://www.nxp.com/docs/en/user-guide/IMX_LINUX_USERS_GUIDE.pdf
 7.3.1.6.3 Multiple videos overlay
 
+	Gamma correction
+gamma correction equation: y = 1024 * (x / 17) ^ 0.7
+https://desmos.com/calculator y=1024\cdot\left(\frac{x}{17}\right)^{0.7}
+
+nano /opt/imx8-isp/bin/xml/VM-017-COL_AO062-C_1920x1080.xml
+sensor/CC/cell[index=2]/ccMatrix
+	[2.47656 -0.90625 0.0546875 -0.492188 2.125 -0.609375 -0.03125 -0.671875 1.95146] // base fix
+	[2.47656 -0.90625 -0.0582523 -0.492188 2.125 -0.46875 -0.03125 -0.679688 1.89063] // option 2
+	[2.46875 -0.90625 0.203125 -0.320313 2.125 -0.523438 0.0546875 -0.695313 2.03884] // option 3
+sensor/CC/cell[index=2]/ccOffsets
+	[-59 -150 -59]
+
+XML - degamma_dx:
+	0.75
+
 */
