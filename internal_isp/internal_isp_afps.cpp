@@ -88,9 +88,9 @@ void InternalIspAfps::SetIso(int iso)
 
 	// qDebug() << "iso:" << iso;
 
-	if (iso > 400)
+	if (iso > this->TargetIso)
 		this->setLowerFps();
-	else if (iso < 400)
+	else if (iso < this->TargetIso)
 		this->setHigherFps();
 }
 
@@ -124,10 +124,10 @@ void InternalIspAfps::setFps(int fps)
 	ispProcThread->AddCommandToQueue(commandItem);
 }
 
-void InternalIspAfps::setGrayMode(bool grayMode)
-{
-	this->grayMode = grayMode;
+// void InternalIspAfps::setGrayMode(bool grayMode)
+// {
+// 	this->grayMode = grayMode;
 
-	CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Bool, IF_DEMOSAIC_G_EN,  IF_DEMOSAIC_S_EN,  DEMOSAIC_ENABLE_PARAMS, !grayMode);
-	ispProcThread->AddCommandToQueue(commandItem);
-}
+// 	CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Bool, IF_DEMOSAIC_G_EN,  IF_DEMOSAIC_S_EN,  DEMOSAIC_ENABLE_PARAMS, !grayMode);
+// 	ispProcThread->AddCommandToQueue(commandItem);
+// }

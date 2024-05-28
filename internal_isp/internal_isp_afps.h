@@ -25,20 +25,21 @@ private:
 	int avgMeanLuminanceMeasured = 0;
 	int iso = 0;
 
-	const int ThreasholdMin = 80;
-	const int ThreasholdMax = 100;
-	const int MinChangeInterval = 700;
+	const int TargetIso = 400;
+	// const int ThreasholdMin = 80;
+	// const int ThreasholdMax = 100;
+	const int MinChangeInterval = 400; // ms
 		/* allowed FPS list for AR0521 1920x1080 */
 	const QList<uint8_t> AllowedFPS = { 7, 8, 9, 11, 12, 14, 16, 20, 25, 33, 50, 100 };
 	int fpsIndex = 9;  // initial 33 fps
 	int fps = 33;
-	bool grayMode = false;
+	// bool grayMode = false;
 
 	bool isInitialized();
 	void setLowerFps();
 	void setHigherFps();
 	void setFps(int fps);
-	void setGrayMode(bool grayMode);
+	// void setGrayMode(bool grayMode);
 };
 
 #endif // INTERNALISPAFPS_H
