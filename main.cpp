@@ -107,18 +107,21 @@ https://www.nxp.com/docs/en/user-guide/IMX_LINUX_USERS_GUIDE.pdf
 7.3.1.6.3 Multiple videos overlay
 
 	Gamma correction
-gamma correction equation: y = 1024 * (x / 17) ^ 0.7
-https://desmos.com/calculator y=1024\cdot\left(\frac{x}{17}\right)^{0.7}
+gamma correction equation: y = 1024 * (x / (16 + 1))) ^ 0.7
+https://desmos.com/calculator y=1024\cdot\left(\frac{x}{16+1}\right)^{0.7}
 
+	Fix camera Phytec VM-017 colors (black color on low luminacance)
 nano /opt/imx8-isp/bin/xml/VM-017-COL_AO062-C_1920x1080.xml
-sensor/CC/cell[index=2]/ccMatrix
-	[2.47656 -0.90625 0.0546875 -0.492188 2.125 -0.609375 -0.03125 -0.671875 1.95146] // base fix
+# ----------------------------------------
+<sensor/CC/cell[index=2]/ccMatrix>:
+	[2.47656 -0.90625 0.0546875 -0.492188 2.125 -0.609375 -0.03125 -0.671875 1.95146] // option 1
 	[2.47656 -0.90625 -0.0582523 -0.492188 2.125 -0.46875 -0.03125 -0.679688 1.89063] // option 2
-	[2.46875 -0.90625 0.203125 -0.320313 2.125 -0.523438 0.0546875 -0.695313 2.03884] // option 3
-sensor/CC/cell[index=2]/ccOffsets
+	[2.46875 -0.90625 0.203125 -0.320313 2.125 -0.523438 0.0546875 -0.695313 2.03884] // option 3 - newest
+<sensor/CC/cell[index=2]/ccOffsets>:
 	[-59 -150 -59]
 
-XML - degamma_dx:
-	0.75
+<sensor/DEGAMMA/cell/degamma_dx>: 0.75
+	[0.000000 537.261288 903.562145 1224.690783 1519.604274 1796.441185 2059.676093 2312.112773 2555.659468 2791.691152 3021.241781 3245.114244 3463.948344 3678.264729 3888.494524 4095.000000]
+# ----------------------------------------
 
 */
