@@ -182,7 +182,7 @@ public:
 
 		controls.append(new GroupControl("WB - White Balance"));
 		controls.append(new ChartControl(   IF_WB_G_CFG, IF_WB_S_CCM,    WB_MATRIX_PARAMS,   "Color correction Matrix (X-Talk)",                "",   -3,    3,  1, &typeid(float), false));    // niepewne czy dobrze zapisuje bo getCmd != setCmd
-		controls.append(new ChartControl(   IF_WB_G_CFG, IF_WB_S_OFFSET, WB_OFFSET_PARAMS,   "[red, green, blue] offset",                       "", -512,   50, 50, &typeid(int),   false));    // niepewne czy dobrze zapisuje bo getCmd != setCmd
+		controls.append(new ChartControl(   IF_WB_G_CFG, IF_WB_S_OFFSET, WB_OFFSET_PARAMS,   "[red, green, blue] offset",                       "", -1000,   50, 50, &typeid(int),   false));    // niepewne czy dobrze zapisuje bo getCmd != setCmd
 		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG,    WB_RED_PARAMS,      "WB gains red",             0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));
 		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG,    WB_GREEN_R_PARAMS,  "WB gains green.r",         0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));
 		controls.append(new SliderControl(  IF_WB_G_CFG, IF_WB_S_CFG,    WB_GREEN_B_PARAMS,  "WB gains green.b",         0.0f, 3.999f, 0.0f, 3, "Disable AWB (Auto White Balance) first"));

@@ -44,6 +44,8 @@ int main(int argc, char *argv[])
 {
 	QApplication application(argc, argv);
 
+	qDebug() << argc << argv[1];
+
 	const int DesktopTaskBarHeight = 32;
 	const int MainWindowWidth = 360;
 	const int WindowBorder = 5;
