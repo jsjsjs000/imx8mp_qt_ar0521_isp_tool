@@ -88,9 +88,9 @@ void InternalIspAfps::SetIso(int iso)
 
 	// qDebug() << "iso:" << iso;
 
-	if (iso > this->TargetIso)
+	if (iso > this->TargetIso && this->fps > 7)
 		this->setLowerFps();
-	else if (iso < this->TargetIso)
+	else if (iso < this->TargetIso && this->fps < 100)
 		this->setHigherFps();
 }
 
