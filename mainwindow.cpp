@@ -6,6 +6,7 @@
 
 #include "command_item.h"
 #include "controls_definitions.h"
+#include "screenshot_checker.h"
 #include <widgets/chart_widget.h>
 #include <widgets/checkbox_widget.h>
 #include <widgets/combobox_widget.h>
@@ -25,6 +26,7 @@ IspControl ispControl;
 IspProcThread *ispProcThread;
 ControlsDefinitions controlsDefinition;
 Controls2Definitions controls2Definition;
+ScreenshotChecker *screenshotChecker;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -55,18 +57,24 @@ MainWindow::MainWindow(QWidget *parent)
 	this->killGStreamerProcess();
 	this->createGStreamerProcess();
 
-	ispControl.openVideo();
+	int video = ispControl.openVideo();
 
 	controls2Definition.readXml();
 	this->updateControls2fromXml();
 
 	this->canUpdateControls = true;
 
-	this->elapsedTimer.start();
-	this->lastTime = this->elapsedTimer.elapsed();
-	timerId = startTimer(500);
+	if (!video)
+	{
+		this->elapsedTimer.start();
+		this->lastTime = this->elapsedTimer.elapsed();
+		timerId = startTimer(500);
 
-	this->runProcFsThread();
+		this->runProcFsThread();
+	}
+
+	screenshotChecker = new ScreenshotChecker(this);
+	screenshotChecker->start();
 }
 
 MainWindow::~MainWindow()
