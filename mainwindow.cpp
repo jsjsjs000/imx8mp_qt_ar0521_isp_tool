@@ -76,7 +76,7 @@ MainWindow::MainWindow(QWidget *parent)
 	}
 
 	screenshotChecker = new ScreenshotChecker(this);
-	connect(screenshotChecker, &ScreenshotChecker::signal_show_rename_screenshot_window, this, &MainWindow::signal_show_rename_screenshot_window);
+	connect(screenshotChecker, &ScreenshotChecker::signal_show_rename_screenshot_window, this, &MainWindow::slot_show_rename_screenshot_window);
 	screenshotChecker->start();
 }
 
@@ -113,16 +113,16 @@ void MainWindow::setFps(int fps)
 void MainWindow::runProcFsThread()
 {
 	ispProcThread = new IspProcThread(this, ispControl, controlsDefinition, this->widgets);
-	connect(ispProcThread, &IspProcThread::signal_update_slider_control_int,         this, &MainWindow::signal_update_slider_control_int);
-	connect(ispProcThread, &IspProcThread::signal_update_slider_control_float,       this, &MainWindow::signal_update_slider_control_float);
-	connect(ispProcThread, &IspProcThread::signal_update_slider_array_control_int,   this, &MainWindow::signal_update_slider_array_control_int);
-	connect(ispProcThread, &IspProcThread::signal_update_slider_array_control_float, this, &MainWindow::signal_update_slider_array_control_float);
-	connect(ispProcThread, &IspProcThread::signal_update_comboBox_item_index,        this, &MainWindow::signal_update_comboBox_item_index);
-	connect(ispProcThread, &IspProcThread::signal_update_comboBox2_item_index,       this, &MainWindow::signal_update_comboBox2_item_index);
-	connect(ispProcThread, &IspProcThread::signal_update_checkBox_set_state,         this, &MainWindow::signal_update_checkBox_set_state);
-	connect(ispProcThread, &IspProcThread::signal_update_label_set_text,             this, &MainWindow::signal_update_label_set_text);
-	connect(ispProcThread, &IspProcThread::signal_update_chart,                      this, &MainWindow::signal_update_chart);
-	connect(ispProcThread, &IspProcThread::signal_update_matrix_view,                this, &MainWindow::signal_update_matrix_view);
+	connect(ispProcThread, &IspProcThread::signal_update_slider_control_int,         this, &MainWindow::slot_update_slider_control_int);
+	connect(ispProcThread, &IspProcThread::signal_update_slider_control_float,       this, &MainWindow::slot_update_slider_control_float);
+	connect(ispProcThread, &IspProcThread::signal_update_slider_array_control_int,   this, &MainWindow::slot_update_slider_array_control_int);
+	connect(ispProcThread, &IspProcThread::signal_update_slider_array_control_float, this, &MainWindow::slot_update_slider_array_control_float);
+	connect(ispProcThread, &IspProcThread::signal_update_comboBox_item_index,        this, &MainWindow::slot_update_comboBox_item_index);
+	connect(ispProcThread, &IspProcThread::signal_update_comboBox2_item_index,       this, &MainWindow::slot_update_comboBox2_item_index);
+	connect(ispProcThread, &IspProcThread::signal_update_checkBox_set_state,         this, &MainWindow::slot_update_checkBox_set_state);
+	connect(ispProcThread, &IspProcThread::signal_update_label_set_text,             this, &MainWindow::slot_update_label_set_text);
+	connect(ispProcThread, &IspProcThread::signal_update_chart,                      this, &MainWindow::slot_update_chart);
+	connect(ispProcThread, &IspProcThread::signal_update_matrix_view,                this, &MainWindow::slot_update_matrix_view);
 	ispProcThread->start();
 }
 
@@ -508,70 +508,70 @@ void MainWindow::reloadDriver()
 	this->setFpsTime = this->elapsedTimer.elapsed();
 }
 
-void MainWindow::signal_update_slider_control_int(SliderWidget *slider, int value)
+void MainWindow::slot_update_slider_control_int(SliderWidget *slider, int value)
 {
 	this->canUpdateControls = false;
 	slider->setValue(value);
 	this->canUpdateControls = true;
 }
 
-void MainWindow::signal_update_slider_control_float(SliderWidget *slider, float value)
+void MainWindow::slot_update_slider_control_float(SliderWidget *slider, float value)
 {
 	this->canUpdateControls = false;
 	slider->setValueFloat(value);
 	this->canUpdateControls = true;
 }
 
-void MainWindow::signal_update_slider_array_control_int(SliderArrayWidget *slider, QList<int> values)
+void MainWindow::slot_update_slider_array_control_int(SliderArrayWidget *slider, QList<int> values)
 {
 	this->canUpdateControls = false;
 	slider->setValues(values);
 	this->canUpdateControls = true;
 }
 
-void MainWindow::signal_update_slider_array_control_float(SliderArrayWidget *slider, QList<float> values)
+void MainWindow::slot_update_slider_array_control_float(SliderArrayWidget *slider, QList<float> values)
 {
 	this->canUpdateControls = false;
 	slider->setValuesFloats(values);
 	this->canUpdateControls = true;
 }
 
-void MainWindow::signal_update_comboBox_item_index(ComboBoxWidget *comboBox, int index)
+void MainWindow::slot_update_comboBox_item_index(ComboBoxWidget *comboBox, int index)
 {
 	this->canUpdateControls = false;
 	comboBox->setItemIndex(index);
 	this->canUpdateControls = true;
 }
 
-void MainWindow::signal_update_comboBox2_item_index(ComboBoxWidget2 *comboBox, QString index)
+void MainWindow::slot_update_comboBox2_item_index(ComboBoxWidget2 *comboBox, QString index)
 {
 	this->canUpdateControls = false;
 	comboBox->setItemIndex(index);
 	this->canUpdateControls = true;
 }
 
-void MainWindow::signal_update_checkBox_set_state(CheckBoxWidget *checkBox, bool state)
+void MainWindow::slot_update_checkBox_set_state(CheckBoxWidget *checkBox, bool state)
 {
 	this->canUpdateControls = false;
 	checkBox->setState((bool)state);
 	this->canUpdateControls = true;
 }
 
-void MainWindow::signal_update_label_set_text(LabelWidget *label, QString text)
+void MainWindow::slot_update_label_set_text(LabelWidget *label, QString text)
 {
 	this->canUpdateControls = false;
 	label->setText(text);
 	this->canUpdateControls = true;
 }
 
-void MainWindow::signal_update_chart(ChartWidget *chart, float x1, float x2, float y1, float y2, float gridX, float gridY, QList<QPointF> points)
+void MainWindow::slot_update_chart(ChartWidget *chart, float x1, float x2, float y1, float y2, float gridX, float gridY, QList<QPointF> points)
 {
 	this->canUpdateControls = false;
 	chart->initialize(x1, x2, y1, y2, gridX, gridY, points);
 	this->canUpdateControls = true;
 }
 
-void MainWindow::signal_update_matrix_view(MatrixViewWidget *matrixView, QList<QPointF> points)
+void MainWindow::slot_update_matrix_view(MatrixViewWidget *matrixView, QList<QPointF> points)
 {
 	this->canUpdateControls = false;
 	matrixView->setPoints(points);
@@ -583,7 +583,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 	this->ui->saveButton->setVisible(index == 1);
 }
 
-void MainWindow::signal_show_rename_screenshot_window(QString filename)
+void MainWindow::slot_show_rename_screenshot_window(QString filename)
 {
 	qDebug() << "screen" << filename;
 	this->displayRenameScreenshotWindow(filename);
@@ -601,19 +601,7 @@ void MainWindow::displayRenameScreenshotWindow(QString filename)
 	renameScreenshotWindow->setParameters(filename);
 
 	connect(renameScreenshotWindow, &RenameScreenshotWindow::signal_addFilenameToCachedFilesList,
-			screenshotChecker, &ScreenshotChecker::signal_addFilenameToCachedFilesList);
+			screenshotChecker, &ScreenshotChecker::slot_addFilenameToCachedFilesList);
 
 	renameScreenshotWindow->show();
 }
-
-/*
-
-	to do:
-+ thread
-+ reset to initial/default
-+ AE parameters
-+ FPS
-+ rest controls
-- presets
-
-*/

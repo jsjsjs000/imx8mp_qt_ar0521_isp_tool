@@ -27,20 +27,20 @@ public:
 private slots:
 	void on_saveButton_clicked();
 	bool event(QEvent *e);
-	void signal_update_slider_control_int(SliderWidget *slider, int value);
-	void signal_update_slider_control_float(SliderWidget *slider, float value);
-	void signal_update_slider_array_control_int(SliderArrayWidget *slider, QList<int> values);
-	void signal_update_slider_array_control_float(SliderArrayWidget *slider, QList<float> values);
-	void signal_update_comboBox_item_index(ComboBoxWidget *comboBox, int index);
-	void signal_update_comboBox2_item_index(ComboBoxWidget2 *comboBox, QString index);
-	void signal_update_checkBox_set_state(CheckBoxWidget *checkBox, bool state);
-	void signal_update_label_set_text(LabelWidget *label, QString text);
-	void signal_update_chart(ChartWidget *chart, float x1, float x2, float y1, float y2, float gridX, float gridY, QListQPointF points);
-	void signal_update_matrix_view(MatrixViewWidget *matrixView, QList<QPointF> points);
+	void slot_update_slider_control_int(SliderWidget *slider, int value);
+	void slot_update_slider_control_float(SliderWidget *slider, float value);
+	void slot_update_slider_array_control_int(SliderArrayWidget *slider, QList<int> values);
+	void slot_update_slider_array_control_float(SliderArrayWidget *slider, QList<float> values);
+	void slot_update_comboBox_item_index(ComboBoxWidget *comboBox, int index);
+	void slot_update_comboBox2_item_index(ComboBoxWidget2 *comboBox, QString index);
+	void slot_update_checkBox_set_state(CheckBoxWidget *checkBox, bool state);
+	void slot_update_label_set_text(LabelWidget *label, QString text);
+	void slot_update_chart(ChartWidget *chart, float x1, float x2, float y1, float y2, float gridX, float gridY, QListQPointF points);
+	void slot_update_matrix_view(MatrixViewWidget *matrixView, QList<QPointF> points);
 
 	void on_tabWidget_currentChanged(int index);
 
-	void signal_show_rename_screenshot_window(QString filename);
+	void slot_show_rename_screenshot_window(QString filename);
 
 private:
 	const int InitialFps = 30;

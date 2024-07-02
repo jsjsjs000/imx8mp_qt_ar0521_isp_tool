@@ -24,7 +24,7 @@ signals:
 	void signal_show_rename_screenshot_window(QString filename);
 
 public slots:
-	void signal_addFilenameToCachedFilesList(QString filename);
+	void slot_addFilenameToCachedFilesList(QString filename);
 };
 
 #endif // SCREENSHOT_CHECKER_H

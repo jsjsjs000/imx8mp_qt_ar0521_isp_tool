@@ -24,7 +24,7 @@ void ScreenshotChecker::run()
 	}
 }
 
-void ScreenshotChecker::signal_addFilenameToCachedFilesList(QString filename)
+void ScreenshotChecker::slot_addFilenameToCachedFilesList(QString filename)
 {
 	cachedFilesList << filename;
 }
