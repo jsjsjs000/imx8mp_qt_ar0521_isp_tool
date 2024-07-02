@@ -23,6 +23,8 @@ private:
 	clock_t lastTime2 = 0;
 	IspProcThread *ispProcThread = nullptr;
 	int avgMeanLuminanceMeasured = 0;
+	float gain = 0;
+	int exposureTime = 0;
 	int iso = 0;
 
 	const int TargetIso = 400;

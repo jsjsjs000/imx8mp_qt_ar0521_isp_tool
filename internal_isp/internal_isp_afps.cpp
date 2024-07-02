@@ -32,6 +32,7 @@ void InternalIspAfps::SetMeanLuminanceMeasured(QList<QPointF> meanLuminanceMeasu
 {
 	if (!this->isInitialized())
 		return;
+return;
 
 	QList<uint8_t> sortedList;
 	for (int i = 0; i < meanLuminanceMeasured.count(); i++)
@@ -70,6 +71,7 @@ void InternalIspAfps::SetIso(int iso)
 {
 	if (!this->isInitialized())
 		return;
+return;
 
 	if (iso < 100 || iso > 1600)
 	{
