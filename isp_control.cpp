@@ -259,10 +259,10 @@ bool IspControl::setParamBool(const char *getCmd, const char *setCmd, const char
 
 Json::Value IspControl::getParam(const char *getCmd)
 {
-	Json::Value jRequest, jResponse;
-	this->fixGetParam(&jRequest, getCmd);
-	if (!vivIoctl(getCmd, jRequest, jResponse))
+	// Json::Value jRequest, jResponse;
+	// this->fixGetParam(&jRequest, getCmd);
+	// if (!vivIoctl(getCmd, jRequest, jResponse))
 		return nullptr;
 
-	return jResponse;
+	// return jResponse;
 }

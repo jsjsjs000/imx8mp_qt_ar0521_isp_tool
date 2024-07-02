@@ -25,7 +25,7 @@ class MatrixViewWidget;
 
 class IspProcThread : public QThread
 {
-	Q_OBJECT;
+	Q_OBJECT
 
 private:
 	IspControl &ispControl;

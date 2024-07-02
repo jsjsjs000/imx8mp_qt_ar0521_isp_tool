@@ -17,6 +17,7 @@ SOURCES += \
 	isp_control.cpp \
 	isp_proc_thread.cpp \
 	isp_xml.cpp \
+	screenshot_checker.cpp \
 	main.cpp \
 	mainwindow.cpp \
 	lib/jsoncpp/src/lib_json/json_reader.cpp \
@@ -43,6 +44,7 @@ HEADERS += \
   isp_control.h \
 	isp_proc_thread.h \
 	isp_xml.h \
+	screenshot_checker.h \
 	mainwindow.h \
 	lib/json_helper/json_helper.h \
 	widgets/button_widget.h \
