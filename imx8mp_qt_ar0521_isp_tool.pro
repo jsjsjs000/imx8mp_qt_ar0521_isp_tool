@@ -17,6 +17,7 @@ SOURCES += \
 	isp_control.cpp \
 	isp_proc_thread.cpp \
 	isp_xml.cpp \
+  rename_screenshot_window.cpp \
 	screenshot_checker.cpp \
 	main.cpp \
 	mainwindow.cpp \
@@ -44,6 +45,7 @@ HEADERS += \
   isp_control.h \
 	isp_proc_thread.h \
 	isp_xml.h \
+  rename_screenshot_window.h \
 	screenshot_checker.h \
 	mainwindow.h \
 	lib/json_helper/json_helper.h \
@@ -60,6 +62,7 @@ HEADERS += \
 
 FORMS += \
 	mainwindow.ui \
+	rename_screenshot_window.ui \
 	widgets/button_widget.ui \
 	widgets/chart_widget.ui \
 	widgets/checkbox_widget.ui \

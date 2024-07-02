@@ -191,8 +191,9 @@ class CheckBoxControl : public Control
 
 public:
 	bool checked;
+	bool boolNotNumeric;  // set as true/false or 1/0
 
-	CheckBoxControl(QString getCmd, QString setCmd, QString parameter, QString name, bool checked, QString description)
+	CheckBoxControl(QString getCmd, QString setCmd, QString parameter, QString name, bool checked, QString description, bool boolNotNumeric = false)
 	{
 		this->getCmd = getCmd;
 		this->setCmd = setCmd;
@@ -200,6 +201,7 @@ public:
 		this->name = name;
 		this->checked = checked;
 		this->description = description;
+		this->boolNotNumeric = boolNotNumeric;
 	}
 };
 

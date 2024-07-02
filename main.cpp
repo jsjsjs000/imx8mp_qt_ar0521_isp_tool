@@ -31,9 +31,7 @@ void playVideo()
 	// playlist->setCurrentIndex(1);
 	player->play(); */
 
-	/* QImage myImage;
-￼
-
+/* QImage myImage;
 	myImage.load("/opt/qt12/bin/test.jpeg");
 	QLabel myLabel;
 	myLabel.setPixmap(QPixmap::fromImage(myImage));
@@ -42,9 +40,9 @@ void playVideo()
 
 int main(int argc, char *argv[])
 {
-	QApplication application(argc, argv);
-
 	// qDebug() << argc << argv[1];
+
+	QApplication application(argc, argv);
 
 	const int DesktopTaskBarHeight = 32;
 	const int MainWindowWidth = 360;
@@ -52,7 +50,7 @@ int main(int argc, char *argv[])
 	const QSize desktopSize = QGuiApplication::primaryScreen()->size();
 
 	MainWindow mainWindow;
-	mainWindow.setGeometry(0, DesktopTaskBarHeight,
+	mainWindow.setGeometry(1, 1,
 			MainWindowWidth + 2 * WindowBorder, desktopSize.height() - 2 * DesktopTaskBarHeight);
 	mainWindow.show();
 
@@ -61,17 +59,17 @@ int main(int argc, char *argv[])
 
 /*
 
-Projekty > ARM_PD_22.1.1 > Uruchamianie > Środowisko:
+Projekty > ARM_PD_23.1.0 > Uruchamianie > Środowisko:
 	DISPLAY=:0
 	GST_V4L2_USE_LIBV4L2=1
 
-Projekty > ARM_PD_22.1.1 > Uruchamianie > Środowisko:
+Projekty > ARM_PD_23.1.0 > Uruchamianie > Środowisko:
 	DISPLAY=:0
 	GDK_BACKEND=X11
 	GST_V4L2_USE_LIBV4L2=1
 	QT_QPA_PLATFORM=xcb
 
-Projekty > ARM_PD_22.1.1 > Uruchamianie > Środowisko: (nie działa wideo)
+Projekty > ARM_PD_23.1.0 > Uruchamianie > Środowisko: (nie działa wideo)
 	DISPLAY=:0:0
 	GST_V4L2_USE_LIBV4L2=1
 	QT_QPA_PLATFORM=wayland
@@ -99,7 +97,7 @@ https://gstreamer.freedesktop.org/documentation/installing/on-linux.html?gi-lang
 apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
 
 	get libraries list:
-pd22.1.1
+pd23.1.0
 pkg-config --cflags --libs gstreamer-video-1.0
 
 

@@ -102,7 +102,7 @@ public:
 		controls.append(new SliderControl(  IF_DEMOSAIC_G_CFG, IF_DEMOSAIC_S_CFG, DEMOSAIC_THRESHOLD_PARAMS, "Demosaic threshold", 0, 255, 0, "0: Maximum edge sensitivity\n255: No texture detection"));
 
 		controls.append(new GroupControl("DPCC -  Defect Pixel Cluster Correction"));
-		controls.append(new CheckBoxControl(IF_DPCC_G_EN, IF_DPCC_S_EN, DPF_ENABLE_PARAMS,         "Enabled",                              true,    "The state of the Defect Pixel Cluster Correction"));
+		controls.append(new CheckBoxControl(IF_DPCC_G_EN, IF_DPCC_S_EN, DPF_ENABLE_PARAMS,         "Enabled",                              true,    "The state of the Defect Pixel Cluster Correction", true));
 
 		controls.append(new GroupControl("DPF - De-noising Pre-Filter"));
 		controls.append(new CheckBoxControl(IF_DPF_G_EN,  IF_DPF_S_EN,  DPF_ENABLE_PARAMS,         "Enabled",                              true,    "The state of the De-noising Pre-Filter"));

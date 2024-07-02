@@ -6,6 +6,7 @@
 
 #include "command_item.h"
 #include "controls_definitions.h"
+#include "qscreen.h"
 #include "screenshot_checker.h"
 #include <widgets/chart_widget.h>
 #include <widgets/checkbox_widget.h>
@@ -21,6 +22,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "isp_proc_thread.h"
+#include "rename_screenshot_window.h"
 
 IspControl ispControl;
 IspProcThread *ispProcThread;
@@ -74,6 +76,7 @@ MainWindow::MainWindow(QWidget *parent)
 	}
 
 	screenshotChecker = new ScreenshotChecker(this);
+	connect(screenshotChecker, &ScreenshotChecker::signal_show_rename_screenshot_window, this, &MainWindow::signal_show_rename_screenshot_window);
 	screenshotChecker->start();
 }
 
@@ -578,6 +581,29 @@ void MainWindow::signal_update_matrix_view(MatrixViewWidget *matrixView, QList<Q
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
 	this->ui->saveButton->setVisible(index == 1);
+}
+
+void MainWindow::signal_show_rename_screenshot_window(QString filename)
+{
+	qDebug() << "screen" << filename;
+	this->displayRenameScreenshotWindow(filename);
+}
+
+void MainWindow::displayRenameScreenshotWindow(QString filename)
+{
+	RenameScreenshotWindow *renameScreenshotWindow = new RenameScreenshotWindow;
+	const QSize desktopSize = QGuiApplication::primaryScreen()->size();
+	QRect screenGeometry = renameScreenshotWindow->geometry();
+	renameScreenshotWindow->setGeometry(
+			desktopSize.width() / 2 - screenGeometry.width() / 2,
+			desktopSize.height() / 2 - screenGeometry.height() / 2,
+			screenGeometry.width(), screenGeometry.height());
+	renameScreenshotWindow->setParameters(filename);
+
+	connect(renameScreenshotWindow, &RenameScreenshotWindow::signal_addFilenameToCachedFilesList,
+			screenshotChecker, &ScreenshotChecker::signal_addFilenameToCachedFilesList);
+
+	renameScreenshotWindow->show();
 }
 
 /*

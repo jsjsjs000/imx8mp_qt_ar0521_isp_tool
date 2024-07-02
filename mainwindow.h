@@ -40,6 +40,8 @@ private slots:
 
 	void on_tabWidget_currentChanged(int index);
 
+	void signal_show_rename_screenshot_window(QString filename);
+
 private:
 	const int InitialFps = 30;
 	const int Width = 1920;  // 1.777
@@ -79,6 +81,7 @@ private:
 	void onActivated();
 	void onClose();
 	void reloadDriver();
+	void displayRenameScreenshotWindow(QString filename);
 
 	static void onCheckBoxChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, bool value);
 	static void onSliderValueChange(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int value, int divide);
