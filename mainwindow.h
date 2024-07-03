@@ -43,7 +43,7 @@ private slots:
 	void slot_show_rename_screenshot_window(QString filename);
 
 private:
-	const int InitialFps = 30;
+	const int InitialFps = 30;  // 7, 8, 9, 11, 12, 14, 16, 20, 25, 33, 50, 100
 	const int Width = 1920;  // 1.777
 	const int Height = 1080;
 	// const int Width = 2592;  // 1.333
