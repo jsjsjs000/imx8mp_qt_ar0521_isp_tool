@@ -36,7 +36,10 @@ MainWindow::MainWindow(QWidget *parent)
 {
 	ui->setupUi(this);
 
-	this->ui->saveButton->setVisible(false);
+	ui->saveButton->setVisible(false);
+
+ui->presetComboBox->addItem("aa");  // $$
+ui->presetComboBox->addItem("bb");
 
 	controlsDefinition.init();
 	controls2Definition.init();
@@ -611,4 +614,24 @@ void MainWindow::displayRenameScreenshotWindow(QString filename)
 			screenshotChecker, &ScreenshotChecker::slot_addFilenameToCachedFilesList);
 
 	renameScreenshotWindow->show();
+}
+
+void MainWindow::on_presetComboBox_currentIndexChanged(int index)
+{
+	qDebug() << "preset combobox" << index;
+}
+
+void MainWindow::on_presetSaveButton_clicked()
+{
+	qDebug() << "preset save";
+}
+
+void MainWindow::on_presetNewButton_clicked()
+{
+	qDebug() << "preset new";
+}
+
+void MainWindow::on_presetDeleteButton_clicked()
+{
+	qDebug() << "preset delete";
 }
