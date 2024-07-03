@@ -449,7 +449,14 @@ void MainWindow::updateControls2fromXml()
 
 void MainWindow::timerEvent(QTimerEvent* /* event */)
 {
-	this->ui->fpsLabel->setText("FPS: " + QString::number(ispProcThread->readFps) + ", " + ispProcThread->GetStatus());
+	this->ui->fpsLabel->setText(
+			"FPS: " + QString::number(ispProcThread->fps) + ", " +
+			"ISO: " + QString::number(ispProcThread->iso) + ", " +
+			"mean luminance: " + QString::number(ispProcThread->meanLuminance) + ",\n" +
+			"exposure time: " + QString::number((int)(ispProcThread->exposureTime * 1000)) + " ms, " +
+			"gain: " + QString::number(ispProcThread->exposureGain, 'f', 2) + ", " +
+			"integration time: " + QString::number((int)(ispProcThread->integrationTime * 1000)) + " ms");
+			// ispProcThread->GetStatus()
 
 		/* set initial FPS at startup */
 	if (this->setFpsTime > 0 && this->elapsedTimer.elapsed() - this->setFpsTime >= 1000)
@@ -585,7 +592,7 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 
 void MainWindow::slot_show_rename_screenshot_window(QString filename)
 {
-	qDebug() << "screen" << filename;
+	qDebug() << "screenshot" << filename;
 	this->displayRenameScreenshotWindow(filename);
 }
 

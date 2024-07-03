@@ -43,7 +43,14 @@ private:
 
 public:
 	bool Stop = false;
-	int readFps = 0;
+
+	int fps = 0;
+	float exposureGain = 0.0;
+	float exposureTime = 0.0;
+	float integrationTime = 0.0;
+	int iso = 0;
+	int meanLuminance = 0;
+
 	explicit IspProcThread(QObject *parent, IspControl &ispControl, ControlsDefinitions &controlsDefinition, QMap<QString, QWidget*> &widgets);
 	void AddCommandToQueue(const CommandItem &commandItem);
 	QString GetStatus();

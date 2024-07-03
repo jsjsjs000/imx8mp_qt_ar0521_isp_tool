@@ -128,16 +128,20 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 				{
 					float value_ = value->asFloat();
 					emit signal_update_slider_control_float(slider, value_);
-					// qDebug() << scontrol->parameter << value;
+					// qDebug() << scontrol->parameter << value_;
 
-					if (strncmp(scontrol->parameter.toStdString().c_str(), EC_TIME_PARAMS, strlen(EC_TIME_PARAMS)) == 0)
+					if (scontrol->getCmd == IF_EC_G_CFG && scontrol->parameter == EC_TIME_PARAMS)
 					{
+						this->exposureTime = value_;
+
 						if (value_ != 0)
-							this->readFps = 1.0f / value_;
+							this->fps = 1.0f / value_;
 						else
-							this->readFps = 0;
+							this->fps = 0;
 						// qDebug("%f", 1.0 / value);
 					}
+					else if (scontrol->getCmd == IF_EC_G_CFG && scontrol->parameter == EC_GAIN_PARAMS)
+						this->exposureGain = value_;
 				}
 			}
 		}
@@ -170,8 +174,11 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 					index = value->asInt();
 				emit signal_update_comboBox_item_index(comboBox, index);
 
-				if (strncmp(scontrol->parameter.toStdString().c_str(), AE_SENSITIVITY_PARAMS, strlen(AE_SENSITIVITY_PARAMS)) == 0)
+				if (scontrol->getCmd == IF_AE_G_ISO && scontrol->parameter == AE_SENSITIVITY_PARAMS)
+				{
+					this->iso = index;
 					internalIspAfps.SetIso(index);
+				}
 			}
 		}
 		else if (const ComboBoxControl2 *scontrol = dynamic_cast<const ComboBoxControl2*>(control))
@@ -196,7 +203,13 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 				qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
 			else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 			{
-				int state = value->asInt();
+				int state;
+				if (value->isBool())
+					state = value->asBool();
+				else if (value->isString())
+					state = value->asString().compare("false") != 0;
+				else
+					state = value->asInt();
 				emit signal_update_checkBox_set_state(checkBox, state);
 				// qDebug() << scontrol->parameter << state;
 			}
@@ -251,6 +264,9 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 
 				emit signal_update_label_set_text(label, text);
 				// qDebug() << scontrol->parameter << state;
+
+				if (scontrol->getCmd == IF_FILTER_G_STATUS && scontrol->parameter == FILTER_INTEGRATION_TIME_PARAMS)
+					this->integrationTime = value_.asFloat();
 			}
 		}
 		else if (const ChartControl *scontrol = dynamic_cast<const ChartControl*>(control))
@@ -286,8 +302,15 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 				emit signal_update_matrix_view(matrixView, points);
 				// qDebug() << scontrol->parameter << points;
 
-				if (strncmp(scontrol->parameter.toStdString().c_str(), AE_LUMA_PARAMS_BASE64, strlen(AE_LUMA_PARAMS_BASE64)) == 0)
+				if (scontrol->getCmd == IF_AE_G_STATUS && scontrol->parameter == AE_LUMA_PARAMS_BASE64)
+				{
+					int mean = 0;
+					for (uint i = 0; i < value->size(); i++)
+						mean += value->get(i, 0).asFloat();
+					this->meanLuminance = mean / value->size();
+
 					internalIspAfps.SetMeanLuminanceMeasured(points);
+				}
 			}
 		}
 	}
