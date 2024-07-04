@@ -14,7 +14,7 @@ class PresetRenameDialog : public QDialog
 public:
 	explicit PresetRenameDialog(QDialog *parent = nullptr);
 	~PresetRenameDialog();
-	void setParameters(QString windowTitle, QString labelText);
+	void setParameters(QString windowTitle, QString labelText, QString value);
 	QString getName();
 
 private slots:

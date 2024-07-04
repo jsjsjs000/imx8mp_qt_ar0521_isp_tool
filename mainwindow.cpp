@@ -624,6 +624,7 @@ void MainWindow::on_presetComboBox_currentIndexChanged(int index)
 		/* V4L2 */
 	if (this->ui->tabWidget->currentIndex() == 0)
 	{
+
 	}
 }
 
@@ -636,13 +637,29 @@ void MainWindow::on_presetSaveButton_clicked()
 			/* None preset exists */
 		if (this->ui->presetComboBox->currentIndex() < 0)
 		{
-			name = this->showRenamePresetDialog("Save preset", "Preset name:");
+			name = this->showRenamePresetDialog("Save preset", "Preset name:", nullptr);
 			if (name == nullptr)
 				return;
 		}
 
-		qDebug() << "closed ok" << name;
 		presets1.save(this->ui->presetComboBox, name);
+	}
+}
+
+void MainWindow::on_presetRenameButton_clicked()
+{
+		/* V4L2 */
+	if (this->ui->tabWidget->currentIndex() == 0)
+	{
+		if (this->ui->presetComboBox->currentIndex() >= 0)
+		{
+			QString oldName = this->ui->presetComboBox->currentText();
+			QString name = showRenamePresetDialog("Rename preset", "New preset name:", oldName);
+			if (name == nullptr)
+				return;
+
+			presets1.rename(this->ui->presetComboBox, name);
+		}
 	}
 }
 
@@ -651,7 +668,7 @@ void MainWindow::on_presetNewButton_clicked()
 		/* V4L2 */
 	if (this->ui->tabWidget->currentIndex() == 0)
 	{
-		QString name = this->showRenamePresetDialog("Add preset", "Preset name:");
+		QString name = this->showRenamePresetDialog("Add preset", "Preset name:", nullptr);
 		if (name == nullptr)
 			return;
 
@@ -668,7 +685,7 @@ void MainWindow::on_presetDeleteButton_clicked()
 	}
 }
 
-QString MainWindow::showRenamePresetDialog(QString windowTitle, QString labelText)
+QString MainWindow::showRenamePresetDialog(QString windowTitle, QString labelText, QString value)
 {
 	PresetRenameDialog *presetRenameForm = new PresetRenameDialog;
 	const QSize desktopSize = QGuiApplication::primaryScreen()->size();
@@ -677,7 +694,7 @@ QString MainWindow::showRenamePresetDialog(QString windowTitle, QString labelTex
 			desktopSize.width() / 2 - screenGeometry.width() / 2,
 			desktopSize.height() / 2 - screenGeometry.height() / 2,
 			screenGeometry.width(), screenGeometry.height());
-	presetRenameForm->setParameters(windowTitle, labelText);
+	presetRenameForm->setParameters(windowTitle, labelText, value);
 	presetRenameForm->setModal(true);
 	if (presetRenameForm->exec() == 0)
 		return nullptr;

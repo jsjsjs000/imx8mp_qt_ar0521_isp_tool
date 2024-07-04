@@ -11,6 +11,10 @@ PresetRenameDialog::PresetRenameDialog(QDialog *parent)
 	setWindowFlags(windowFlags() & (~Qt::WindowMaximizeButtonHint));  /// remove maximize box
 
 	QApplication::instance()->installEventFilter(this);
+
+		/* For debug - keyboard simulation * /
+	static char c = 'a';
+	ui->edit->setText(QString(c++)); */
 }
 
 PresetRenameDialog::~PresetRenameDialog()
@@ -33,10 +37,12 @@ bool PresetRenameDialog::eventFilter(QObject *obj, QEvent *event)
 	return QObject::eventFilter(obj, event);
 }
 
-void PresetRenameDialog::setParameters(QString windowTitle, QString labelText)
+void PresetRenameDialog::setParameters(QString windowTitle, QString labelText, QString value)
 {
 	this->setWindowTitle(windowTitle);
 	this->ui->label->setText(labelText);
+	if (value != nullptr)
+		this->ui->edit->setText(value);
 }
 
 QString PresetRenameDialog::getName()

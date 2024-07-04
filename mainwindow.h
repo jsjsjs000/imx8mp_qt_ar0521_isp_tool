@@ -48,6 +48,8 @@ private slots:
 	void on_presetNewButton_clicked();
 	void on_presetDeleteButton_clicked();
 
+	void on_presetRenameButton_clicked();
+
 private:
 	const int InitialFps = 30;  // 7, 8, 9, 11, 12, 14, 16, 20, 25, 33, 50, 100
 	const int Width = 1920;  // 1.777
@@ -92,7 +94,7 @@ private:
 	void onClose();
 	void reloadDriver();
 	void displayRenameScreenshotWindow(QString filename);
-	QString showRenamePresetDialog(QString windowTitle, QString labelText);
+	QString showRenamePresetDialog(QString windowTitle, QString labelText, QString value);
 
 	static void onCheckBoxChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, bool value);
 	static void onSliderValueChange(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int value, int divide);

@@ -19,6 +19,18 @@ void Presets::save(QComboBox *comboBox, QString name)
 this->printDebug();
 }
 
+void Presets::rename(QComboBox *comboBox, QString name)
+{
+	if (comboBox->currentIndex() < 0)
+		return;
+
+	presetsList[comboBox->currentIndex()]->name = name;
+
+	comboBox->setItemText(comboBox->currentIndex(), name);
+
+this->printDebug();
+}
+
 void Presets::add(QComboBox *comboBox, QString name)
 {
 	Preset *preset = new Preset();

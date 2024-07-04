@@ -9,13 +9,13 @@ class Presets
 {
 private:
 	QList<Preset*> presetsList;
-	// int currentPresetIndex = -1;
 
 	void printDebug();
 
 public:
 	Presets();
 	void save(QComboBox *comboBox, QString name);
+	void rename(QComboBox *comboBox, QString name);
 	void add(QComboBox *comboBox, QString name);
 	void deleteCurrent(QComboBox *comboBox);
 };
