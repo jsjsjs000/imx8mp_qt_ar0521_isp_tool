@@ -6,7 +6,7 @@
 #include <QMap>
 #include <QPointF>
 #include "controls2.h"
-#include "isp_xml.h"
+#include "v4l2_isp/isp_xml.h"
 
 class Controls2Definitions
 {

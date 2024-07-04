@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "isp_proc_thread.h"
+#include "v4l2_isp/isp_proc_thread.h"
 #include "presets/preset.h"
 
 #include <QList>

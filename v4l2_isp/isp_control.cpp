@@ -115,26 +115,28 @@ end:
 	return false;
 }
 
-// bool IspControl::getFps()
-// {
-// 	viv_caps_mode_info_s info;
-// 	if (::ioctl(this->fd, VIV_VIDIOC_S_MODEINFO, &info) != 0)
-// 		return false;
-// 	qDebug("fps %d", info.fps);
+/*
+bool IspControl::getFps()
+{
+	viv_caps_mode_info_s info;
+	if (::ioctl(this->fd, VIV_VIDIOC_S_MODEINFO, &info) != 0)
+		return false;
+	qDebug("fps %d", info.fps);
 
-// 	vvcam_mode_info_t
-// 	uint32_t pfps;
-// 	uint32_t ret = ::ioctl(this->fd, VVSENSORIOC_G_FPS, &pfps);
-// 	if (ret != 0)
-// 		qDebug() << pfps;
+	vvcam_mode_info_t
+	uint32_t pfps;
+	uint32_t ret = ::ioctl(this->fd, VVSENSORIOC_G_FPS, &pfps);
+	if (ret != 0)
+		qDebug() << pfps;
 
-// 	IsiSensorAeInfo_t AeInfo;
-// 	IsiGetAeInfoIsfs(&AeInfo);
+	IsiSensorAeInfo_t AeInfo;
+	IsiGetAeInfoIsfs(&AeInfo);
 
-// 	SensorOps fo;
+	SensorOps fo;
 
-// 	return true;
-// }
+	return true;
+}
+*/
 
 void IspControl::fixGetParam(Json::Value *jRequest, const char *getCmd)
 {

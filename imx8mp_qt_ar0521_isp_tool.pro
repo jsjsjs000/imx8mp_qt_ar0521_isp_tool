@@ -14,9 +14,9 @@ SOURCES += \
   command_item.cpp \
   controls2_definitions.cpp \
   internal_isp/internal_isp_afps.cpp \
-	isp_control.cpp \
-	isp_proc_thread.cpp \
-	isp_xml.cpp \
+	v4l2_isp/isp_control.cpp \
+	v4l2_isp/isp_proc_thread.cpp \
+	v4l2_isp/isp_xml.cpp \
   presets/preset.cpp \
   presets/preset_rename_dialog.cpp \
   presets/presets.cpp \
@@ -45,9 +45,9 @@ HEADERS += \
   controls2_definitions.h \
   controls_definitions.h \
   internal_isp/internal_isp_afps.h \
-  isp_control.h \
-	isp_proc_thread.h \
-	isp_xml.h \
+	v4l2_isp/isp_control.h \
+	v4l2_isp/isp_proc_thread.h \
+	v4l2_isp/isp_xml.h \
   presets/preset.h \
   presets/preset_rename_dialog.h \
   presets/presets.h \

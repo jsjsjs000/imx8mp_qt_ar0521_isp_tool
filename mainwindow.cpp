@@ -21,7 +21,7 @@
 #include "controls2_definitions.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "isp_proc_thread.h"
+#include "v4l2_isp/isp_proc_thread.h"
 #include "screenshots//rename_screenshot_window.h"
 #include "presets/preset_rename_dialog.h"
 

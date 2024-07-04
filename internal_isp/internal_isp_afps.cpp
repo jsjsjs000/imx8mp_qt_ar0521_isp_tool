@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <command_item.h>
 #include "ioctl_cmds.h"
-#include "isp_proc_thread.h"
+#include "v4l2_isp/isp_proc_thread.h"
 
 InternalIspAfps::InternalIspAfps()
 {
