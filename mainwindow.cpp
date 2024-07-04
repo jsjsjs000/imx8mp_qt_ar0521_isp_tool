@@ -40,9 +40,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 	ui->saveButton->setVisible(false);
 
-// ui->presetComboBox->addItem("aa");  // $$
-// ui->presetComboBox->addItem("bb");
-
 	controlsDefinition.init();
 	controls2Definition.init();
 	this->createControls();
@@ -624,6 +621,7 @@ void MainWindow::on_presetComboBox_currentIndexChanged(int index)
 		return;
 
 	qDebug() << "preset combobox" << index;
+		/* V4L2 */
 	if (this->ui->tabWidget->currentIndex() == 0)
 	{
 	}
@@ -631,7 +629,7 @@ void MainWindow::on_presetComboBox_currentIndexChanged(int index)
 
 void MainWindow::on_presetSaveButton_clicked()
 {
-	qDebug() << "preset save" << this->ui->tabWidget->currentIndex();
+		/* V4L2 */
 	if (this->ui->tabWidget->currentIndex() == 0)
 	{
 		QString name = "";
@@ -650,17 +648,23 @@ void MainWindow::on_presetSaveButton_clicked()
 
 void MainWindow::on_presetNewButton_clicked()
 {
-	qDebug() << "preset new";
+		/* V4L2 */
 	if (this->ui->tabWidget->currentIndex() == 0)
 	{
+		QString name = this->showRenamePresetDialog("Add preset", "Preset name:");
+		if (name == nullptr)
+			return;
+
+		presets1.add(this->ui->presetComboBox, name);
 	}
 }
 
 void MainWindow::on_presetDeleteButton_clicked()
 {
-	qDebug() << "preset delete";
+		/* V4L2 */
 	if (this->ui->tabWidget->currentIndex() == 0)
 	{
+		presets1.deleteCurrent(this->ui->presetComboBox);
 	}
 }
 

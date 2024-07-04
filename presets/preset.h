@@ -6,7 +6,7 @@
 class Preset
 {
 public:
-	bool defalut = false;
+	bool isDefault = false;
 	QString name = "";
 
 	Preset();
