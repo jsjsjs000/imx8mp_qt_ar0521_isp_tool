@@ -7,7 +7,7 @@
 #include "command_item.h"
 #include "controls_definitions.h"
 #include "qscreen.h"
-#include "screenshot_checker.h"
+#include "screenshots/screenshot_checker.h"
 #include <widgets/chart_widget.h>
 #include <widgets/checkbox_widget.h>
 #include <widgets/combobox_widget.h>
@@ -22,7 +22,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "isp_proc_thread.h"
-#include "rename_screenshot_window.h"
+#include "screenshots//rename_screenshot_window.h"
+#include "presets/preset_rename_dialog.h"
 
 IspControl ispControl;
 IspProcThread *ispProcThread;
@@ -35,11 +36,12 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
+	setWindowFlags(windowFlags() & (~Qt::WindowMaximizeButtonHint));  /// remove maximize box
 
 	ui->saveButton->setVisible(false);
 
-ui->presetComboBox->addItem("aa");  // $$
-ui->presetComboBox->addItem("bb");
+// ui->presetComboBox->addItem("aa");  // $$
+// ui->presetComboBox->addItem("bb");
 
 	controlsDefinition.init();
 	controls2Definition.init();
@@ -618,20 +620,63 @@ void MainWindow::displayRenameScreenshotWindow(QString filename)
 
 void MainWindow::on_presetComboBox_currentIndexChanged(int index)
 {
+	if (!canUpdateControls)
+		return;
+
 	qDebug() << "preset combobox" << index;
+	if (this->ui->tabWidget->currentIndex() == 0)
+	{
+	}
 }
 
 void MainWindow::on_presetSaveButton_clicked()
 {
-	qDebug() << "preset save";
+	qDebug() << "preset save" << this->ui->tabWidget->currentIndex();
+	if (this->ui->tabWidget->currentIndex() == 0)
+	{
+		QString name = "";
+			/* None preset exists */
+		if (this->ui->presetComboBox->currentIndex() < 0)
+		{
+			name = this->showRenamePresetDialog("Save preset", "Preset name:");
+			if (name == nullptr)
+				return;
+		}
+
+		qDebug() << "closed ok" << name;
+		presets1.save(this->ui->presetComboBox, name);
+	}
 }
 
 void MainWindow::on_presetNewButton_clicked()
 {
 	qDebug() << "preset new";
+	if (this->ui->tabWidget->currentIndex() == 0)
+	{
+	}
 }
 
 void MainWindow::on_presetDeleteButton_clicked()
 {
 	qDebug() << "preset delete";
+	if (this->ui->tabWidget->currentIndex() == 0)
+	{
+	}
+}
+
+QString MainWindow::showRenamePresetDialog(QString windowTitle, QString labelText)
+{
+	PresetRenameDialog *presetRenameForm = new PresetRenameDialog;
+	const QSize desktopSize = QGuiApplication::primaryScreen()->size();
+	QRect screenGeometry = presetRenameForm->geometry();
+	presetRenameForm->setGeometry(
+			desktopSize.width() / 2 - screenGeometry.width() / 2,
+			desktopSize.height() / 2 - screenGeometry.height() / 2,
+			screenGeometry.width(), screenGeometry.height());
+	presetRenameForm->setParameters(windowTitle, labelText);
+	presetRenameForm->setModal(true);
+	if (presetRenameForm->exec() == 0)
+		return nullptr;
+
+	return presetRenameForm->getName();
 }

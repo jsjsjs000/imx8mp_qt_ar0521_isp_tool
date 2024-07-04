@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include "isp_proc_thread.h"
+#include "presets/preset.h"
 
 #include <QList>
 #include <QPointF>
@@ -9,6 +10,8 @@
 #include <QVideoWidget>
 #include <QMediaPlayer>
 #include <QElapsedTimer>
+
+#include <presets/presets.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -39,15 +42,10 @@ private slots:
 	void slot_update_matrix_view(MatrixViewWidget *matrixView, QList<QPointF> points);
 
 	void on_tabWidget_currentChanged(int index);
-
 	void slot_show_rename_screenshot_window(QString filename);
-
 	void on_presetComboBox_currentIndexChanged(int index);
-
 	void on_presetSaveButton_clicked();
-
 	void on_presetNewButton_clicked();
-
 	void on_presetDeleteButton_clicked();
 
 private:
@@ -75,6 +73,10 @@ private:
 	int lastSetFps = this->InitialFps;
 	clock_t setFpsTime = 0;
 
+	Presets presets1;
+	// QList<Preset> presets1;
+	// int currentPresetIndex = -1;
+
 	int getFps();
 	void setFps(int fps);
 	void runProcFsThread();
@@ -90,6 +92,7 @@ private:
 	void onClose();
 	void reloadDriver();
 	void displayRenameScreenshotWindow(QString filename);
+	QString showRenamePresetDialog(QString windowTitle, QString labelText);
 
 	static void onCheckBoxChanged(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, bool value);
 	static void onSliderValueChange(MainWindow *mainWindow, QString getCmd, QString setCmd, QString parameter, int value, int divide);

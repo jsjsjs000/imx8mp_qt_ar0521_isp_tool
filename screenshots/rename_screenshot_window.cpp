@@ -9,6 +9,7 @@ RenameScreenshotWindow::RenameScreenshotWindow(QWidget *parent)
 		, ui(new Ui::RenameScreenshotWindow)
 {
 	ui->setupUi(this);
+	setWindowFlags(windowFlags() & (~Qt::WindowMaximizeButtonHint));  /// remove maximize box
 
 	QApplication::instance()->installEventFilter(this);
 }
