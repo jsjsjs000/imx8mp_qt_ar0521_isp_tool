@@ -2,19 +2,27 @@
 
 Presets::Presets() {}
 
-void Presets::save(QComboBox *comboBox, QString name)
+bool Presets::loadPresetsList(QComboBox *comboBox)
 {
-	qDebug() << "ci" << comboBox->currentIndex();
+	QList<QString> list;
+	if (!presetV4l2Isp.load(&list))
+		return false;
+
+	for (const QString &s : qAsConst(list))
+		qDebug() << s;
+
+	return true;
+}
+
+void Presets::save(QComboBox *comboBox, QString name, QString params)
+{
+// qDebug() << "combobox item" << comboBox->currentIndex();
 
 		/* None preset exists */
 	if (comboBox->currentIndex() < 0)
-	{
-		this->add(comboBox, name);
-	}
+		this->add(comboBox, name, params);
 	else
-	{
-
-	}
+		presetV4l2Isp.save(name, params);
 
 this->printDebug();
 }
@@ -31,7 +39,7 @@ void Presets::rename(QComboBox *comboBox, QString name)
 this->printDebug();
 }
 
-void Presets::add(QComboBox *comboBox, QString name)
+void Presets::add(QComboBox *comboBox, QString name, QString params)
 {
 	Preset *preset = new Preset();
 	preset->name = name;
@@ -39,6 +47,8 @@ void Presets::add(QComboBox *comboBox, QString name)
 
 	comboBox->addItem(name, QVariant::fromValue(preset));
 	comboBox->setCurrentIndex(comboBox->count() - 1);
+
+	presetV4l2Isp.save(name, params);
 
 this->printDebug();
 }

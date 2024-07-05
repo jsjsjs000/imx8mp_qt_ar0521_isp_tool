@@ -66,6 +66,9 @@ MainWindow::MainWindow(QWidget *parent)
 	controls2Definition.readXml();
 	this->updateControls2fromXml();
 
+	if (!presets1.loadPresetsList(ui->presetComboBox))
+		qDebug() << "Can't load presets from disk.";
+
 	this->canUpdateControls = true;
 
 	if (!video)
@@ -80,6 +83,9 @@ MainWindow::MainWindow(QWidget *parent)
 	screenshotChecker = new ScreenshotChecker(this);
 	connect(screenshotChecker, &ScreenshotChecker::signal_show_rename_screenshot_window, this, &MainWindow::slot_show_rename_screenshot_window);
 	screenshotChecker->start();
+
+	connect(this, &MainWindow::signal_getParams, ispProcThread, &IspProcThread::slot_getParams);
+	connect(this, &MainWindow::signal_getParamsDiff, ispProcThread, &IspProcThread::slot_getParamsDiff);
 }
 
 MainWindow::~MainWindow()
@@ -468,6 +474,10 @@ void MainWindow::timerEvent(QTimerEvent* /* event */)
 
 		this->lastTime = this->elapsedTimer.elapsed();
 	}
+
+	// QString s = emit this->signal_getParamsDiff();
+	// qDebug().noquote() << s;
+	// qDebug() << "";
 }
 
 void MainWindow::onActivated()
@@ -641,8 +651,11 @@ void MainWindow::on_presetSaveButton_clicked()
 			if (name == nullptr)
 				return;
 		}
+		else
+			name = this->ui->presetComboBox->itemText(this->ui->presetComboBox->currentIndex());
 
-		presets1.save(this->ui->presetComboBox, name);
+		QString params = emit this->signal_getParams();
+		presets1.save(this->ui->presetComboBox, name, params);
 	}
 }
 
@@ -672,7 +685,8 @@ void MainWindow::on_presetNewButton_clicked()
 		if (name == nullptr)
 			return;
 
-		presets1.add(this->ui->presetComboBox, name);
+		QString params = emit this->signal_getParams();
+		presets1.add(this->ui->presetComboBox, name, params);
 	}
 }
 
@@ -683,6 +697,11 @@ void MainWindow::on_presetDeleteButton_clicked()
 	{
 		presets1.deleteCurrent(this->ui->presetComboBox);
 	}
+}
+
+QString MainWindow::getSafeFilename(QString s)
+{
+	return s.replace('/', '_');
 }
 
 QString MainWindow::showRenamePresetDialog(QString windowTitle, QString labelText, QString value)
@@ -699,5 +718,7 @@ QString MainWindow::showRenamePresetDialog(QString windowTitle, QString labelTex
 	if (presetRenameForm->exec() == 0)
 		return nullptr;
 
-	return presetRenameForm->getName();
+	QString name = presetRenameForm->getName();
+	name = getSafeFilename(name);
+	return name;
 }

@@ -27,6 +27,12 @@ public:
 	MainWindow(QWidget *parent = nullptr);
 	~MainWindow();
 
+	static QString getSafeFilename(QString s);
+
+signals:
+	QString signal_getParams();
+	QString signal_getParamsDiff();
+
 private slots:
 	void on_saveButton_clicked();
 	bool event(QEvent *e);

@@ -14,6 +14,7 @@ SOURCES += \
   command_item.cpp \
   controls2_definitions.cpp \
   internal_isp/internal_isp_afps.cpp \
+  presets/preset_v4l2_isp.cpp \
 	v4l2_isp/isp_control.cpp \
 	v4l2_isp/isp_proc_thread.cpp \
 	v4l2_isp/isp_xml.cpp \
@@ -45,6 +46,7 @@ HEADERS += \
   controls2_definitions.h \
   controls_definitions.h \
   internal_isp/internal_isp_afps.h \
+  presets/preset_v4l2_isp.h \
 	v4l2_isp/isp_control.h \
 	v4l2_isp/isp_proc_thread.h \
 	v4l2_isp/isp_xml.h \

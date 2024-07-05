@@ -35,11 +35,15 @@ private:
 	QQueue<CommandItem> commandsQueue;
 	QMutex commandsQueueMutex;
 
+	QMap<QString, QString> defaultParams;
+	QMap<QString, QString> lastReadParams;
+
 	void run() override;
 	void readParameters();
 	void updateControlsFromJson(Json::Value json, QString cmd);
 	bool isCommandQueueNotEmpty();
 	void executeCommandsFromQueue();
+	void saveParam(const Control *control, QString value);
 
 public:
 	bool Stop = false;
@@ -66,6 +70,10 @@ signals:
 	void signal_update_label_set_text(LabelWidget *label, QString text);
 	void signal_update_chart(ChartWidget *chart, float x1, float x2, float y1, float y2, float gridX, float gridY, QList<QPointF> points);
 	void signal_update_matrix_view(MatrixViewWidget *matrixView, QList<QPointF> points);
+
+public slots:
+	QString slot_getParams();
+	QString slot_getParamsDiff();
 };
 
 #endif // ISPPROCTHREAD_H

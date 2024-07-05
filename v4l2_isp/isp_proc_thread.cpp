@@ -1,5 +1,6 @@
 #include "isp_proc_thread.h"
 #include <QDebug>
+#include <QStringBuilder>
 #include <QThread>
 #include <json/value.h>
 #include <widgets/chart_widget.h>
@@ -102,6 +103,51 @@ void IspProcThread::readParameters()
 	}
 }
 
+void IspProcThread::saveParam(const Control *control, QString value)
+{
+	QString key = control->getCmd + "/" + control->parameter;
+	if (!this->defaultParams.contains(key))
+	{
+		this->defaultParams[key] = value;
+		this->lastReadParams[key] = value;
+
+		// qDebug() << "new key:" << key << value;
+	}
+	else if (this->lastReadParams[key] != value)
+	{
+		this->lastReadParams[key] = value;
+
+		// qDebug() << "update key:" << key << value;
+	}
+}
+
+QString IspProcThread::slot_getParams()
+{
+	QString s = "";
+	for (auto it = this->lastReadParams.keyValueBegin(); it != this->lastReadParams.keyValueEnd(); ++it)
+	{
+		if (s.length() > 0)
+			s = s % "\n";
+		s = s % it->first % "=" % it->second;
+	}
+	return s;
+}
+
+QString IspProcThread::slot_getParamsDiff()
+{
+	QString s = "";
+	for (auto it = this->lastReadParams.keyValueBegin(); it != this->lastReadParams.keyValueEnd(); ++it)
+	{
+		if (it->second != this->defaultParams[it->first])
+		{
+			if (s.length() > 0)
+				s = s % "\n";
+			s = s % it->first % "=" % it->second;
+		}
+	}
+	return s;
+}
+
 void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 {
 	for (const auto *control : qAsConst(controlsDefinition.controls))
@@ -121,12 +167,14 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 				if (scontrol->precision == 0)
 				{
 					int value_ = value->asInt();
+					this->saveParam(control, QString::number(value_));
 					emit signal_update_slider_control_int(slider, value_);
 					// qDebug() << scontrol->parameter << value;
 				}
 				else
 				{
 					float value_ = value->asFloat();
+					this->saveParam(control, QString::number(value_));
 					emit signal_update_slider_control_float(slider, value_);
 					// qDebug() << scontrol->parameter << value_;
 
@@ -154,8 +202,15 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 			{
 				Json::Value defaultValue = -1.0;
 				QList<float> values;
+				QString values_ = "";
 				for (uint i = 0; i < value->size(); i++)
+				{
 					values.push_back(value->get(i, defaultValue).asFloat());
+					if (i > 0)
+						values_ += " ";
+					values_ += QString::number(value->get(i, defaultValue).asFloat());
+				}
+				this->saveParam(control, values_);
 				emit signal_update_slider_array_control_float(slider, values);
 				// qDebug() << scontrol->parameter << values;
 			}
@@ -172,6 +227,7 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 					index = value->asBool();
 				else
 					index = value->asInt();
+				this->saveParam(control, QString::number(index));
 				emit signal_update_comboBox_item_index(comboBox, index);
 
 				if (scontrol->getCmd == IF_AE_G_ISO && scontrol->parameter == AE_SENSITIVITY_PARAMS)
@@ -193,6 +249,7 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 					index = value->asBool() ? "true" : "false";
 				else
 					index = QString(value->asCString());
+				this->saveParam(control, index);
 				emit signal_update_comboBox2_item_index(comboBox, index);
 			}
 		}
@@ -210,6 +267,7 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 					state = value->asString().compare("false") != 0;
 				else
 					state = value->asInt();
+				this->saveParam(control, QString::number(state));
 				emit signal_update_checkBox_set_state(checkBox, state);
 				// qDebug() << scontrol->parameter << state;
 			}
@@ -262,6 +320,7 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 					qDebug() << scontrol->parameter << "not decoded in LabelControl";
 				}
 
+				this->saveParam(control, text);
 				emit signal_update_label_set_text(label, text);
 				// qDebug() << scontrol->parameter << state;
 
@@ -280,8 +339,15 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 				// else if (scontrol->type == &typeid(int[]))
 				Json::Value defaultValue = -1.0;
 				QList<QPointF> points;
+				QString points_ = "";
 				for (uint i = 0; i < value->size(); i++)
+				{
 					points.push_back(QPointF(i, value->get(i, defaultValue).asFloat()));
+					if (i > 0)
+						points_ += " ";
+					points_ += QString::number(value->get(i, defaultValue).asFloat());
+				}
+				this->saveParam(control, points_);
 				emit signal_update_chart(chart, 0, value->size() - 1, scontrol->y1, scontrol->y2, 1.0f, scontrol->gridY, points);
 				// qDebug() << scontrol->parameter << points;
 			}
@@ -297,8 +363,15 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 				// else if (scontrol->type == &typeid(int[]))
 				Json::Value defaultValue = -1.0;
 				QList<QPointF> points;
+				QString points_ = "";
 				for (uint i = 0; i < value->size(); i++)
+				{
 					points.push_back(QPointF(i, value->get(i, defaultValue).asFloat()));
+					if (i > 0)
+						points_ += " ";
+					points_ += QString::number(value->get(i, defaultValue).asFloat());
+				}
+				this->saveParam(control, points_);
 				emit signal_update_matrix_view(matrixView, points);
 				// qDebug() << scontrol->parameter << points;
 
