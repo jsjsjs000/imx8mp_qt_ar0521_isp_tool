@@ -84,8 +84,15 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(screenshotChecker, &ScreenshotChecker::signal_show_rename_screenshot_window, this, &MainWindow::slot_show_rename_screenshot_window);
 	screenshotChecker->start();
 
-	connect(this, &MainWindow::signal_getParams, ispProcThread, &IspProcThread::slot_getParams);
-	connect(this, &MainWindow::signal_getParamsDiff, ispProcThread, &IspProcThread::slot_getParamsDiff);
+	QString defaultPreset = "";
+	if (PresetV4l2Isp::loadDefaultPreset(&defaultPreset))
+	{
+		for (int i = 0; i < ui->presetComboBox->count(); i++)
+			if (ui->presetComboBox->itemText(i) == defaultPreset)
+				ui->presetComboBox->setCurrentIndex(i);
+	}
+	else if (ui->presetComboBox->count() > 0)
+		on_presetComboBox_currentIndexChanged(0);
 }
 
 MainWindow::~MainWindow()
@@ -131,6 +138,9 @@ void MainWindow::runProcFsThread()
 	connect(ispProcThread, &IspProcThread::signal_update_label_set_text,             this, &MainWindow::slot_update_label_set_text);
 	connect(ispProcThread, &IspProcThread::signal_update_chart,                      this, &MainWindow::slot_update_chart);
 	connect(ispProcThread, &IspProcThread::signal_update_matrix_view,                this, &MainWindow::slot_update_matrix_view);
+	connect(this,          &MainWindow::signal_getParams,                   ispProcThread, &IspProcThread::slot_getParams);
+	connect(this,          &MainWindow::signal_getParamsDiff,               ispProcThread, &IspProcThread::slot_getParamsDiff);
+	connect(this,          &MainWindow::signal_setParams,                   ispProcThread, &IspProcThread::slot_setParams);
 	ispProcThread->start();
 }
 
@@ -630,11 +640,17 @@ void MainWindow::on_presetComboBox_currentIndexChanged(int index)
 	if (!canUpdateControls)
 		return;
 
-	qDebug() << "preset combobox" << index;
 		/* V4L2 */
 	if (this->ui->tabWidget->currentIndex() == 0)
 	{
+		QString name = this->ui->presetComboBox->itemText(index);
+		QMap<QString, QString> params;
+		if (!presets1.load(name, &params))
+			return;
 
+		emit signal_setParams(&params);
+
+		PresetV4l2Isp::saveDefaultPreset(name);
 	}
 }
 

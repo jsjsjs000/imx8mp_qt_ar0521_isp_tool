@@ -74,6 +74,7 @@ signals:
 public slots:
 	QString slot_getParams();
 	QString slot_getParamsDiff();
+	void slot_setParams(QMap<QString, QString> *params);
 };
 
 #endif // ISPPROCTHREAD_H

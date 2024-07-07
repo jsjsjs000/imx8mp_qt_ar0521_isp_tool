@@ -32,6 +32,7 @@ public:
 signals:
 	QString signal_getParams();
 	QString signal_getParamsDiff();
+	void signal_setParams(QMap<QString, QString> *params);
 
 private slots:
 	void on_saveButton_clicked();

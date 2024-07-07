@@ -148,6 +148,221 @@ QString IspProcThread::slot_getParamsDiff()
 	return s;
 }
 
+void IspProcThread::slot_setParams(QMap<QString, QString> *params)
+{
+	for (auto it = params->keyValueBegin(); it != params->keyValueEnd(); ++it)
+	{
+		QStringList words = it->first.split("/");
+		if (words.count() != 2)
+			continue;
+
+		QString cmd = words[0];
+		QString param = words[1];
+		QString value = it->second;
+
+		for (const auto *control : qAsConst(controlsDefinition.controls))
+		{
+			if (this->Stop)
+				break;
+
+			if (control->getCmd != cmd || control->parameter != param || control->getCmd == "" || control->setCmd == "")
+				continue;
+
+			if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
+			{
+				SliderWidget *slider = (SliderWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+				if (slider == nullptr)
+					qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
+				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
+				{
+					// qDebug() << "restore:" << cmd << param << value;
+					bool ok;
+					if (scontrol->precision == 0)
+					{
+						int value_ = value.toInt(&ok);
+						if (!ok)
+							continue;
+						ispControl.setParamNumber(control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+								control->parameter.toStdString().c_str(), value_, 1);
+					}
+					else
+					{
+						float value_ = value.toFloat(&ok);
+						if (!ok)
+							continue;
+						ispControl.setParamNumber(control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+								control->parameter.toStdString().c_str(), value_ * scontrol->multiple, scontrol->multiple);
+					}
+				}
+			}
+			else if (const SliderArrayControl *scontrol = dynamic_cast<const SliderArrayControl*>(control))
+			{
+				SliderArrayWidget *slider = (SliderArrayWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+				if (slider == nullptr)
+					qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
+				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
+				{
+					// Json::Value defaultValue = -1.0;
+					// QList<float> values;
+					// QString values_ = "";
+					// for (uint i = 0; i < value.size(); i++)
+					// {
+					// 	values.push_back(value.get(i, defaultValue).asFloat());
+					// 	if (i > 0)
+					// 		values_ += " ";
+					// 	values_ += QString::number(value.get(i, defaultValue).asFloat());
+					// }
+					// qDebug() << scontrol->parameter << values;
+				}
+			}
+			else if (const ComboBoxControl *scontrol = dynamic_cast<const ComboBoxControl*>(control))
+			{
+				ComboBoxWidget *comboBox = (ComboBoxWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+				if (comboBox == nullptr)
+					qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
+				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
+				{
+					// int index;
+					// if (value->isBool())
+					// 	index = value->asBool();
+					// else
+					// 	index = value->asInt();
+				}
+			}
+			else if (const ComboBoxControl2 *scontrol = dynamic_cast<const ComboBoxControl2*>(control))
+			{
+				ComboBoxWidget2 *comboBox = (ComboBoxWidget2*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+				if (comboBox == nullptr)
+					qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
+				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
+				{
+					// QString index;
+					// if (value->isBool())
+					// 	index = value->asBool() ? "true" : "false";
+					// else
+					// 	index = QString(value->asCString());
+				}
+			}
+			else if (const CheckBoxControl *scontrol = dynamic_cast<const CheckBoxControl*>(control))
+			{
+				CheckBoxWidget *checkBox = (CheckBoxWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+				if (checkBox == nullptr)
+					qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
+				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
+				{
+					// int state;
+					// if (value->isBool())
+					// 	state = value->asBool();
+					// else if (value->isString())
+					// 	state = value->asString().compare("false") != 0;
+					// else
+					// 	state = value->asInt();
+				}
+			}
+			else if (const LabelControl *scontrol = dynamic_cast<const LabelControl*>(control))
+			{
+				LabelWidget *label = (LabelWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+				if (label == nullptr)
+					qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
+				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
+				{
+					// Json::Value value_ = *value;
+					// QString text;
+					// if (scontrol->type == &typeid(int[]))
+					// {
+					// 	for (uint i = 0; i < value_.size(); i++)
+					// 	{
+					// 		if (i > 0)
+					// 			text += ",";
+					// 		text += QString::number(value_[i].asInt());
+					// 	}
+					// }
+					// else if (scontrol->type == &typeid(float[]))
+					// {
+					// 	for (uint i = 0; i < value_.size(); i++)
+					// 	{
+					// 		if (i > 0)
+					// 			text += ", ";
+					// 		text += QString::number(value_[i].asFloat(), 'f', 3);
+					// 	}
+					// }
+					// else if (scontrol->type == &typeid(int))
+					// 	text = QString::number(value_.asInt());
+					// else if (scontrol->type == &typeid(float))
+					// 	text = QString::number(value_.asFloat(), 'f', 3);
+					// else if (scontrol->type == &typeid(std::string))
+					// 	text = QString(value_.asCString());
+					// else if (scontrol->type == &typeid(std::string[]))
+					// {
+					// 	for (uint i = 0; i < value_.size(); i++)
+					// 	{
+					// 		if (i > 0)
+					// 			text += ", ";
+					// 		text += QString(value_[i].asCString());
+					// 	}
+					// }
+					// else
+					// {
+					// 	text = "(" + scontrol->parameter + " not decoded type)";
+					// 	qDebug() << scontrol->parameter << "not decoded in LabelControl";
+					// }
+				}
+			}
+			else if (const ChartControl *scontrol = dynamic_cast<const ChartControl*>(control))
+			{
+				ChartWidget *chart = (ChartWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+				if (chart == nullptr)
+					qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
+				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
+				{
+					// if (scontrol->type == &typeid(float[]))
+					// else if (scontrol->type == &typeid(int[]))
+					// Json::Value defaultValue = -1.0;
+					// QList<QPointF> points;
+					// QString points_ = "";
+					// for (uint i = 0; i < value->size(); i++)
+					// {
+					// 	points.push_back(QPointF(i, value->get(i, defaultValue).asFloat()));
+					// 	if (i > 0)
+					// 		points_ += " ";
+					// 	points_ += QString::number(value->get(i, defaultValue).asFloat());
+					// }
+				}
+			}
+			else if (const MatrixViewControl *scontrol = dynamic_cast<const MatrixViewControl*>(control))
+			{
+				MatrixViewWidget *matrixView = (MatrixViewWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+				if (matrixView == nullptr)
+					qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
+				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
+				{
+					// if (scontrol->type == &typeid(float[]))
+					// else if (scontrol->type == &typeid(int[]))
+					// Json::Value defaultValue = -1.0;
+					// QList<QPointF> points;
+					// QString points_ = "";
+					// for (uint i = 0; i < value->size(); i++)
+					// {
+					// 	points.push_back(QPointF(i, value->get(i, defaultValue).asFloat()));
+					// 	if (i > 0)
+					// 		points_ += " ";
+					// 	points_ += QString::number(value->get(i, defaultValue).asFloat());
+					// }
+					// // qDebug() << scontrol->parameter << points;
+
+					// if (scontrol->getCmd == IF_AE_G_STATUS && scontrol->parameter == AE_LUMA_PARAMS_BASE64)
+					// {
+					// 	int mean = 0;
+					// 	for (uint i = 0; i < value->size(); i++)
+					// 		mean += value->get(i, 0).asFloat();
+					// 	this->meanLuminance = mean / value->size();
+					// }
+				}
+			}
+		}
+	}
+}
+
 void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 {
 	for (const auto *control : qAsConst(controlsDefinition.controls))

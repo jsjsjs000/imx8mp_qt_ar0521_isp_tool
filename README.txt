@@ -13,4 +13,4 @@
 + show fps, iso, gain, exposure time, integration time in status bar
 
 -- fix defect pixels reading - problem in driver
--- max gain in .xml - not exists in .xml
+-- max gain in .xml - parameter not exists in .xml

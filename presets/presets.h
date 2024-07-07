@@ -9,7 +9,7 @@
 class Presets
 {
 private:
-	QList<Preset*> presetsList;
+	// QList<Preset*> presetsList;
 	PresetV4l2Isp presetV4l2Isp;
 
 	void printDebug();
@@ -17,6 +17,7 @@ private:
 public:
 	Presets();
 	bool loadPresetsList(QComboBox *comboBox);
+	bool load(QString name, QMap<QString, QString> *params);
 	void save(QComboBox *comboBox, QString name, QString params);
 	void rename(QComboBox *comboBox, QString name);
 	void add(QComboBox *comboBox, QString name, QString params);
