@@ -182,16 +182,24 @@ void IspProcThread::slot_setParams(QMap<QString, QString> *params)
 						int value_ = value.toInt(&ok);
 						if (!ok)
 							continue;
-						ispControl.setParamNumber(control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+						// ispControl.setParamNumber(control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+						// 		control->parameter.toStdString().c_str(), value_, 1);
+						CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Number,
+								control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
 								control->parameter.toStdString().c_str(), value_, 1);
+						this->AddCommandToQueue(commandItem);
 					}
 					else
 					{
 						float value_ = value.toFloat(&ok);
 						if (!ok)
 							continue;
-						ispControl.setParamNumber(control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+						// ispControl.setParamNumber(control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+						// 		control->parameter.toStdString().c_str(), value_ * scontrol->multiple, scontrol->multiple);
+						CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Number,
+								control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
 								control->parameter.toStdString().c_str(), value_ * scontrol->multiple, scontrol->multiple);
+						this->AddCommandToQueue(commandItem);
 					}
 				}
 			}
@@ -222,11 +230,14 @@ void IspProcThread::slot_setParams(QMap<QString, QString> *params)
 					qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
 				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 				{
-					// int index;
-					// if (value->isBool())
-					// 	index = value->asBool();
-					// else
-					// 	index = value->asInt();
+					// qDebug() << "restore combobox:" << cmd << param << value;
+					bool value_ = value == "1" || value == "true";
+					// ispControl.setParamBool(control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+					// 		control->parameter.toStdString().c_str(), value_);
+					CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Number,
+							control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+							control->parameter.toStdString().c_str(), value_, 1);
+					this->AddCommandToQueue(commandItem);
 				}
 			}
 			else if (const ComboBoxControl2 *scontrol = dynamic_cast<const ComboBoxControl2*>(control))
@@ -236,11 +247,24 @@ void IspProcThread::slot_setParams(QMap<QString, QString> *params)
 					qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
 				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 				{
-					// QString index;
-					// if (value->isBool())
-					// 	index = value->asBool() ? "true" : "false";
-					// else
-					// 	index = QString(value->asCString());
+					// qDebug() << "restore combobox2:" << cmd << param << value;
+					// bool value_ = value == "1" || value == "true";
+					// ispControl.setParamBool(control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+					// 		control->parameter.toStdString().c_str(), value_);
+					CommandItem commandItem;
+					if (value == "0" || value == "false")
+						commandItem = CommandItem(CommandItem::CommandItemType::Bool,
+								control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+								control->parameter.toStdString().c_str(), false);
+					else if (value == "1" || value == "true")
+						commandItem = CommandItem(CommandItem::CommandItemType::Bool,
+								control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+								control->parameter.toStdString().c_str(), true);
+					else
+						commandItem = CommandItem(CommandItem::CommandItemType::String,
+								control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+								control->parameter.toStdString().c_str(), value);
+					this->AddCommandToQueue(commandItem);
 				}
 			}
 			else if (const CheckBoxControl *scontrol = dynamic_cast<const CheckBoxControl*>(control))
@@ -250,64 +274,17 @@ void IspProcThread::slot_setParams(QMap<QString, QString> *params)
 					qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
 				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 				{
-					// int state;
-					// if (value->isBool())
-					// 	state = value->asBool();
-					// else if (value->isString())
-					// 	state = value->asString().compare("false") != 0;
-					// else
-					// 	state = value->asInt();
+					qDebug() << "restore checkbox:" << cmd << param << value;
+					bool value_ = value == "1" || value == "true";
+					// ispControl.setParamBool(control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+					// 		control->parameter.toStdString().c_str(), value_);
 				}
+				CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Bool,
+						control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+						control->parameter.toStdString().c_str(), value);
+				this->AddCommandToQueue(commandItem);
 			}
-			else if (const LabelControl *scontrol = dynamic_cast<const LabelControl*>(control))
-			{
-				LabelWidget *label = (LabelWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
-				if (label == nullptr)
-					qDebug() << "Widget " << scontrol->setCmd + "/" + scontrol->parameter << " not found";
-				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
-				{
-					// Json::Value value_ = *value;
-					// QString text;
-					// if (scontrol->type == &typeid(int[]))
-					// {
-					// 	for (uint i = 0; i < value_.size(); i++)
-					// 	{
-					// 		if (i > 0)
-					// 			text += ",";
-					// 		text += QString::number(value_[i].asInt());
-					// 	}
-					// }
-					// else if (scontrol->type == &typeid(float[]))
-					// {
-					// 	for (uint i = 0; i < value_.size(); i++)
-					// 	{
-					// 		if (i > 0)
-					// 			text += ", ";
-					// 		text += QString::number(value_[i].asFloat(), 'f', 3);
-					// 	}
-					// }
-					// else if (scontrol->type == &typeid(int))
-					// 	text = QString::number(value_.asInt());
-					// else if (scontrol->type == &typeid(float))
-					// 	text = QString::number(value_.asFloat(), 'f', 3);
-					// else if (scontrol->type == &typeid(std::string))
-					// 	text = QString(value_.asCString());
-					// else if (scontrol->type == &typeid(std::string[]))
-					// {
-					// 	for (uint i = 0; i < value_.size(); i++)
-					// 	{
-					// 		if (i > 0)
-					// 			text += ", ";
-					// 		text += QString(value_[i].asCString());
-					// 	}
-					// }
-					// else
-					// {
-					// 	text = "(" + scontrol->parameter + " not decoded type)";
-					// 	qDebug() << scontrol->parameter << "not decoded in LabelControl";
-					// }
-				}
-			}
+			// else if (const LabelControl *scontrol = dynamic_cast<const LabelControl*>(control))
 			else if (const ChartControl *scontrol = dynamic_cast<const ChartControl*>(control))
 			{
 				ChartWidget *chart = (ChartWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
