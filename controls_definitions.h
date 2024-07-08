@@ -13,8 +13,9 @@ class ControlsDefinitions
 public:
 	QVector<Control*> controls;
 	QList<QString> readParams;
+	QVector<SaveControl*> saveControls;
 
-	void init(void)
+	void init()
 	{
 		controls.append(new GroupControl("AE - Auto Exposure"));
 		controls.append(new CheckBoxControl(IF_AE_G_EN, IF_AE_S_EN, AE_ENABLE_PARAMS,        "Enabled",                    true,          ""));
@@ -91,7 +92,7 @@ public:
 		controls.append(new ComboBoxControl(IF_CPROC_G_CFG, IF_CPROC_S_CFG,   CPROC_LUMA_OUT_PARAMS,   "Luminance output", lumaoutMap, "CPROC luminance output clipping range"));
 		controls.append(new SliderControl(  IF_CPROC_G_CFG, IF_CPROC_S_CFG,   CPROC_SATURATION_PARAMS, "Saturation",              0.0f, 1.99f, 1.0f, 3, "Saturation value"));
 			QMap<int, QString> *coeffMap = new QMap<int, QString>;
-			coeffMap->insert({{0, "index 1"}, {1, "index 2"}});
+			coeffMap->insert({{1, "index 1"}, {2, "index 2"}});
 		controls.append(new ComboBoxControl(NULL,           IF_CPROC_S_COEFF, CPROC_INDEX_PARAMS,      "Input coefficient index",    coeffMap,    "index 1: 0.257812, 0.5,      0.101562, -0.148438, -0.289062, 0.4375, 0.4375, -0.367188, -0.070312\nindex 2: 0.296875, 0.585938, 0.117188, -0.171875, -0.328125, 0.5,    0.5,    -0.421875, -0.078125"));
 
 		controls.append(new GroupControl("DEMOSAIC"));
@@ -299,6 +300,103 @@ public:
 				IF_SENSOR_G_RESH,
 				IF_SENSOR_G_SEC,
 		});
+	}
+
+	void initSaveControls()
+	{
+		saveControls.append(new SaveControl(IF_AE_G_EN,        IF_AE_S_EN,        AE_ENABLE_PARAMS));            // CheckBoxControl
+		saveControls.append(new SaveControl(IF_AE_G_CFG,       IF_AE_S_CFG,       AE_MODE_PARAMS));              // ComboBoxControl
+		saveControls.append(new SaveControl(IF_AE_G_CFG,       IF_AE_S_CFG,       AE_DAMP_OVER_PARAMS));         // SliderControl
+		saveControls.append(new SaveControl(IF_AE_G_CFG,       IF_AE_S_CFG,       AE_DAMP_UNDER_PARAMS));        // SliderControl
+		saveControls.append(new SaveControl(IF_AE_G_CFG,       IF_AE_S_CFG,       AE_SET_POINT_PARAMS));         // SliderControl
+		saveControls.append(new SaveControl(IF_AE_G_CFG,       IF_AE_S_CFG,       AE_CLM_TOLERANCE_PARAMS));     // SliderControl
+		saveControls.append(new SaveControl(IF_AE_G_ISO,       IF_AE_S_ISO,       AE_SENSITIVITY_PARAMS));       // ComboBoxControl
+		saveControls.append(new SaveControl(IF_AE_G_ECM,       IF_AE_S_ECM,       AE_FLICKER_PERIOD_PARAMS));    // ComboBoxControl
+		saveControls.append(new SaveControl(IF_AE_G_ECM,       IF_AE_S_ECM,       AE_AFPS_PARAMS));              // CheckBoxControl
+		saveControls.append(new SaveControl(IF_AWB_G_EN,       IF_AWB_S_EN,       AWB_ENABLE_PARAMS));           // CheckBoxControl
+		saveControls.append(new SaveControl(IF_AWB_G_CFG,      IF_AWB_S_CFG,      AWB_MODE_PARAMS));             // ComboBoxControl
+		saveControls.append(new SaveControl(IF_AWB_G_CFG,      IF_AWB_S_CFG,      AWB_INDEX_PARAMS));            // ComboBoxControl
+		saveControls.append(new SaveControl(IF_AWB_G_CFG,      IF_AWB_S_CFG,      AWB_DAMPING_PARAMS));          // CheckBoxControl
+		// saveControls.append(new SaveControl(NULL,           IF_AWB_S_MEASWIN,  RECT_LEFT));                   // SliderControl
+		// saveControls.append(new SaveControl(NULL,           IF_AWB_S_MEASWIN,  RECT_TOP));                    // SliderControl
+		// saveControls.append(new SaveControl(NULL,           IF_AWB_S_MEASWIN,  RECT_WIDTH));                  // SliderControl
+		// saveControls.append(new SaveControl(NULL,           IF_AWB_S_MEASWIN,  RECT_HEIGHT));                 // SliderControl
+		saveControls.append(new SaveControl(IF_BLS_G_CFG,      IF_BLS_S_CFG,      BLS_RED_PARAMS));              // SliderControl
+		saveControls.append(new SaveControl(IF_BLS_G_CFG,      IF_BLS_S_CFG,      BLS_GREEN_R_PARAMS));          // SliderControl
+		saveControls.append(new SaveControl(IF_BLS_G_CFG,      IF_BLS_S_CFG,      BLS_GREEN_B_PARAMS));          // SliderControl
+		saveControls.append(new SaveControl(IF_BLS_G_CFG,      IF_BLS_S_CFG,      BLS_BLUE_PARAMS));             // SliderControl
+		saveControls.append(new SaveControl(IF_CAC_G_EN,       IF_CAC_S_EN,       CAC_ENABLE_PARAMS));           // CheckBoxControl
+		saveControls.append(new SaveControl(IF_CNR_G_EN,       IF_CNR_S_EN,       CNR_ENABLE_PARAMS));           // CheckBoxControl
+		saveControls.append(new SaveControl(IF_CNR_G_CFG,      IF_CNR_S_CFG,      CNR_TC1_PARAMS));              // SliderControl
+		saveControls.append(new SaveControl(IF_CNR_G_CFG,      IF_CNR_S_CFG,      CNR_TC2_PARAMS));              // SliderControl
+		saveControls.append(new SaveControl(IF_CPROC_G_EN,     IF_CPROC_S_EN,     CPROC_ENABLE_PARAMS));         // CheckBoxControl
+		saveControls.append(new SaveControl(IF_CPROC_G_CFG,    IF_CPROC_S_CFG,    CPROC_BRIGHTNESS_PARAMS));     // SliderControl
+		saveControls.append(new SaveControl(IF_CPROC_G_CFG,    IF_CPROC_S_CFG,    CPROC_CHROMA_OUT_PARAMS));     // ComboBoxControl
+		saveControls.append(new SaveControl(IF_CPROC_G_CFG,    IF_CPROC_S_CFG,    CPROC_CONTRAST_PARAMS));       // SliderControl
+		saveControls.append(new SaveControl(IF_CPROC_G_CFG,    IF_CPROC_S_CFG,    CPROC_HUE_PARAMS));            // SliderControl
+		saveControls.append(new SaveControl(IF_CPROC_G_CFG,    IF_CPROC_S_CFG,    CPROC_LUMA_IN_PARAMS));        // ComboBoxControl
+		saveControls.append(new SaveControl(IF_CPROC_G_CFG,    IF_CPROC_S_CFG,    CPROC_LUMA_OUT_PARAMS));       // ComboBoxControl
+		saveControls.append(new SaveControl(IF_CPROC_G_CFG,    IF_CPROC_S_CFG,    CPROC_SATURATION_PARAMS));     // SliderControl
+		// saveControls.append(new SaveControl(NULL,           IF_CPROC_S_COEFF,  CPROC_INDEX_PARAMS));          // ComboBoxControl
+		saveControls.append(new SaveControl(IF_DEMOSAIC_G_EN,  IF_DEMOSAIC_S_EN,  DEMOSAIC_ENABLE_PARAMS));      // CheckBoxControl
+		saveControls.append(new SaveControl(IF_DEMOSAIC_G_CFG, IF_DEMOSAIC_S_CFG, DEMOSAIC_MODE_PARAMS));        // ComboBoxControl
+		saveControls.append(new SaveControl(IF_DEMOSAIC_G_CFG, IF_DEMOSAIC_S_CFG, DEMOSAIC_THRESHOLD_PARAMS));   // SliderControl
+		saveControls.append(new SaveControl(IF_DPCC_G_EN,      IF_DPCC_S_EN,      DPF_ENABLE_PARAMS));           // CheckBoxControl
+		saveControls.append(new SaveControl(IF_DPF_G_EN,       IF_DPF_S_EN,       DPF_ENABLE_PARAMS));           // CheckBoxControl
+		saveControls.append(new SaveControl(IF_DPF_G_CFG,      IF_DPF_S_CFG,      DPF_GRADIENT_PARAMS));         // SliderControl
+		saveControls.append(new SaveControl(IF_DPF_G_CFG,      IF_DPF_S_CFG,      DPF_OFFSET_PARAMS));           // SliderControl
+		saveControls.append(new SaveControl(IF_DPF_G_CFG,      IF_DPF_S_CFG,      DPF_MIN_PARAMS));              // SliderControl
+		saveControls.append(new SaveControl(IF_DPF_G_CFG,      IF_DPF_S_CFG,      DPF_DIV_PARAMS));              // SliderControl
+		saveControls.append(new SaveControl(IF_DPF_G_CFG,      IF_DPF_S_CFG,      DPF_SIGMA_GREEN_PARAMS));      // SliderControl
+		saveControls.append(new SaveControl(IF_DPF_G_CFG,      IF_DPF_S_CFG,      DPF_SIGMA_RED_BLUE_PARAMS));   // SliderControl
+		saveControls.append(new SaveControl(IF_EC_G_CFG,       IF_EC_S_CFG,       EC_GAIN_PARAMS));              // SliderControl
+		saveControls.append(new SaveControl(IF_EC_G_CFG,       IF_EC_S_CFG,       EC_TIME_PARAMS));              // SliderControl
+		saveControls.append(new SaveControl(IF_FILTER_G_EN,    IF_FILTER_S_EN,    FILTER_ENABLE_PARAMS));        // CheckBoxControl
+		saveControls.append(new SaveControl(IF_FILTER_G_CFG,   IF_FILTER_S_CFG,   FILTER_AUTO_PARAMS));          // CheckBoxControl
+		saveControls.append(new SaveControl(IF_FILTER_G_CFG,   IF_FILTER_S_CFG,   FILTER_DENOISE_PARAMS));       // SliderControl
+		saveControls.append(new SaveControl(IF_FILTER_G_CFG,   IF_FILTER_S_CFG,   FILTER_SHARPEN_PARAMS));       // SliderControl
+		saveControls.append(new SaveControl(IF_FILTER_G_CFG,   IF_FILTER_S_CFG,   FILTER_CHRHMODE_PARAMS));      // SliderControl
+		saveControls.append(new SaveControl(IF_FILTER_G_CFG,   IF_FILTER_S_CFG,   FILTER_CHRVMODE_PARAMS));      // SliderControl
+		saveControls.append(new SaveControl(IF_GC_G_EN,        IF_GC_S_EN,        GC_ENABLE_PARAMS));            // CheckBoxControl
+		saveControls.append(new SaveControl(IF_GC_G_CFG,       IF_GC_S_CFG,       GC_CURVE_PARAMS));             // ChartControl
+		saveControls.append(new SaveControl(IF_GC_G_CFG,       IF_GC_S_CFG,       GC_MODE_PARAMS));              // ComboBoxControl
+		saveControls.append(new SaveControl(IF_HDR_G_EN,       IF_HDR_S_EN,       HDR_ENABLE_PARAMS));           // CheckBoxControl
+		saveControls.append(new SaveControl(IF_HDR_G_CFG,      IF_HDR_S_CFG,      HDR_EXTENSION_BIT_PARAMS));    // SliderControl
+		saveControls.append(new SaveControl(IF_HDR_G_CFG,      IF_HDR_S_CFG,      HDR_EXPOSURE_RATIO_PARAMS));   // SliderControl
+		saveControls.append(new SaveControl(IF_LSC_G_EN,       IF_LSC_S_EN,       LSC_ENABLE_PARAMS));           // CheckBoxControl
+		saveControls.append(new SaveControl(IF_WDR_G_EN,       IF_WDR_S_EN,       WDR_ENABLE_PARAMS));           // CheckBoxControl
+		saveControls.append(new SaveControl(IF_WDR_G_CFG,      IF_WDR_S_CFG,      WDR_AUTO_LEVEL_PARAMS));       // SliderControl
+		saveControls.append(new SaveControl(IF_WDR_G_CFG,      IF_WDR_S_CFG,      WDR_STRENGTH_PARAMS));         // SliderControl
+		saveControls.append(new SaveControl(IF_WDR_G_CFG,      IF_WDR_S_CFG,      WDR_GAIN_MAX_PARAMS));         // SliderControl
+		saveControls.append(new SaveControl(IF_WDR_G_CFG,      IF_WDR_S_CFG,      WDR_STRENGTH_GLOBAL_PARAMS));  // SliderControl
+		saveControls.append(new SaveControl(IF_WB_G_CFG,       IF_WB_S_CCM,       WB_MATRIX_PARAMS));            // ChartControl
+		saveControls.append(new SaveControl(IF_WB_G_CFG,       IF_WB_S_OFFSET,    WB_OFFSET_PARAMS));            // ChartControl
+		saveControls.append(new SaveControl(IF_WB_G_CFG,       IF_WB_S_CFG,       WB_RED_PARAMS));               // SliderControl
+		saveControls.append(new SaveControl(IF_WB_G_CFG,       IF_WB_S_CFG,       WB_GREEN_R_PARAMS));           // SliderControl
+		saveControls.append(new SaveControl(IF_WB_G_CFG,       IF_WB_S_CFG,       WB_GREEN_B_PARAMS));           // SliderControl
+		saveControls.append(new SaveControl(IF_WB_G_CFG,       IF_WB_S_CFG,       WB_BLUE_PARAMS));              // SliderControl
+		saveControls.append(new SaveControl(IF_DWE_G_PARAMS,   IF_DWE_S_PARAMS,   "dwe/mode"));                  // ComboBoxControl
+		saveControls.append(new SaveControl(IF_DWE_G_PARAMS,   IF_DWE_S_PARAMS,   "dwe/hflip"));                 // ComboBoxControl2
+		saveControls.append(new SaveControl(IF_DWE_G_PARAMS,   IF_DWE_S_PARAMS,   "dwe/vflip"));                 // ComboBoxControl2
+		saveControls.append(new SaveControl(IF_DWE_G_PARAMS,   IF_DWE_S_PARAMS,   "dwe/bypass"));                // ComboBoxControl2
+		saveControls.append(new SaveControl(IF_DWE_G_PARAMS,   IF_DWE_S_PARAMS,   "dwe/mat"));                   // SliderArrayControl
+		saveControls.append(new SaveControl(NULL,              IF_S_FPS,          "fps"));                       // SliderControl
+		saveControls.append(new SaveControl(IF_SENSOR_G_SEC,   IF_SENSOR_S_SEC,   "exposure"));                  // SliderControl
+	}
+
+	bool isInSaveControls(QString name)
+	{
+		QStringList words = name.split("|");
+		if (words.count() != 2)
+			return false;
+
+		QString cmd = words[0];
+		QString param = words[1];
+		for (int i = 0; i < saveControls.count(); i++)
+			if ((saveControls[i]->getCmd == cmd || saveControls[i]->getCmd == nullptr) && saveControls[i]->parameter == param)
+				return true;
+
+		return false;
 	}
 };
 

@@ -3,6 +3,7 @@
 #include <QSpacerItem>
 #include <QProcess>
 #include <QThread>
+#include <QStringBuilder>
 
 #include "command_item.h"
 #include "controls_definitions.h"
@@ -41,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->saveButton->setVisible(false);
 
 	controlsDefinition.init();
+	controlsDefinition.initSaveControls();
 	controls2Definition.init();
 	this->createControls();
 	this->createControls2();
@@ -89,7 +91,11 @@ MainWindow::MainWindow(QWidget *parent)
 	{
 		for (int i = 0; i < ui->presetComboBox->count(); i++)
 			if (ui->presetComboBox->itemText(i) == defaultPreset)
+			{
 				ui->presetComboBox->setCurrentIndex(i);
+				on_presetComboBox_currentIndexChanged(0);
+				break;
+			}
 	}
 	else if (ui->presetComboBox->count() > 0)
 		on_presetComboBox_currentIndexChanged(0);
@@ -106,7 +112,7 @@ int MainWindow::getFps()
 	for (const auto *control : qAsConst(controlsDefinition.controls))
 		if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
 		{
-			SliderWidget *slider = (SliderWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+			SliderWidget *slider = (SliderWidget*)this->widgets[scontrol->setCmd + "|" + scontrol->parameter];
 			if (slider != nullptr && scontrol->setCmd == IF_S_FPS)
 				return slider->getValue();
 		}
@@ -119,7 +125,7 @@ void MainWindow::setFps(int fps)
 	for (const auto *control : qAsConst(controlsDefinition.controls))
 		if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
 		{
-			SliderWidget *slider = (SliderWidget*)this->widgets[scontrol->setCmd + "/" + scontrol->parameter];
+			SliderWidget *slider = (SliderWidget*)this->widgets[scontrol->setCmd + "|" + scontrol->parameter];
 			if (slider != nullptr && scontrol->setCmd == IF_S_FPS)
 				slider->setValue(fps);
 		}
@@ -193,56 +199,56 @@ void MainWindow::createControls()
 		else if (const CheckBoxControl *scontrol = dynamic_cast<const CheckBoxControl*>(control))
 		{
 			CheckBoxWidget *checkBox = new CheckBoxWidget(this, this, scontrol, &MainWindow::onCheckBoxChanged);
-			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), checkBox);
+			this->widgets.insert(QString(scontrol->setCmd + "|" + scontrol->parameter), checkBox);
 			ui->verticalLayout_1->addWidget(checkBox);
 			checkBox->setState(scontrol->checked);
 		}
 		else if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
 		{
 			SliderWidget *slider = new SliderWidget(this, this, scontrol, &MainWindow::onSliderValueChange);
-			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), slider);
+			this->widgets.insert(QString(scontrol->setCmd + "|" + scontrol->parameter), slider);
 			ui->verticalLayout_1->addWidget(slider);
 		}
 		else if (const SliderArrayControl *scontrol = dynamic_cast<const SliderArrayControl*>(control))
 		{
 			SliderArrayWidget *slider = new SliderArrayWidget(this, this, scontrol, &MainWindow::onSliderArrayValueChange);
-			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), slider);
+			this->widgets.insert(QString(scontrol->setCmd + "|" + scontrol->parameter), slider);
 			ui->verticalLayout_1->addWidget(slider);
 		}
 		else if (const ButtonControl *scontrol = dynamic_cast<const ButtonControl*>(control))
 		{
 			ButtonWidget *button = new ButtonWidget(this, this, scontrol, &MainWindow::onButtonClicked);
-			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), button);
+			this->widgets.insert(QString(scontrol->setCmd + "|" + scontrol->parameter), button);
 			ui->verticalLayout_1->addWidget(button);
 		}
 		else if (const LabelControl *scontrol = dynamic_cast<const LabelControl*>(control))
 		{
 			LabelWidget *label = new LabelWidget(this, this, scontrol);
-			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), label);
+			this->widgets.insert(QString(scontrol->setCmd + "|" + scontrol->parameter), label);
 			ui->verticalLayout_1->addWidget(label);
 		}
 		else if (const ComboBoxControl *scontrol = dynamic_cast<const ComboBoxControl*>(control))
 		{
 			ComboBoxWidget *comboBox = new ComboBoxWidget(this, this, scontrol, &MainWindow::onComboBoxIndexChanged);
-			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), comboBox);
+			this->widgets.insert(QString(scontrol->setCmd + "|" + scontrol->parameter), comboBox);
 			ui->verticalLayout_1->addWidget(comboBox);
 		}
 		else if (const ComboBoxControl2 *scontrol = dynamic_cast<const ComboBoxControl2*>(control))
 		{
 			ComboBoxWidget2 *comboBox = new ComboBoxWidget2(this, this, scontrol, &MainWindow::onComboBox2IndexChanged);
-			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), comboBox);
+			this->widgets.insert(QString(scontrol->setCmd + "|" + scontrol->parameter), comboBox);
 			ui->verticalLayout_1->addWidget(comboBox);
 		}
 		else if (const ChartControl *scontrol = dynamic_cast<const ChartControl*>(control))
 		{
 			ChartWidget *chart = new ChartWidget(this, this, scontrol, &MainWindow::onChartControlPointsChanged);
-			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), chart);
+			this->widgets.insert(QString(scontrol->setCmd + "|" + scontrol->parameter), chart);
 			ui->verticalLayout_1->addWidget(chart);
 		}
 		else if (const MatrixViewControl *scontrol = dynamic_cast<const MatrixViewControl*>(control))
 		{
 			MatrixViewWidget *matrix = new MatrixViewWidget(this, this, scontrol);
-			this->widgets.insert(QString(scontrol->setCmd + "/" + scontrol->parameter), matrix);
+			this->widgets.insert(QString(scontrol->setCmd + "|" + scontrol->parameter), matrix);
 			ui->verticalLayout_1->addWidget(matrix);
 		}
 	}
@@ -644,6 +650,7 @@ void MainWindow::on_presetComboBox_currentIndexChanged(int index)
 	if (this->ui->tabWidget->currentIndex() == 0)
 	{
 		QString name = this->ui->presetComboBox->itemText(index);
+		qDebug() << "load preset" << name;
 		QMap<QString, QString> params;
 		if (!presets1.load(name, &params))
 			return;
@@ -671,6 +678,14 @@ void MainWindow::on_presetSaveButton_clicked()
 			name = this->ui->presetComboBox->itemText(this->ui->presetComboBox->currentIndex());
 
 		QString params = emit this->signal_getParams();
+
+		QString key1 = QString(IF_S_FPS) % QString("|fps");
+		if (this->widgets.contains(key1))
+		{
+			SliderWidget *slider = (SliderWidget*)this->widgets[key1];
+			params = params % "\n" % key1 % QString("=") % QString::number(slider->getValue());
+		}
+
 		presets1.save(this->ui->presetComboBox, name, params);
 	}
 }

@@ -282,4 +282,19 @@ public:
 	}
 };
 
+class SaveControl
+{
+public:
+	QString getCmd;
+	QString setCmd;
+	QString parameter;
+
+	SaveControl(QString getCmd, QString setCmd, QString parameter)
+	{
+		this->getCmd = getCmd;
+		this->setCmd = setCmd;
+		this->parameter = parameter;
+	}
+};
+
 #endif // CONTROLS_H
