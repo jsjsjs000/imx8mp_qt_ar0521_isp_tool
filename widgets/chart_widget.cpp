@@ -410,3 +410,14 @@ void ChartWidget::updateGammaCurve()
 	this->repaint();
 	this->executeChangedEvent();
 }
+
+float ChartWidget::getGamma()
+{
+	return this->gamma;
+}
+
+void ChartWidget::setGamma(float gamma)
+{
+	this->gamma = gamma;
+	this->ui->labelGamma->setText(QString::number(this->gamma, 'f', 2));
+}

@@ -24,6 +24,8 @@ public:
 	void initialize(float x1, float x2, float y1, float y2, float gridX, float gridY,
 			QList<QPointF> points);
 	void initializeDefaultAndFactoryPoints(QList<QPointF> defaultPoints, QList<QPointF> factoryPoints);
+	float getGamma();
+	void setGamma(float gamma);
 
 private slots:
 	void actionResetDefaultSlot();

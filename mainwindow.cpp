@@ -657,6 +657,24 @@ void MainWindow::on_presetComboBox_currentIndexChanged(int index)
 
 		emit signal_setParams(&params);
 
+		canUpdateControls = false;
+		QString keyFps = QString(IF_S_FPS) % QString("|fps");
+		for (auto it = params.keyValueBegin(); it != params.keyValueEnd(); ++it)
+			if (it->first == keyFps)
+			{
+				bool ok;
+				int fps = it->second.toInt(&ok);
+				if (ok)
+				{
+					if (this->widgets.contains(keyFps))
+					{
+						SliderWidget *slider = (SliderWidget*)this->widgets[keyFps];
+						slider->setValue(fps);
+					}
+				}
+			}
+		canUpdateControls = true;
+
 		PresetV4l2Isp::saveDefaultPreset(name);
 	}
 }
@@ -679,11 +697,11 @@ void MainWindow::on_presetSaveButton_clicked()
 
 		QString params = emit this->signal_getParams();
 
-		QString key1 = QString(IF_S_FPS) % QString("|fps");
-		if (this->widgets.contains(key1))
+		QString keyFps = QString(IF_S_FPS) % QString("|fps");
+		if (this->widgets.contains(keyFps))
 		{
-			SliderWidget *slider = (SliderWidget*)this->widgets[key1];
-			params = params % "\n" % key1 % QString("=") % QString::number(slider->getValue());
+			SliderWidget *slider = (SliderWidget*)this->widgets[keyFps];
+			params = params % "\n" % keyFps % QString("=") % QString::number(slider->getValue());
 		}
 
 		presets1.save(this->ui->presetComboBox, name, params);

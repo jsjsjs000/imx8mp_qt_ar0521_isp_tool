@@ -154,7 +154,7 @@ void IspProcThread::slot_setParams(QMap<QString, QString> *params)
 {
 	for (auto it = params->keyValueBegin(); it != params->keyValueEnd(); ++it)
 	{
-// qDebug() << it->first << it->second;
+		// qDebug() << it->first << it->second;
 		QStringList words = it->first.split("|");
 		if (words.count() != 2)
 			continue;
@@ -215,7 +215,7 @@ void IspProcThread::slot_setParams(QMap<QString, QString> *params)
 					QList<float> *value_ = new QList<float>();
 					for (int i = 0; i < words.count(); i++)
 					{
-						value_->push_back(value.toFloat(&ok));
+						value_->push_back(words[i].toFloat(&ok));
 						if (!ok)
 							break;
 					}
@@ -291,7 +291,35 @@ void IspProcThread::slot_setParams(QMap<QString, QString> *params)
 				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 				{
 					// qDebug() << "restore chart:" << cmd << param << value;
-					// $$
+					bool ok = false;
+					QStringList wordsAll = value.split("|");
+					QString points;
+					if (wordsAll.count() == 0)
+						continue;
+
+					points = wordsAll[0];
+					if (wordsAll.count() == 2 && scontrol->gammaCurve)
+					{
+						QString gammaStr = wordsAll[1];
+						float gamma = gammaStr.toFloat(&ok);
+						if (ok)
+							chart->setGamma(gamma);
+					}
+					QStringList words = points.split(" ");
+					QList<float> *value_ = new QList<float>();
+					for (int i = 0; i < words.count(); i++)
+					{
+						value_->push_back(words[i].toFloat(&ok));
+						if (!ok)
+							break;
+					}
+					if (ok)
+					{
+						CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Array,
+								control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+								control->parameter.toStdString().c_str(), value_);
+						this->AddCommandToQueue(commandItem);
+					}
 				}
 			}
 			else if (const MatrixViewControl *scontrol = dynamic_cast<const MatrixViewControl*>(control))
@@ -508,6 +536,8 @@ void IspProcThread::updateControlsFromJson(Json::Value json, QString cmd)
 						points_ += " ";
 					points_ += QString::number(value->get(i, defaultValue).asFloat());
 				}
+				if (scontrol->gammaCurve)
+					points_ = points_ % "|" % QString::number(chart->getGamma(), 'f', 2);
 				this->saveParam(control, points_);
 				emit signal_update_chart(chart, 0, value->size() - 1, scontrol->y1, scontrol->y2, 1.0f, scontrol->gridY, points);
 				// qDebug() << scontrol->parameter << points;
