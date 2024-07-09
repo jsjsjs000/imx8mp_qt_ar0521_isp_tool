@@ -241,7 +241,7 @@ public:
 		controls.append(new LabelControl(                    IF_SENSOR_G_RESH,      "resh", "Sensor height",           "", &typeid(int)));
 		controls.append(new SliderControl(  NULL,            IF_S_FPS,              "fps",  "FPS",           1, 60, 1, ""));
 //	controls.append(new ButtonControl(  NULL,            IF_SENSOR_LIB_PRELOAD, "",     "",       "Reload sensor calibration file (hang up stream)", ""));     // not works
-		controls.append(new SliderControl(  IF_SENSOR_G_SEC, IF_SENSOR_S_SEC,       SENSOR_START_EC,  "AE start exposure = IntegrationTime x Gain",         0.0f, 4.0f, 0.0f, 3, "Disable AE (Auto Exposure) first"));
+		controls.append(new LabelControl(                    IF_SENSOR_G_SEC,       SENSOR_START_EC,  "AE start exposure = IntegrationTime x Gain", "Disable AE (Auto Exposure) first", &typeid(float)));  // IF_SENSOR_S_SEC - Calling this function is only valid before the stream on
 //	controls.append(new SliderControl(  NULL,            IF_SENSOR_S_TESTPAT,   "test.pattern ",  "Sensor test pattern mode",         0, 10, 0, ""));  // not works
 
 //	controls.append(new GroupControl("Pipline"));
@@ -317,10 +317,10 @@ public:
 		saveControls.append(new SaveControl(IF_AWB_G_CFG,      IF_AWB_S_CFG,      AWB_MODE_PARAMS));             // ComboBoxControl
 		saveControls.append(new SaveControl(IF_AWB_G_CFG,      IF_AWB_S_CFG,      AWB_INDEX_PARAMS));            // ComboBoxControl
 		saveControls.append(new SaveControl(IF_AWB_G_CFG,      IF_AWB_S_CFG,      AWB_DAMPING_PARAMS));          // CheckBoxControl
-		// saveControls.append(new SaveControl(NULL,           IF_AWB_S_MEASWIN,  RECT_LEFT));                   // SliderControl
-		// saveControls.append(new SaveControl(NULL,           IF_AWB_S_MEASWIN,  RECT_TOP));                    // SliderControl
-		// saveControls.append(new SaveControl(NULL,           IF_AWB_S_MEASWIN,  RECT_WIDTH));                  // SliderControl
-		// saveControls.append(new SaveControl(NULL,           IF_AWB_S_MEASWIN,  RECT_HEIGHT));                 // SliderControl
+		//-saveControls.append(new SaveControl(NULL,           IF_AWB_S_MEASWIN,  RECT_LEFT));                   // SliderControl
+		//-saveControls.append(new SaveControl(NULL,           IF_AWB_S_MEASWIN,  RECT_TOP));                    // SliderControl
+		//-saveControls.append(new SaveControl(NULL,           IF_AWB_S_MEASWIN,  RECT_WIDTH));                  // SliderControl
+		//-saveControls.append(new SaveControl(NULL,           IF_AWB_S_MEASWIN,  RECT_HEIGHT));                 // SliderControl
 		saveControls.append(new SaveControl(IF_BLS_G_CFG,      IF_BLS_S_CFG,      BLS_RED_PARAMS));              // SliderControl
 		saveControls.append(new SaveControl(IF_BLS_G_CFG,      IF_BLS_S_CFG,      BLS_GREEN_R_PARAMS));          // SliderControl
 		saveControls.append(new SaveControl(IF_BLS_G_CFG,      IF_BLS_S_CFG,      BLS_GREEN_B_PARAMS));          // SliderControl
@@ -337,11 +337,11 @@ public:
 		saveControls.append(new SaveControl(IF_CPROC_G_CFG,    IF_CPROC_S_CFG,    CPROC_LUMA_IN_PARAMS));        // ComboBoxControl
 		saveControls.append(new SaveControl(IF_CPROC_G_CFG,    IF_CPROC_S_CFG,    CPROC_LUMA_OUT_PARAMS));       // ComboBoxControl
 		saveControls.append(new SaveControl(IF_CPROC_G_CFG,    IF_CPROC_S_CFG,    CPROC_SATURATION_PARAMS));     // SliderControl
-		// saveControls.append(new SaveControl(NULL,           IF_CPROC_S_COEFF,  CPROC_INDEX_PARAMS));          // ComboBoxControl
-		saveControls.append(new SaveControl(IF_DEMOSAIC_G_EN,  IF_DEMOSAIC_S_EN,  DEMOSAIC_ENABLE_PARAMS));      // CheckBoxControl
+		//-saveControls.append(new SaveControl(NULL,           IF_CPROC_S_COEFF,  CPROC_INDEX_PARAMS));          // ComboBoxControl
+		saveControls.append(new SaveControl(IF_DEMOSAIC_G_EN,  IF_DEMOSAIC_S_EN,  DEMOSAIC_ENABLE_PARAMS,    1));// CheckBoxControl
 		saveControls.append(new SaveControl(IF_DEMOSAIC_G_CFG, IF_DEMOSAIC_S_CFG, DEMOSAIC_MODE_PARAMS));        // ComboBoxControl
 		saveControls.append(new SaveControl(IF_DEMOSAIC_G_CFG, IF_DEMOSAIC_S_CFG, DEMOSAIC_THRESHOLD_PARAMS));   // SliderControl
-		saveControls.append(new SaveControl(IF_DPCC_G_EN,      IF_DPCC_S_EN,      DPF_ENABLE_PARAMS));           // CheckBoxControl
+		//-saveControls.append(new SaveControl(IF_DPCC_G_EN,   IF_DPCC_S_EN,      DPF_ENABLE_PARAMS));           // CheckBoxControl
 		saveControls.append(new SaveControl(IF_DPF_G_EN,       IF_DPF_S_EN,       DPF_ENABLE_PARAMS));           // CheckBoxControl
 		saveControls.append(new SaveControl(IF_DPF_G_CFG,      IF_DPF_S_CFG,      DPF_GRADIENT_PARAMS));         // SliderControl
 		saveControls.append(new SaveControl(IF_DPF_G_CFG,      IF_DPF_S_CFG,      DPF_OFFSET_PARAMS));           // SliderControl
@@ -381,22 +381,22 @@ public:
 		saveControls.append(new SaveControl(IF_DWE_G_PARAMS,   IF_DWE_S_PARAMS,   "dwe/bypass"));                // ComboBoxControl2
 		saveControls.append(new SaveControl(IF_DWE_G_PARAMS,   IF_DWE_S_PARAMS,   "dwe/mat"));                   // SliderArrayControl
 		saveControls.append(new SaveControl(NULL,              IF_S_FPS,          "fps"));                       // SliderControl
-		saveControls.append(new SaveControl(IF_SENSOR_G_SEC,   IF_SENSOR_S_SEC,   SENSOR_START_EC));             // SliderControl
+		//-saveControls.append(new SaveControl(NULL,           IF_SENSOR_S_SEC,   SENSOR_START_EC));             // SliderControl
 	}
 
-	bool isInSaveControls(QString name)
+	SaveControl* getSaveControls(QString name)
 	{
 		QStringList words = name.split("|");
 		if (words.count() != 2)
-			return false;
+			return nullptr;
 
 		QString cmd = words[0];
 		QString param = words[1];
 		for (int i = 0; i < saveControls.count(); i++)
 			if ((saveControls[i]->getCmd == cmd || saveControls[i]->getCmd == nullptr) && saveControls[i]->parameter == param)
-				return true;
+				return saveControls[i];
 
-		return false;
+		return nullptr;
 	}
 };
 

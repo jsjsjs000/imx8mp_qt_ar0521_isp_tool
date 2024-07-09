@@ -8,7 +8,7 @@
 #include "isp_control.h"
 #include "cam_device_module_ids.h"
 
-// #define DEBUG
+// #define DEBUG_ISP_CONTROL
 
 IspControl::IspControl() {}
 
@@ -32,7 +32,7 @@ int IspControl::openVideo()
 		return 1;
 	}
 
-#ifdef DEBUG
+#ifdef DEBUG_ISP_CONTROL
 	qDebug("Open: %s \n", szFile);
 	qDebug("Open: (fd=%d)\n", fd);
 	qDebug("Open Device: %s (fd=%d)\n", szFile, fd);
@@ -41,12 +41,12 @@ int IspControl::openVideo()
 
 	if (strcmp((const char*)caps.driver, "viv_v4l2_device") == 0)
 	{
-#ifdef DEBUG
+#ifdef DEBUG_ISP_CONTROL
 		qDebug("found viv video dev %s\n", szFile);
 #endif
 		int streamid = -1;
 		::ioctl(this->fd, VIV_VIDIOC_S_STREAMID, &streamid);
-#ifdef DEBUG
+#ifdef DEBUG_ISP_CONTROL
 		qDebug("streamid %d\n", streamid);
 #endif
 	}
@@ -87,7 +87,7 @@ bool IspControl::vivIoctl(const char *cmd, Json::Value& jsonRequest, Json::Value
 	strncpy(ec.string, jsonRequest.toStyledString().c_str(), VIV_JSON_BUFFER_SIZE);
 	char sendString[strlen(ec.string) + 1];
 	strncpy(sendString, ec.string, strlen(ec.string) + 1);
-#ifdef DEBUG
+#ifdef DEBUG_ISP_CONTROL
 	qDebug("DEBUG out: %s\n", ec.string);
 	// std::string inputString;
 	// std::getline(std::cin, inputString);
@@ -102,7 +102,7 @@ bool IspControl::vivIoctl(const char *cmd, Json::Value& jsonRequest, Json::Value
 	else
 	{
 		::ioctl(this->fd, VIDIOC_G_EXT_CTRLS, &ecs);
-#ifdef DEBUG
+#ifdef DEBUG_ISP_CONTROL
 		qDebug("DEBUG in: %s\n", ec.string);
 #endif
 		Json::Reader reader;

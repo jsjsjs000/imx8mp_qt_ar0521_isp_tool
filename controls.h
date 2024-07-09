@@ -285,15 +285,21 @@ public:
 class SaveControl
 {
 public:
+	static const int MinPriority = -5;
+	static const int MaxPriority = 5;
+
 	QString getCmd;
 	QString setCmd;
 	QString parameter;
+	int priority;
 
-	SaveControl(QString getCmd, QString setCmd, QString parameter)
+		/// priority: (-5 - 5) - default 0 - execution from -5 to 5
+	SaveControl(QString getCmd, QString setCmd, QString parameter, int priority = 0)
 	{
 		this->getCmd = getCmd;
 		this->setCmd = setCmd;
 		this->parameter = parameter;
+		this->priority = priority;
 	}
 };
 

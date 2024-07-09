@@ -127,7 +127,7 @@ QString IspProcThread::slot_getParams()
 	QString s = "";
 	for (auto it = this->lastReadParams.keyValueBegin(); it != this->lastReadParams.keyValueEnd(); ++it)
 	{
-		if (!controlsDefinition.isInSaveControls(it->first))
+		if (controlsDefinition.getSaveControls(it->first) == nullptr)
 			continue;
 
 		if (s.length() > 0)
@@ -154,199 +154,211 @@ QString IspProcThread::slot_getParamsDiff()
 
 void IspProcThread::slot_setParams(QMap<QString, QString> *params)
 {
-	for (auto it = params->keyValueBegin(); it != params->keyValueEnd(); ++it)
+	for (int priority = SaveControl::MinPriority; priority <= SaveControl::MaxPriority; priority++)
 	{
-		// qDebug() << it->first << it->second;
-		QStringList words = it->first.split("|");
-		if (words.count() != 2)
-			continue;
-
-		QString cmd = words[0];
-		QString param = words[1];
-		QString value = it->second;
-
-		for (const auto *control : qAsConst(controlsDefinition.controls))
+		for (auto it = params->keyValueBegin(); it != params->keyValueEnd(); ++it)
 		{
-			if (this->Stop)
-				break;
-
-			if (!(control->getCmd == cmd || control->setCmd == cmd) || control->parameter != param)
+			// qDebug() << it->first << it->second;
+			QStringList words = it->first.split("|");
+			if (words.count() != 2)
 				continue;
 
-			if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
-			{
-				SliderWidget *slider = (SliderWidget*)this->widgets[scontrol->setCmd + "|" + scontrol->parameter];
-				if (slider == nullptr)
-					qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
-				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
-				{
-#ifdef DEBUG_ISP_PROC_THREAD
-					qDebug() << "restore slider:" << cmd << param << value;
-#endif
-					bool ok;
-					if (scontrol->precision == 0)
-					{
-						int value_ = value.toInt(&ok);
-						if (!ok)
-							continue;
-						CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Number,
-								control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
-								control->parameter.toStdString().c_str(), value_, 1);
-						this->AddCommandToQueue(commandItem);
-					}
-					else
-					{
-						float value_ = value.toFloat(&ok);
-						if (!ok)
-							continue;
-						CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Number,
-								control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
-								control->parameter.toStdString().c_str(), value_ * scontrol->multiple, scontrol->multiple);
-						this->AddCommandToQueue(commandItem);
-					}
-				}
-			}
-			else if (const SliderArrayControl *scontrol = dynamic_cast<const SliderArrayControl*>(control))
-			{
-				SliderArrayWidget *slider = (SliderArrayWidget*)this->widgets[scontrol->setCmd + "|" + scontrol->parameter];
-				if (slider == nullptr)
-					qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
-				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
-				{
-#ifdef DEBUG_ISP_PROC_THREAD
-					qDebug() << "restore slider array:" << cmd << param << value;
-#endif
-					QStringList words = value.split(" ");
-					bool ok = false;
-					QList<float> array;
-					for (int i = 0; i < words.count(); i++)
-					{
-						array.push_back(words[i].toFloat(&ok));
-						if (!ok)
-							break;
-					}
-					if (ok)
-					{
-						CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Array,
-								control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
-								control->parameter.toStdString().c_str(), array);
-						this->AddCommandToQueue(commandItem);
-					}
-				}
-			}
-			else if (const ComboBoxControl *scontrol = dynamic_cast<const ComboBoxControl*>(control))
-			{
-				ComboBoxWidget *comboBox = (ComboBoxWidget*)this->widgets[scontrol->setCmd + "|" + scontrol->parameter];
-				if (comboBox == nullptr)
-					qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
-				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
-				{
-#ifdef DEBUG_ISP_PROC_THREAD
-					qDebug() << "restore combobox:" << cmd << param << value;
-#endif
-					bool value_ = value == "1" || value == "true";
-					CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Number,
-							control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
-							control->parameter.toStdString().c_str(), value_, 1);
-					this->AddCommandToQueue(commandItem);
-				}
-			}
-			else if (const ComboBoxControl2 *scontrol = dynamic_cast<const ComboBoxControl2*>(control))
-			{
-				ComboBoxWidget2 *comboBox = (ComboBoxWidget2*)this->widgets[scontrol->setCmd + "|" + scontrol->parameter];
-				if (comboBox == nullptr)
-					qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
-				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
-				{
-#ifdef DEBUG_ISP_PROC_THREAD
-					qDebug() << "restore combobox2:" << cmd << param << value;
-#endif
-					CommandItem commandItem;
-					if (value == "0" || value == "false")
-						commandItem = CommandItem(CommandItem::CommandItemType::Bool,
-								control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
-								control->parameter.toStdString().c_str(), false);
-					else if (value == "1" || value == "true")
-						commandItem = CommandItem(CommandItem::CommandItemType::Bool,
-								control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
-								control->parameter.toStdString().c_str(), true);
-					else
-						commandItem = CommandItem(CommandItem::CommandItemType::String,
-								control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
-								control->parameter.toStdString().c_str(), value);
-					this->AddCommandToQueue(commandItem);
-				}
-			}
-			else if (const CheckBoxControl *scontrol = dynamic_cast<const CheckBoxControl*>(control))
-			{
-				CheckBoxWidget *checkBox = (CheckBoxWidget*)this->widgets[scontrol->setCmd + "|" + scontrol->parameter];
-				if (checkBox == nullptr)
-					qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
-				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
-				{
-#ifdef DEBUG_ISP_PROC_THREAD
-					qDebug() << "restore checkbox:" << cmd << param << value;
-#endif
-					bool value_ = value == "1" || value == "true";
-					CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Bool,
-							control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
-							control->parameter.toStdString().c_str(), value_);
-					this->AddCommandToQueue(commandItem);
-				}
-			}
-			// else if (const LabelControl *scontrol = dynamic_cast<const LabelControl*>(control))
-			else if (const ChartControl *scontrol = dynamic_cast<const ChartControl*>(control))
-			{
-				ChartWidget *chart = (ChartWidget*)this->widgets[scontrol->setCmd + "|" + scontrol->parameter];
-				if (chart == nullptr)
-					qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
-				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
-				{
-#ifdef DEBUG_ISP_PROC_THREAD
-					qDebug() << "restore chart:" << cmd << param << value;
-#endif
-					bool ok = false;
-					QStringList wordsAll = value.split("|");
-					QString points;
-					if (wordsAll.count() == 0)
-						continue;
+			QString cmd = words[0];
+			QString param = words[1];
+			QString value = it->second;
 
-					points = wordsAll[0];
-					if (wordsAll.count() == 2 && scontrol->gammaCurve)
+			SaveControl *saveControl = controlsDefinition.getSaveControls(it->first);
+			if (saveControl == nullptr || saveControl->priority != priority)
+				continue;
+
+			for (const auto *control : qAsConst(controlsDefinition.controls))
+			{
+				if (this->Stop)
+					break;
+
+				if (!(control->getCmd == cmd || control->setCmd == cmd) || control->parameter != param)
+					continue;
+
+				if (const SliderControl *scontrol = dynamic_cast<const SliderControl*>(control))
+				{
+					SliderWidget *slider = (SliderWidget*)this->widgets[scontrol->setCmd + "|" + scontrol->parameter];
+					if (slider == nullptr)
+						qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
+					else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 					{
-						QString gammaStr = wordsAll[1];
-						float gamma = gammaStr.toFloat(&ok);
+#ifdef DEBUG_ISP_PROC_THREAD
+						qDebug() << "restore slider:" << cmd << param << value;
+#endif
+						bool ok;
+						if (scontrol->precision == 0)
+						{
+							int value_ = value.toInt(&ok);
+							if (!ok)
+								continue;
+							CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Number,
+									control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+									control->parameter.toStdString().c_str(), value_, 1);
+							this->AddCommandToQueue(commandItem);
+						}
+						else
+						{
+							float value_ = value.toFloat(&ok);
+							if (!ok)
+								continue;
+							CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Number,
+									control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+									control->parameter.toStdString().c_str(), value_ * scontrol->multiple, scontrol->multiple);
+							this->AddCommandToQueue(commandItem);
+						}
+					}
+				}
+				else if (const SliderArrayControl *scontrol = dynamic_cast<const SliderArrayControl*>(control))
+				{
+					SliderArrayWidget *slider = (SliderArrayWidget*)this->widgets[scontrol->setCmd + "|" + scontrol->parameter];
+					if (slider == nullptr)
+						qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
+					else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
+					{
+#ifdef DEBUG_ISP_PROC_THREAD
+						qDebug() << "restore slider array:" << cmd << param << value;
+#endif
+						QStringList words = value.split(" ");
+						bool ok = false;
+						QList<float> array;
+						for (int i = 0; i < words.count(); i++)
+						{
+							array.push_back(words[i].toFloat(&ok));
+							if (!ok)
+								break;
+						}
 						if (ok)
-							chart->setGamma(gamma);
+						{
+							CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Array,
+									control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+									control->parameter.toStdString().c_str(), array);
+							this->AddCommandToQueue(commandItem);
+						}
 					}
-					QStringList words = points.split(" ");
-					QList<float> array;
-					for (int i = 0; i < words.count(); i++)
+				}
+				else if (const ComboBoxControl *scontrol = dynamic_cast<const ComboBoxControl*>(control))
+				{
+					ComboBoxWidget *comboBox = (ComboBoxWidget*)this->widgets[scontrol->setCmd + "|" + scontrol->parameter];
+					if (comboBox == nullptr)
+						qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
+					else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 					{
-						array.push_back(words[i].toFloat(&ok));
-						if (!ok)
-							break;
+#ifdef DEBUG_ISP_PROC_THREAD
+						qDebug() << "restore combobox:" << cmd << param << value;
+#endif
+						// bool value_ = value == "1" || value == "true";
+						bool ok;
+						int value_ = value.toInt(&ok);
+						if (ok)
+						{
+							CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Number,
+									control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+									control->parameter.toStdString().c_str(), value_, 1);
+							this->AddCommandToQueue(commandItem);
+						}
 					}
-					if (ok)
+				}
+				else if (const ComboBoxControl2 *scontrol = dynamic_cast<const ComboBoxControl2*>(control))
+				{
+					ComboBoxWidget2 *comboBox = (ComboBoxWidget2*)this->widgets[scontrol->setCmd + "|" + scontrol->parameter];
+					if (comboBox == nullptr)
+						qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
+					else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 					{
-						CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Array,
-								control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
-								control->parameter.toStdString().c_str(), array);
+#ifdef DEBUG_ISP_PROC_THREAD
+						qDebug() << "restore combobox2:" << cmd << param << value;
+#endif
+						CommandItem commandItem;
+						if (value == "0" || value == "false")
+							commandItem = CommandItem(CommandItem::CommandItemType::Bool,
+									control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+									control->parameter.toStdString().c_str(), false);
+						else if (value == "1" || value == "true")
+							commandItem = CommandItem(CommandItem::CommandItemType::Bool,
+									control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+									control->parameter.toStdString().c_str(), true);
+						else
+							commandItem = CommandItem(CommandItem::CommandItemType::String,
+									control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+									control->parameter.toStdString().c_str(), value);
 						this->AddCommandToQueue(commandItem);
 					}
 				}
-			}
-			else if (const MatrixViewControl *scontrol = dynamic_cast<const MatrixViewControl*>(control))
-			{
-				MatrixViewWidget *matrixView = (MatrixViewWidget*)this->widgets[scontrol->setCmd + "|" + scontrol->parameter];
-				if (matrixView == nullptr)
-					qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
-				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
+				else if (const CheckBoxControl *scontrol = dynamic_cast<const CheckBoxControl*>(control))
 				{
+					CheckBoxWidget *checkBox = (CheckBoxWidget*)this->widgets[scontrol->setCmd + "|" + scontrol->parameter];
+					if (checkBox == nullptr)
+						qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
+					else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
+					{
 #ifdef DEBUG_ISP_PROC_THREAD
-					qDebug() << "restore matrix view:" << cmd << param << value;
+						qDebug() << "restore checkbox:" << cmd << param << value;
 #endif
-					// $$
+						bool value_ = value == "1" || value == "true";
+						CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Bool,
+								control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+								control->parameter.toStdString().c_str(), value_);
+						this->AddCommandToQueue(commandItem);
+					}
+				}
+				// else if (const LabelControl *scontrol = dynamic_cast<const LabelControl*>(control))
+				else if (const ChartControl *scontrol = dynamic_cast<const ChartControl*>(control))
+				{
+					ChartWidget *chart = (ChartWidget*)this->widgets[scontrol->setCmd + "|" + scontrol->parameter];
+					if (chart == nullptr)
+						qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
+					else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
+					{
+#ifdef DEBUG_ISP_PROC_THREAD
+						qDebug() << "restore chart:" << cmd << param << value;
+#endif
+						bool ok = false;
+						QStringList wordsAll = value.split("|");
+						QString points;
+						if (wordsAll.count() == 0)
+							continue;
+
+						points = wordsAll[0];
+						if (wordsAll.count() == 2 && scontrol->gammaCurve)
+						{
+							QString gammaStr = wordsAll[1];
+							float gamma = gammaStr.toFloat(&ok);
+							if (ok)
+								chart->setGamma(gamma);
+						}
+						QStringList words = points.split(" ");
+						QList<float> array;
+						for (int i = 0; i < words.count(); i++)
+						{
+							array.push_back(words[i].toFloat(&ok));
+							if (!ok)
+								break;
+						}
+						if (ok)
+						{
+							CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Array,
+									control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
+									control->parameter.toStdString().c_str(), array);
+							this->AddCommandToQueue(commandItem);
+						}
+					}
+				}
+				else if (const MatrixViewControl *scontrol = dynamic_cast<const MatrixViewControl*>(control))
+				{
+					MatrixViewWidget *matrixView = (MatrixViewWidget*)this->widgets[scontrol->setCmd + "|" + scontrol->parameter];
+					if (matrixView == nullptr)
+						qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
+					else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
+					{
+#ifdef DEBUG_ISP_PROC_THREAD
+						qDebug() << "restore matrix view:" << cmd << param << value;
+#endif
+						// $$
+					}
 				}
 			}
 		}
