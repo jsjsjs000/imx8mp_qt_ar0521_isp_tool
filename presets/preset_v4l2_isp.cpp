@@ -118,7 +118,7 @@ bool PresetV4l2Isp::saveDefaultPreset(QString name)
 {
 	try
 	{
-		QFile file(QCoreApplication::applicationDirPath() + "|" + DefaultPresetConfig());
+		QFile file(QCoreApplication::applicationDirPath() + "/" + DefaultPresetConfig());
 		if (!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
 			return false;
 
@@ -130,7 +130,7 @@ bool PresetV4l2Isp::saveDefaultPreset(QString name)
 	}
 	catch (...)
 	{
-		qDebug() << "Can't save file" << QCoreApplication::applicationDirPath() + "|" + DefaultPresetConfig();
+		qDebug() << "Can't save file" << QCoreApplication::applicationDirPath() + "/" + DefaultPresetConfig();
 		return false;
 	}
 }
@@ -139,7 +139,7 @@ bool PresetV4l2Isp::loadDefaultPreset(QString *name)
 {
 	try
 	{
-		QFile file(QCoreApplication::applicationDirPath() + "|" + DefaultPresetConfig());
+		QFile file(QCoreApplication::applicationDirPath() + "/" + DefaultPresetConfig());
 		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 			return false;
 
@@ -152,7 +152,7 @@ bool PresetV4l2Isp::loadDefaultPreset(QString *name)
 	}
 	catch (...)
 	{
-		qDebug() << "Can't read file" << QCoreApplication::applicationDirPath() + "|" + DefaultPresetConfig();
+		qDebug() << "Can't read file" << QCoreApplication::applicationDirPath() + "/" + DefaultPresetConfig();
 		return false;
 	}
 }
