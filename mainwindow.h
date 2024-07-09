@@ -1,9 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "v4l2_isp/isp_proc_thread.h"
-#include "presets/preset.h"
-
 #include <QList>
 #include <QPointF>
 #include <QMainWindow>
@@ -12,6 +9,8 @@
 #include <QElapsedTimer>
 
 #include <presets/presets.h>
+
+#include "v4l2_isp/isp_proc_thread.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {

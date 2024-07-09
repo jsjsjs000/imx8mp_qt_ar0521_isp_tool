@@ -167,8 +167,8 @@ void IspProcThread::slot_setParams(QMap<QString, QString> *params)
 			QString param = words[1];
 			QString value = it->second;
 
-			SaveControl *saveControl = controlsDefinition.getSaveControls(it->first);
-			if (saveControl == nullptr || saveControl->priority != priority)
+			SaveControl *saveControl = controlsDefinition.getSaveControls(it->first, priority);
+			if (saveControl == nullptr)
 				continue;
 
 			for (const auto *control : qAsConst(controlsDefinition.controls))
@@ -295,10 +295,14 @@ void IspProcThread::slot_setParams(QMap<QString, QString> *params)
 						qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
 					else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 					{
-#ifdef DEBUG_ISP_PROC_THREAD
-						qDebug() << "restore checkbox:" << cmd << param << value;
-#endif
 						bool value_ = value == "1" || value == "true";
+						if (saveControl->enableDisable == true)
+							value_ = true;
+						else if (saveControl->enableDisable == false)
+							value_ = false;
+#ifdef DEBUG_ISP_PROC_THREAD
+						qDebug() << "restore checkbox:" << cmd << param << value_;
+#endif
 						CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Bool,
 								control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
 								control->parameter.toStdString().c_str(), value_);

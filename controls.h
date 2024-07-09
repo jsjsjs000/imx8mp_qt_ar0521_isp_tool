@@ -292,14 +292,17 @@ public:
 	QString setCmd;
 	QString parameter;
 	int priority;
+	std::optional<bool> enableDisable;
 
 		/// priority: (-5 - 5) - default 0 - execution from -5 to 5
-	SaveControl(QString getCmd, QString setCmd, QString parameter, int priority = 0)
+	SaveControl(QString getCmd, QString setCmd, QString parameter, int priority = 0,
+			std::optional<bool> enableDisable = std::nullopt)
 	{
 		this->getCmd = getCmd;
 		this->setCmd = setCmd;
 		this->parameter = parameter;
 		this->priority = priority;
+		this->enableDisable = enableDisable;
 	}
 };
 
