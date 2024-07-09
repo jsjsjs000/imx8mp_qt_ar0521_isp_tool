@@ -71,6 +71,19 @@ MainWindow::MainWindow(QWidget *parent)
 	if (!presets1.loadPresetsList(ui->presetComboBox))
 		qDebug() << "Can't load presets from disk.";
 
+	QString defaultPreset = "";
+	if (PresetV4l2Isp::loadDefaultPreset(&defaultPreset))
+	{
+		for (int i = 0; i < ui->presetComboBox->count(); i++)
+			if (ui->presetComboBox->itemText(i) == defaultPreset)
+			{
+				ui->presetComboBox->setCurrentIndex(i);
+				break;
+			}
+	}
+	else if (ui->presetComboBox->count() > 0)
+		ui->presetComboBox->setCurrentIndex(0);
+
 	this->canUpdateControls = true;
 
 	if (!video)
@@ -83,22 +96,12 @@ MainWindow::MainWindow(QWidget *parent)
 	}
 
 	screenshotChecker = new ScreenshotChecker(this);
-	connect(screenshotChecker, &ScreenshotChecker::signal_show_rename_screenshot_window, this, &MainWindow::slot_show_rename_screenshot_window);
+	connect(screenshotChecker, &ScreenshotChecker::signal_show_rename_screenshot_window,
+			this, &MainWindow::slot_show_rename_screenshot_window);
 	screenshotChecker->start();
 
-	QString defaultPreset = "";
-	if (PresetV4l2Isp::loadDefaultPreset(&defaultPreset))
-	{
-		for (int i = 0; i < ui->presetComboBox->count(); i++)
-			if (ui->presetComboBox->itemText(i) == defaultPreset)
-			{
-				ui->presetComboBox->setCurrentIndex(i);
-				on_presetComboBox_currentIndexChanged(0);
-				break;
-			}
-	}
-	else if (ui->presetComboBox->count() > 0)
-		on_presetComboBox_currentIndexChanged(0);
+	if (ui->presetComboBox->count() > 0)
+		on_presetComboBox_currentIndexChanged(ui->presetComboBox->currentIndex());
 }
 
 MainWindow::~MainWindow()

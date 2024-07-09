@@ -13,6 +13,8 @@
 #include <widgets/slider_widget.h>
 #include <widgets/slider_array_widget.h>
 
+#define DEBUG_ISP_PROC_THREAD
+
 IspProcThread::IspProcThread(QObject *parent, IspControl &ispControl, ControlsDefinitions &controlsDefinition,
 		QMap<QString, QWidget*> &widgets) : QThread(parent), ispControl(ispControl),
 		controlsDefinition(controlsDefinition), widgets(widgets)
@@ -178,7 +180,9 @@ void IspProcThread::slot_setParams(QMap<QString, QString> *params)
 					qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
 				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 				{
-					// qDebug() << "restore slider:" << cmd << param << value;
+#ifdef DEBUG_ISP_PROC_THREAD
+					qDebug() << "restore slider:" << cmd << param << value;
+#endif
 					bool ok;
 					if (scontrol->precision == 0)
 					{
@@ -209,21 +213,23 @@ void IspProcThread::slot_setParams(QMap<QString, QString> *params)
 					qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
 				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 				{
-					// qDebug() << "restore slider array:" << cmd << param << value;
+#ifdef DEBUG_ISP_PROC_THREAD
+					qDebug() << "restore slider array:" << cmd << param << value;
+#endif
 					QStringList words = value.split(" ");
 					bool ok = false;
-					QList<float> *value_ = new QList<float>();
+					QList<float> array;
 					for (int i = 0; i < words.count(); i++)
 					{
-						value_->push_back(words[i].toFloat(&ok));
+						array.push_back(words[i].toFloat(&ok));
 						if (!ok)
 							break;
 					}
 					if (ok)
 					{
-						CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Number,
+						CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Array,
 								control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
-								control->parameter.toStdString().c_str(), value_);
+								control->parameter.toStdString().c_str(), array);
 						this->AddCommandToQueue(commandItem);
 					}
 				}
@@ -235,7 +241,9 @@ void IspProcThread::slot_setParams(QMap<QString, QString> *params)
 					qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
 				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 				{
-					// qDebug() << "restore combobox:" << cmd << param << value;
+#ifdef DEBUG_ISP_PROC_THREAD
+					qDebug() << "restore combobox:" << cmd << param << value;
+#endif
 					bool value_ = value == "1" || value == "true";
 					CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Number,
 							control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
@@ -250,7 +258,9 @@ void IspProcThread::slot_setParams(QMap<QString, QString> *params)
 					qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
 				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 				{
-					// qDebug() << "restore combobox2:" << cmd << param << value;
+#ifdef DEBUG_ISP_PROC_THREAD
+					qDebug() << "restore combobox2:" << cmd << param << value;
+#endif
 					CommandItem commandItem;
 					if (value == "0" || value == "false")
 						commandItem = CommandItem(CommandItem::CommandItemType::Bool,
@@ -274,7 +284,9 @@ void IspProcThread::slot_setParams(QMap<QString, QString> *params)
 					qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
 				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 				{
-					// qDebug() << "restore checkbox:" << cmd << param << value;
+#ifdef DEBUG_ISP_PROC_THREAD
+					qDebug() << "restore checkbox:" << cmd << param << value;
+#endif
 					bool value_ = value == "1" || value == "true";
 					CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Bool,
 							control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
@@ -290,7 +302,9 @@ void IspProcThread::slot_setParams(QMap<QString, QString> *params)
 					qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
 				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 				{
-					// qDebug() << "restore chart:" << cmd << param << value;
+#ifdef DEBUG_ISP_PROC_THREAD
+					qDebug() << "restore chart:" << cmd << param << value;
+#endif
 					bool ok = false;
 					QStringList wordsAll = value.split("|");
 					QString points;
@@ -306,10 +320,10 @@ void IspProcThread::slot_setParams(QMap<QString, QString> *params)
 							chart->setGamma(gamma);
 					}
 					QStringList words = points.split(" ");
-					QList<float> *value_ = new QList<float>();
+					QList<float> array;
 					for (int i = 0; i < words.count(); i++)
 					{
-						value_->push_back(words[i].toFloat(&ok));
+						array.push_back(words[i].toFloat(&ok));
 						if (!ok)
 							break;
 					}
@@ -317,7 +331,7 @@ void IspProcThread::slot_setParams(QMap<QString, QString> *params)
 					{
 						CommandItem commandItem = CommandItem(CommandItem::CommandItemType::Array,
 								control->getCmd.toStdString().c_str(), control->setCmd.toStdString().c_str(),
-								control->parameter.toStdString().c_str(), value_);
+								control->parameter.toStdString().c_str(), array);
 						this->AddCommandToQueue(commandItem);
 					}
 				}
@@ -329,7 +343,9 @@ void IspProcThread::slot_setParams(QMap<QString, QString> *params)
 					qDebug() << "Widget " << scontrol->setCmd + "|" + scontrol->parameter << " not found";
 				else if (scontrol->setCmd == cmd || scontrol->getCmd == cmd)
 				{
-					// qDebug() << "restore matrix view:" << cmd << param << value;
+#ifdef DEBUG_ISP_PROC_THREAD
+					qDebug() << "restore matrix view:" << cmd << param << value;
+#endif
 					// $$
 				}
 			}

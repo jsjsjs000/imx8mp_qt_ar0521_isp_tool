@@ -85,6 +85,8 @@ bool IspControl::vivIoctl(const char *cmd, Json::Value& jsonRequest, Json::Value
 	::ioctl(this->fd, VIDIOC_G_EXT_CTRLS, &ecs);
 
 	strncpy(ec.string, jsonRequest.toStyledString().c_str(), VIV_JSON_BUFFER_SIZE);
+	char sendString[strlen(ec.string) + 1];
+	strncpy(sendString, ec.string, strlen(ec.string) + 1);
 #ifdef DEBUG
 	qDebug("DEBUG out: %s\n", ec.string);
 	// std::string inputString;
@@ -94,6 +96,7 @@ bool IspControl::vivIoctl(const char *cmd, Json::Value& jsonRequest, Json::Value
 	if (ret != 0)
 	{
 		qDebug("failed to set ext ctrl\n");
+		qDebug() << ec.string;
 		goto end;
 	}
 	else
@@ -104,9 +107,16 @@ bool IspControl::vivIoctl(const char *cmd, Json::Value& jsonRequest, Json::Value
 #endif
 		Json::Reader reader;
 		reader.parse(ec.string, jsonResponse, true);
+		bool result = jsonResponse["result"].asInt() == 0;
+		if (!result)
+		{
+			qDebug() << "bad ext ctrl result";
+			qDebug() << "send:" << sendString;
+			qDebug() << "received:" << ec.string;
+		}
 		delete[] ec.string;
 		ec.string = NULL;
-		return jsonResponse["result"].asInt() == 0;
+		return result;
 	}
 
 end:
