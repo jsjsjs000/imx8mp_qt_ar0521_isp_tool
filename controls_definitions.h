@@ -377,7 +377,7 @@ public:
 		saveControls.append(new SaveControl(IF_WB_G_CFG,       IF_WB_S_CFG,       WB_GREEN_R_PARAMS));                     // SliderControl
 		saveControls.append(new SaveControl(IF_WB_G_CFG,       IF_WB_S_CFG,       WB_GREEN_B_PARAMS));                     // SliderControl
 		saveControls.append(new SaveControl(IF_WB_G_CFG,       IF_WB_S_CFG,       WB_BLUE_PARAMS));                        // SliderControl
-		saveControls.append(new SaveControl(IF_DWE_G_PARAMS,   IF_DWE_S_PARAMS,   "dwe/mode"));                            // ComboBoxControl
+		saveControls.append(new SaveControl(IF_DWE_G_PARAMS,   IF_DWE_S_PARAMS,   "dwe/mode",                -1));         // ComboBoxControl
 		saveControls.append(new SaveControl(IF_DWE_G_PARAMS,   IF_DWE_S_PARAMS,   "dwe/hflip"));                           // ComboBoxControl2
 		saveControls.append(new SaveControl(IF_DWE_G_PARAMS,   IF_DWE_S_PARAMS,   "dwe/vflip"));                           // ComboBoxControl2
 		saveControls.append(new SaveControl(IF_DWE_G_PARAMS,   IF_DWE_S_PARAMS,   "dwe/bypass"));                          // ComboBoxControl2
