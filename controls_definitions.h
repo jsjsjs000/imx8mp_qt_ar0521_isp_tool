@@ -11,9 +11,15 @@
 class ControlsDefinitions
 {
 public:
+	int controlsCount = 0;
 	QVector<Control*> controls;
 	QList<QString> readParams;
 	QVector<SaveControl*> saveControls;
+
+	ControlsDefinitions();
+	SaveControl* getSaveControls(QString name);
+	SaveControl* getSaveControls(QString name, int priority);
+	void getControlsCount();
 
 	void init()
 	{
@@ -385,9 +391,6 @@ public:
 		saveControls.append(new SaveControl(NULL,              IF_S_FPS,          "fps"));                                 // SliderControl
 		//-saveControls.append(new SaveControl(NULL,           IF_SENSOR_S_SEC,   SENSOR_START_EC));                       // SliderControl
 	}
-
-	SaveControl* getSaveControls(QString name);
-	SaveControl* getSaveControls(QString name, int priority);
 };
 
 #endif // CONTROLS_DEFINITIONS_H

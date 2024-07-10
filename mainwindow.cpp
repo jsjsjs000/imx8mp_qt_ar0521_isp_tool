@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 	controlsDefinition.init();
 	controlsDefinition.initSaveControls();
+	controlsDefinition.getControlsCount();
 	controls2Definition.init();
 	this->createControls();
 	this->createControls2();

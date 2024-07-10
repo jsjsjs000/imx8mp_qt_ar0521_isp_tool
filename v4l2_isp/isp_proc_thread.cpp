@@ -46,6 +46,9 @@ QString IspProcThread::GetStatus()
 
 bool IspProcThread::isCommandQueueNotEmpty()
 {
+	if (defaultParams.count() < controlsDefinition.controlsCount)
+		return false;
+
 	this->commandsQueueMutex.lock();
 	bool notEmpty = !this->commandsQueue.empty();
 	this->commandsQueueMutex.unlock();

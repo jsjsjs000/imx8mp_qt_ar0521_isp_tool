@@ -1,6 +1,8 @@
 #include <QString>
 #include "controls_definitions.h"
 
+ControlsDefinitions::ControlsDefinitions() { }
+
 SaveControl* ControlsDefinitions::getSaveControls(QString name)
 {
 	QStringList words = name.split("|");
@@ -30,4 +32,14 @@ SaveControl* ControlsDefinitions::getSaveControls(QString name, int priority)
 			return saveControls[i];
 
 	return nullptr;
+}
+
+void ControlsDefinitions::getControlsCount()
+{
+	int count = 0;
+	for (const auto *control : qAsConst(controls))
+		if (!(dynamic_cast<const LabelControl*>(control) || dynamic_cast<const GroupControl*>(control)))
+			count++;
+
+	controlsCount = count;
 }
