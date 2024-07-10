@@ -13,6 +13,7 @@ CONFIG += c++17
 SOURCES += \
   command_item.cpp \
   controls2_definitions.cpp \
+  controls_definitions.cpp \
   internal_isp/internal_isp_afps.cpp \
   presets/preset_v4l2_isp.cpp \
 	v4l2_isp/isp_control.cpp \

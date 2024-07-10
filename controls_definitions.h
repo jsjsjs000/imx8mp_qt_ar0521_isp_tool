@@ -386,36 +386,8 @@ public:
 		//-saveControls.append(new SaveControl(NULL,           IF_SENSOR_S_SEC,   SENSOR_START_EC));                       // SliderControl
 	}
 
-	SaveControl* getSaveControls(QString name)
-	{
-		QStringList words = name.split("|");
-		if (words.count() != 2)
-			return nullptr;
-
-		QString cmd = words[0];
-		QString param = words[1];
-		for (int i = 0; i < saveControls.count(); i++)
-			if ((saveControls[i]->getCmd == cmd || saveControls[i]->getCmd == nullptr) && saveControls[i]->parameter == param)
-				return saveControls[i];
-
-		return nullptr;
-	}
-
-	SaveControl* getSaveControls(QString name, int priority)
-	{
-		QStringList words = name.split("|");
-		if (words.count() != 2)
-			return nullptr;
-
-		QString cmd = words[0];
-		QString param = words[1];
-		for (int i = 0; i < saveControls.count(); i++)
-			if ((saveControls[i]->getCmd == cmd || saveControls[i]->getCmd == nullptr) && saveControls[i]->parameter == param &&
-					saveControls[i]->priority == priority)
-				return saveControls[i];
-
-		return nullptr;
-	}
+	SaveControl* getSaveControls(QString name);
+	SaveControl* getSaveControls(QString name, int priority);
 };
 
 #endif // CONTROLS_DEFINITIONS_H
