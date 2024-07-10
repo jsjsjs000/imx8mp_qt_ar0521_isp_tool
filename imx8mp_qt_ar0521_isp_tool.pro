@@ -16,12 +16,14 @@ SOURCES += \
   controls_definitions.cpp \
   internal_isp/internal_isp_afps.cpp \
   presets/preset_v4l2_isp.cpp \
+  presets/preset_xml.cpp \
+  presets/presets_xml.cpp \
 	v4l2_isp/isp_control.cpp \
 	v4l2_isp/isp_proc_thread.cpp \
 	v4l2_isp/isp_xml.cpp \
   presets/preset.cpp \
   presets/preset_rename_dialog.cpp \
-  presets/presets.cpp \
+	presets/presets_v4l2_isp.cpp \
 	screenshots/rename_screenshot_window.cpp \
 	screenshots/screenshot_checker.cpp \
 	main.cpp \
@@ -48,12 +50,14 @@ HEADERS += \
   controls_definitions.h \
   internal_isp/internal_isp_afps.h \
   presets/preset_v4l2_isp.h \
+  presets/preset_xml.h \
+  presets/presets_xml.h \
 	v4l2_isp/isp_control.h \
 	v4l2_isp/isp_proc_thread.h \
 	v4l2_isp/isp_xml.h \
   presets/preset.h \
   presets/preset_rename_dialog.h \
-  presets/presets.h \
+	presets/presets_v4l2_isp.h \
 	screenshots/rename_screenshot_window.h \
 	screenshots/screenshot_checker.h \
 	mainwindow.h \

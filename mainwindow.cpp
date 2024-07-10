@@ -69,7 +69,7 @@ MainWindow::MainWindow(QWidget *parent)
 	controls2Definition.readXml();
 	this->updateControls2fromXml();
 
-	if (!presets1.loadPresetsList(ui->presetComboBox))
+	if (!presetsV4L2.loadPresetsList(ui->presetComboBox))
 		qDebug() << "Can't load presets from disk.";
 
 	QString defaultPreset = "";
@@ -620,6 +620,33 @@ void MainWindow::slot_update_matrix_view(MatrixViewWidget *matrixView, QList<QPo
 void MainWindow::on_tabWidget_currentChanged(int index)
 {
 	this->ui->saveButton->setVisible(index == 1);
+
+	qDebug() << "tab";
+
+	canUpdateControls = false;
+	if (index == 0)
+	{
+		ui->presetComboBox->clear();
+		if (!presetsV4L2.loadPresetsList(ui->presetComboBox))
+			qDebug() << "Can't load presets from disk.";
+		QString defaultPreset = "";
+		if (PresetV4l2Isp::loadDefaultPreset(&defaultPreset))
+		{
+			for (int i = 0; i < ui->presetComboBox->count(); i++)
+				if (ui->presetComboBox->itemText(i) == defaultPreset)
+				{
+					ui->presetComboBox->setCurrentIndex(i);
+					break;
+				}
+		}
+	}
+	else if (index == 1)
+	{
+		ui->presetComboBox->clear();
+		if (!presetsXmls.loadPresetsList(ui->presetComboBox))
+			qDebug() << "Can't load XML presets from disk.";
+	}
+	canUpdateControls = true;
 }
 
 void MainWindow::slot_show_rename_screenshot_window(QString filename)
@@ -656,7 +683,7 @@ void MainWindow::on_presetComboBox_currentIndexChanged(int index)
 		QString name = this->ui->presetComboBox->itemText(index);
 		qDebug() << "load preset" << name;
 		QMap<QString, QString> params;
-		if (!presets1.load(name, &params))
+		if (!presetsV4L2.load(name, &params))
 			return;
 
 		emit signal_setParams(&params);
@@ -708,7 +735,7 @@ void MainWindow::on_presetSaveButton_clicked()
 			params = params % "\n" % keyFps % QString("=") % QString::number(slider->getValue());
 		}
 
-		presets1.save(this->ui->presetComboBox, name, params);
+		presetsV4L2.save(this->ui->presetComboBox, name, params);
 	}
 }
 
@@ -724,7 +751,7 @@ void MainWindow::on_presetRenameButton_clicked()
 			if (name == nullptr)
 				return;
 
-			presets1.rename(this->ui->presetComboBox, name);
+			presetsV4L2.rename(this->ui->presetComboBox, name);
 		}
 	}
 }
@@ -739,7 +766,7 @@ void MainWindow::on_presetNewButton_clicked()
 			return;
 
 		QString params = emit this->signal_getParams();
-		presets1.add(this->ui->presetComboBox, name, params);
+		presetsV4L2.add(this->ui->presetComboBox, name, params);
 	}
 }
 
@@ -748,7 +775,7 @@ void MainWindow::on_presetDeleteButton_clicked()
 		/* V4L2 */
 	if (this->ui->tabWidget->currentIndex() == 0)
 	{
-		presets1.deleteCurrent(this->ui->presetComboBox);
+		presetsV4L2.deleteCurrent(this->ui->presetComboBox);
 	}
 }
 

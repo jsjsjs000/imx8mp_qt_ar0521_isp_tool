@@ -13,7 +13,7 @@
 #include <widgets/slider_widget.h>
 #include <widgets/slider_array_widget.h>
 
-#define DEBUG_ISP_PROC_THREAD
+// #define DEBUG_ISP_PROC_THREAD
 
 IspProcThread::IspProcThread(QObject *parent, IspControl &ispControl, ControlsDefinitions &controlsDefinition,
 		QMap<QString, QWidget*> &widgets) : QThread(parent), ispControl(ispControl),

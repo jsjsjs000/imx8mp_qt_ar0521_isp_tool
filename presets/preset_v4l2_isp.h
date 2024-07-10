@@ -7,7 +7,7 @@ class PresetV4l2Isp
 {
 	const QString Directory = "/presets/";
 	const QString Extension = ".cfg";
-	static const QString DefaultPresetConfig() { return "default_preset.cfg"; }
+	static const QString DefaultPresetConfig() { return "default_isp_preset.cfg"; }
 
 public:
 	PresetV4l2Isp();

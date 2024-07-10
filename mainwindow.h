@@ -8,7 +8,8 @@
 #include <QMediaPlayer>
 #include <QElapsedTimer>
 
-#include <presets/presets.h>
+#include <presets/presets_v4l2_isp.h>
+#include <presets/presets_xml.h>
 
 #include "v4l2_isp/isp_proc_thread.h"
 
@@ -81,7 +82,8 @@ private:
 	int lastSetFps = this->InitialFps;
 	clock_t setFpsTime = 0;
 
-	Presets presets1;
+	PresetsV4L2Isp presetsV4L2;
+	PresetsXML presetsXmls;
 	// QList<Preset> presets1;
 	// int currentPresetIndex = -1;
 

@@ -3,13 +3,13 @@
 
 #include <QString>
 
-class Preset
-{
-public:
-	bool isDefault = false;
-	QString name = "";
+// class Preset
+// {
+// public:
+// 	bool isDefault = false;
+// 	QString name = "";
 
-	Preset();
-};
+// 	Preset();
+// };
 
 #endif // PRESET_H

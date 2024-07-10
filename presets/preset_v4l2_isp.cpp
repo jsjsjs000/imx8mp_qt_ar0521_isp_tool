@@ -9,6 +9,36 @@ PresetV4l2Isp::PresetV4l2Isp()
 		QDir().mkdir(QCoreApplication::applicationDirPath() + Directory);
 }
 
+bool PresetV4l2Isp::loadPresetsList(QStringList *list)
+{
+	try
+	{
+		QStringList filter = QStringList("*" + Extension);
+		QDirIterator it(QCoreApplication::applicationDirPath() + Directory, filter,
+										QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot);
+		while (it.hasNext())
+		{
+			QString name = it.next();
+			if (!name.startsWith(QCoreApplication::applicationDirPath() + Directory))
+				continue;
+
+			name = name.mid((QCoreApplication::applicationDirPath() + Directory).length());
+			if (!name.endsWith(Extension))
+				continue;
+
+			name = name.mid(0, name.length() - Extension.length());
+			list->push_back(name);
+		}
+
+		return true;
+	}
+	catch (...)
+	{
+		qDebug() << "Can't list preset folder" << QCoreApplication::applicationDirPath() + Directory;
+		return false;
+	}
+}
+
 bool PresetV4l2Isp::save(QString name, QString params)
 {
 	try
@@ -53,36 +83,6 @@ bool PresetV4l2Isp::load(QString name, QMap<QString, QString> *params)
 	catch (...)
 	{
 		qDebug() << "Can't read file" << QCoreApplication::applicationDirPath() + Directory + name + Extension;
-		return false;
-	}
-}
-
-bool PresetV4l2Isp::loadPresetsList(QStringList *list)
-{
-	try
-	{
-		QStringList filter = QStringList("*" + Extension);
-		QDirIterator it(QCoreApplication::applicationDirPath() + Directory, filter,
-				QDir::AllEntries | QDir::NoSymLinks | QDir::NoDotAndDotDot);
-		while (it.hasNext())
-		{
-			QString name = it.next();
-			if (!name.startsWith(QCoreApplication::applicationDirPath() + Directory))
-				continue;
-
-			name = name.mid((QCoreApplication::applicationDirPath() + Directory).length());
-			if (!name.endsWith(Extension))
-				continue;
-
-			name = name.mid(0, name.length() - Extension.length());
-			list->push_back(name);
-		}
-
-		return true;
-	}
-	catch (...)
-	{
-		qDebug() << "Can't list preset folder" << QCoreApplication::applicationDirPath() + Directory;
 		return false;
 	}
 }

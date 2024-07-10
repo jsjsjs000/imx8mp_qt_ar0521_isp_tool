@@ -1,8 +1,8 @@
-#include "presets.h"
+#include "presets_v4l2_isp.h"
 
-Presets::Presets() {}
+PresetsV4L2Isp::PresetsV4L2Isp() {}
 
-bool Presets::loadPresetsList(QComboBox *comboBox)
+bool PresetsV4L2Isp::loadPresetsList(QComboBox *comboBox)
 {
 	comboBox->clear();
 
@@ -16,7 +16,7 @@ bool Presets::loadPresetsList(QComboBox *comboBox)
 	return true;
 }
 
-bool Presets::load(QString name, QMap<QString, QString> *params)
+bool PresetsV4L2Isp::load(QString name, QMap<QString, QString> *params)
 {
 	if (!presetV4l2Isp.load(name, params))
 		return false;
@@ -24,7 +24,7 @@ bool Presets::load(QString name, QMap<QString, QString> *params)
 	return true;
 }
 
-void Presets::save(QComboBox *comboBox, QString name, QString params)
+void PresetsV4L2Isp::save(QComboBox *comboBox, QString name, QString params)
 {
 // qDebug() << "combobox item" << comboBox->currentIndex();
 
@@ -34,15 +34,15 @@ void Presets::save(QComboBox *comboBox, QString name, QString params)
 	else
 		presetV4l2Isp.save(name, params);
 
-this->printDebug();
+// this->printDebug();
 }
 
-void Presets::rename(QComboBox *comboBox, QString name)
+void PresetsV4L2Isp::rename(QComboBox *comboBox, QString name)
 {
 	if (comboBox->currentIndex() < 0)
 		return;
 
-	// QString oldName = presetsList[comboBox->currentIndex()]->name;
+	// QString oldName = presetsList[comboBox->currentIndex()]->name; $$
 	// presetsList[comboBox->currentIndex()]->name = name;
 
 	QString oldName = comboBox->currentText();
@@ -50,29 +50,29 @@ void Presets::rename(QComboBox *comboBox, QString name)
 
 	presetV4l2Isp.renameConfiguration(oldName, name);
 
-this->printDebug();
+// this->printDebug();
 }
 
-void Presets::add(QComboBox *comboBox, QString name, QString params)
+void PresetsV4L2Isp::add(QComboBox *comboBox, QString name, QString params)
 {
-	Preset *preset = new Preset();
-	preset->name = name;
+	// Preset *preset = new Preset(); $$
+	// preset->name = name;
 	// presetsList.push_back(preset);
 
-	comboBox->addItem(name, QVariant::fromValue(preset));
+	comboBox->addItem(name); //, QVariant::fromValue(preset)); $$
 	comboBox->setCurrentIndex(comboBox->count() - 1);
 
 	presetV4l2Isp.save(name, params);
 
-this->printDebug();
+// this->printDebug();
 }
 
-void Presets::deleteCurrent(QComboBox *comboBox)
+void PresetsV4L2Isp::deleteCurrent(QComboBox *comboBox)
 {
 	if (comboBox->currentIndex() < 0)
 		return;
 
-	// Preset *preset = presetsList[comboBox->currentIndex()];
+	// Preset *preset = presetsList[comboBox->currentIndex()]; $$
 	// QString name = QString(preset->name);
 	// delete preset;
 	// presetsList.removeAt(comboBox->currentIndex());
@@ -82,12 +82,12 @@ void Presets::deleteCurrent(QComboBox *comboBox)
 
 	presetV4l2Isp.deleteConfiguration(name);
 
-this->printDebug();
+// this->printDebug();
 }
 
-void Presets::printDebug()
+void PresetsV4L2Isp::printDebug()
 {
-	// qDebug() << "Presets list:" << this->presetsList.count();
+	// qDebug() << "Presets list:" << this->presetsList.count(); $$
 	// int i = 0;
 	// for (const Preset *preset : this->presetsList)
 	// {

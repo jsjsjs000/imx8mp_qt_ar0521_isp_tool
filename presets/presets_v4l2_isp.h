@@ -6,7 +6,7 @@
 #include <QComboBox>
 #include <QList>
 
-class Presets
+class PresetsV4L2Isp
 {
 private:
 	// QList<Preset*> presetsList;
@@ -15,7 +15,7 @@ private:
 	void printDebug();
 
 public:
-	Presets();
+	PresetsV4L2Isp();
 	bool loadPresetsList(QComboBox *comboBox);
 	bool load(QString name, QMap<QString, QString> *params);
 	void save(QComboBox *comboBox, QString name, QString params);
