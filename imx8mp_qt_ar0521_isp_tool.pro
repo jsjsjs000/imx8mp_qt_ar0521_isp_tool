@@ -21,7 +21,6 @@ SOURCES += \
 	v4l2_isp/isp_control.cpp \
 	v4l2_isp/isp_proc_thread.cpp \
 	v4l2_isp/isp_xml.cpp \
-  presets/preset.cpp \
   presets/preset_rename_dialog.cpp \
 	presets/presets_v4l2_isp.cpp \
 	screenshots/rename_screenshot_window.cpp \
@@ -55,7 +54,6 @@ HEADERS += \
 	v4l2_isp/isp_control.h \
 	v4l2_isp/isp_proc_thread.h \
 	v4l2_isp/isp_xml.h \
-  presets/preset.h \
   presets/preset_rename_dialog.h \
 	presets/presets_v4l2_isp.h \
 	screenshots/rename_screenshot_window.h \

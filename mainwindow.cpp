@@ -754,6 +754,16 @@ void MainWindow::on_presetRenameButton_clicked()
 			presetsV4L2.rename(this->ui->presetComboBox, name);
 		}
 	}
+		/* XML */
+	else if (this->ui->tabWidget->currentIndex() == 1)
+	{
+		QString oldName = this->ui->presetComboBox->currentText();
+		QString name = showRenamePresetDialog("Rename preset", "New preset name:", oldName);
+		if (name == nullptr)
+			return;
+
+		presetsXmls.rename(this->ui->presetComboBox, name);
+	}
 }
 
 void MainWindow::on_presetNewButton_clicked()
@@ -768,6 +778,16 @@ void MainWindow::on_presetNewButton_clicked()
 		QString params = emit this->signal_getParams();
 		presetsV4L2.add(this->ui->presetComboBox, name, params);
 	}
+		/* XML */
+	else if (this->ui->tabWidget->currentIndex() == 1)
+	{
+		QString name = this->showRenamePresetDialog("Add preset", "Preset name:", nullptr);
+		if (name == nullptr)
+			return;
+
+		QString params = emit this->signal_getParams();
+		presetsXmls.add(this->ui->presetComboBox, name, params);
+	}
 }
 
 void MainWindow::on_presetDeleteButton_clicked()
@@ -776,6 +796,11 @@ void MainWindow::on_presetDeleteButton_clicked()
 	if (this->ui->tabWidget->currentIndex() == 0)
 	{
 		presetsV4L2.deleteCurrent(this->ui->presetComboBox);
+	}
+		/* XML */
+	else if (this->ui->tabWidget->currentIndex() == 1)
+	{
+		presetsXmls.deleteCurrent(this->ui->presetComboBox);
 	}
 }
 

@@ -5,8 +5,15 @@
 
 PresetV4l2Isp::PresetV4l2Isp()
 {
-	if (!QDir(QCoreApplication::applicationDirPath() + Directory).exists())
-		QDir().mkdir(QCoreApplication::applicationDirPath() + Directory);
+	try
+	{
+		if (!QDir(QCoreApplication::applicationDirPath() + Directory).exists())
+			QDir().mkdir(QCoreApplication::applicationDirPath() + Directory);
+	}
+	catch (...)
+	{
+		qDebug() << "Can't create folder" << QCoreApplication::applicationDirPath() + Directory;
+	}
 }
 
 bool PresetV4l2Isp::loadPresetsList(QStringList *list)
@@ -95,7 +102,7 @@ bool PresetV4l2Isp::deleteConfiguration(QString name)
 	}
 	catch (...)
 	{
-		qDebug() << "Can't delete preset" << QCoreApplication::applicationDirPath() + Directory;
+		qDebug() << "Can't delete preset" << QCoreApplication::applicationDirPath() + Directory + name + Extension;
 		return false;
 	}
 }
@@ -109,7 +116,8 @@ bool PresetV4l2Isp::renameConfiguration(QString oldName, QString newName)
 	}
 	catch (...)
 	{
-		qDebug() << "Can't delete preset" << QCoreApplication::applicationDirPath() + Directory;
+		qDebug() << "Can't rename preset" << QCoreApplication::applicationDirPath() + Directory + oldName + Extension <<
+				"to" << QCoreApplication::applicationDirPath() + Directory + newName + Extension;
 		return false;
 	}
 }

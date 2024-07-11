@@ -1,7 +1,7 @@
 #ifndef PRESET_V4L2_ISP_H
 #define PRESET_V4L2_ISP_H
 
-#include "preset.h"
+#include <QString>
 
 class PresetV4l2Isp
 {

@@ -1,18 +1,14 @@
 #ifndef PRESETS_H
 #define PRESETS_H
 
-#include "preset.h"
-#include "preset_v4l2_isp.h"
 #include <QComboBox>
 #include <QList>
+#include "preset_v4l2_isp.h"
 
 class PresetsV4L2Isp
 {
 private:
-	// QList<Preset*> presetsList;
 	PresetV4l2Isp presetV4l2Isp;
-
-	void printDebug();
 
 public:
 	PresetsV4L2Isp();

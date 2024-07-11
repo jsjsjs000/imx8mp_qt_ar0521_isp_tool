@@ -44,14 +44,14 @@ bool PresetXML::save(QString name, QString params)
 {
 	try
 	{
-		QFile file(XmlDirectory + name + XmlExtension);
-		if (!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
-			return false;
+		// QFile file(XmlDirectory + name + XmlExtension);
+		// if (!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
+		// 	return false;
 
-		QTextStream out(&file);
-		out << params;
+		// QTextStream out(&file);
+		// out << params;
 
-		file.close();
+		// file.close();
 		return true;
 	}
 	catch (...)
@@ -65,20 +65,20 @@ bool PresetXML::load(QString name, QMap<QString, QString> *params)
 {
 	try
 	{
-		QFile file(XmlDirectory + name + XmlExtension);
-		if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-			return false;
+		// QFile file(XmlDirectory + name + XmlExtension);
+		// if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+		// 	return false;
 
-		QTextStream in(&file);
-		while (!in.atEnd())
-		{
-			QString line = in.readLine();
-			QStringList words = line.split("=");
-			if (words.count() == 2)
-				(*params)[words[0]] = words[1];
-		}
+		// QTextStream in(&file);
+		// while (!in.atEnd())
+		// {
+		// 	QString line = in.readLine();
+		// 	QStringList words = line.split("=");
+		// 	if (words.count() == 2)
+		// 		(*params)[words[0]] = words[1];
+		// }
 
-		file.close();
+		// file.close();
 		return true;
 	}
 	catch (...)
@@ -92,11 +92,11 @@ bool PresetXML::deleteConfiguration(QString name)
 {
 	try
 	{
-		return QFile().remove(XmlDirectory + name + XmlExtension);
+		return QFile().remove(XmlDirectory + XmlFilename + XmlResolution + "_" + name + XmlExtension);
 	}
 	catch (...)
 	{
-		qDebug() << "Can't delete preset" << XmlDirectory;
+		qDebug() << "Can't delete preset" << XmlDirectory + XmlFilename + XmlResolution + "_" + name + XmlExtension;
 		return false;
 	}
 }
@@ -105,11 +105,13 @@ bool PresetXML::renameConfiguration(QString oldName, QString newName)
 {
 	try
 	{
-		return QFile().rename(XmlDirectory + oldName + XmlExtension, XmlDirectory + newName + XmlExtension);
+		return QFile().rename(
+				XmlDirectory + XmlFilename + XmlResolution + "_" + oldName + XmlExtension,
+				XmlDirectory + XmlFilename + XmlResolution + "_" + newName + XmlExtension);
 	}
 	catch (...)
 	{
-		qDebug() << "Can't delete preset" << XmlDirectory;
+		qDebug() << "Can't rename preset" << XmlDirectory;
 		return false;
 	}
 }
