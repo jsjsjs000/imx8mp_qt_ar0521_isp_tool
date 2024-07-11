@@ -16,23 +16,23 @@ bool PresetsXML::loadPresetsList(QComboBox *comboBox)
 	return true;
 }
 
-bool PresetsXML::load(QString name, QMap<QString, QString> *params)
+bool PresetsXML::load(QString name)
 {
-	if (!presetXml.load(name, params))
+	if (!presetXml.load(name))
 		return false;
 
 	return true;
 }
 
-void PresetsXML::save(QComboBox *comboBox, QString name, QString params)
+void PresetsXML::save(QComboBox *comboBox, QString name)
 {
-	// qDebug() << "combobox item" << comboBox->currentIndex();
+	qDebug() << "save - combobox item" << comboBox->currentIndex();
 
 		/* None preset exists */
 	if (comboBox->currentIndex() < 0)
-		this->add(comboBox, name, params);
+		this->add(comboBox, name);
 	else
-		presetXml.save(name, params);
+		presetXml.save(name);
 }
 
 void PresetsXML::rename(QComboBox *comboBox, QString name)
@@ -46,12 +46,12 @@ void PresetsXML::rename(QComboBox *comboBox, QString name)
 	presetXml.renameConfiguration(oldName, name);
 }
 
-void PresetsXML::add(QComboBox *comboBox, QString name, QString params)
+void PresetsXML::add(QComboBox *comboBox, QString name)
 {
 	comboBox->addItem(name);
 	comboBox->setCurrentIndex(comboBox->count() - 1);
 
-	presetXml.save(name, params);
+	presetXml.save(name);
 }
 
 void PresetsXML::deleteCurrent(QComboBox *comboBox)

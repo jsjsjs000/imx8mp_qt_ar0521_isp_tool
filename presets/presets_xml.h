@@ -12,10 +12,10 @@ class PresetsXML
 public:
 	PresetsXML();
 	bool loadPresetsList(QComboBox *comboBox);
-	bool load(QString name, QMap<QString, QString> *params);
-	void save(QComboBox *comboBox, QString name, QString params);
+	bool load(QString name);
+	void save(QComboBox *comboBox, QString name);
 	void rename(QComboBox *comboBox, QString name);
-	void add(QComboBox *comboBox, QString name, QString params);
+	void add(QComboBox *comboBox, QString name);
 	void deleteCurrent(QComboBox *comboBox);
 };
 

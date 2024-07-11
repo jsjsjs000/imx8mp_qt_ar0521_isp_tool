@@ -40,19 +40,13 @@ bool PresetXML::loadPresetsList(QStringList *list)
 	}
 }
 
-bool PresetXML::save(QString name, QString params)
+bool PresetXML::save(QString name)
 {
 	try
 	{
-		// QFile file(XmlDirectory + name + XmlExtension);
-		// if (!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
-		// 	return false;
-
-		// QTextStream out(&file);
-		// out << params;
-
-		// file.close();
-		return true;
+		return QFile().copy(
+				XmlDirectory + XmlFilename + XmlResolution + XmlExtension,
+				XmlDirectory + XmlFilename + XmlResolution + "_" + name + XmlExtension);
 	}
 	catch (...)
 	{
@@ -61,25 +55,13 @@ bool PresetXML::save(QString name, QString params)
 	}
 }
 
-bool PresetXML::load(QString name, QMap<QString, QString> *params)
+bool PresetXML::load(QString name)
 {
 	try
 	{
-		// QFile file(XmlDirectory + name + XmlExtension);
-		// if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-		// 	return false;
-
-		// QTextStream in(&file);
-		// while (!in.atEnd())
-		// {
-		// 	QString line = in.readLine();
-		// 	QStringList words = line.split("=");
-		// 	if (words.count() == 2)
-		// 		(*params)[words[0]] = words[1];
-		// }
-
-		// file.close();
-		return true;
+		return QFile().copy(
+				XmlDirectory + XmlFilename + XmlResolution + "_" + name + XmlExtension,
+				XmlDirectory + XmlFilename + XmlResolution + XmlExtension);
 	}
 	catch (...)
 	{

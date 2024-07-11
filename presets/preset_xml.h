@@ -16,8 +16,8 @@ class PresetXML
 
 public:
 	PresetXML();
-	bool load(QString name, QMap<QString, QString> *params);
-	bool save(QString name, QString params);
+	bool load(QString name);
+	bool save(QString name);
 	bool loadPresetsList(QStringList *list);
 	bool deleteConfiguration(QString name);
 	bool renameConfiguration(QString oldName, QString newName);

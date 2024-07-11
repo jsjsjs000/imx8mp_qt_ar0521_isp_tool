@@ -529,6 +529,7 @@ void MainWindow::on_saveButton_clicked()
 	this->stopProcFsThread();
 
 	controls2Definition.saveXml();
+	on_presetSaveButton_clicked();
 
 	this->killGStreamerProcess();
 	this->reloadDriver();
@@ -708,14 +709,18 @@ void MainWindow::on_presetComboBox_currentIndexChanged(int index)
 
 		PresetV4l2Isp::saveDefaultPreset(name);
 	}
+		/* XML */
+	else if (this->ui->tabWidget->currentIndex() == 1)
+	{
+	}
 }
 
 void MainWindow::on_presetSaveButton_clicked()
 {
+	QString name = "";
 		/* V4L2 */
 	if (this->ui->tabWidget->currentIndex() == 0)
 	{
-		QString name = "";
 			/* None preset exists */
 		if (this->ui->presetComboBox->currentIndex() < 0)
 		{
@@ -736,6 +741,21 @@ void MainWindow::on_presetSaveButton_clicked()
 		}
 
 		presetsV4L2.save(this->ui->presetComboBox, name, params);
+	}
+		/* XML */
+	else if (this->ui->tabWidget->currentIndex() == 1)
+	{
+		/* None preset exists */
+		if (this->ui->presetComboBox->currentIndex() < 0)
+		{
+			name = this->showRenamePresetDialog("Save preset", "Preset name:", nullptr);
+			if (name == nullptr)
+				return;
+		}
+		else
+			name = this->ui->presetComboBox->itemText(this->ui->presetComboBox->currentIndex());
+
+		presetsXmls.save(this->ui->presetComboBox, name);
 	}
 }
 
@@ -785,8 +805,7 @@ void MainWindow::on_presetNewButton_clicked()
 		if (name == nullptr)
 			return;
 
-		QString params = emit this->signal_getParams();
-		presetsXmls.add(this->ui->presetComboBox, name, params);
+		presetsXmls.add(this->ui->presetComboBox, name);
 	}
 }
 
